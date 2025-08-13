@@ -305,11 +305,22 @@
         }
 
         // --- Logica Generatore AI ---
+        // =======================================================================
+        // AZIONE RICHIESTA: Incolla qui la tua chiave API di Google AI Studio
+        // =======================================================================
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
+        // =======================================================================
+
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
         const generatorPrompt = document.getElementById('generator-prompt');
         const resultContainer = document.getElementById('generator-result-container');
+        
         generateBtn.addEventListener('click', async () => {
+            if (GEMINI_API_KEY === "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw") {
+                 resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Per favore, inserisci una chiave API valida nel codice per usare il generatore.</p>';
+                return;
+            }
             const type = generatorType.value;
             const prompt = generatorPrompt.value.trim();
             if (!prompt) {
@@ -321,8 +332,7 @@
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
                 const payload = { contents: chatHistory };
-                const apiKey = "";
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
