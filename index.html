@@ -78,7 +78,24 @@
             </header>
             <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view">Vista Giocatore</button></nav></div></div>
             <main>
-                <div id="dice-roller" class="tab-content active">...</div>
+                <div id="dice-roller" class="tab-content active">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4 mb-6 font-sans">
+                            <div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
+                            <div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
+                        </div>
+                        <div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div>
+                    </div>
+                </div>
                 <div id="ai-generator" class="tab-content">
                      <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
@@ -96,7 +113,13 @@
                     </div>
                 </div>
                 <div id="adventures" class="tab-content">
-                    <div id="adventure-list-view" class="active">...</div>
+                    <div id="adventure-list-view" class="active">
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                            <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
+                            <form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form>
+                            <div id="adventures-list" class="space-y-3"></div>
+                        </div>
+                    </div>
                     <div id="adventure-detail-view" style="display: none;">
                         <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
@@ -118,6 +141,12 @@
                                     <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
                                     <div id="pngs-list" class="space-y-2"></div>
                                 </div>
+                                <hr class="border-gray-600">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3>
+                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button>
+                                    <div id="treasures-list" class="space-y-2"></div>
+                                </div>
                             </aside>
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
                                 <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
@@ -129,7 +158,12 @@
                         </div>
                     </div>
                 </div>
-                 <div id="player-view" class="tab-content">...</div>
+                 <div id="player-view" class="tab-content">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Vista Giocatore</h2>
+                        <p class="text-gray-400 font-sans">Questa sezione mostrerà solo le informazioni che decidi di condividere con i tuoi giocatori.</p>
+                    </div>
+                 </div>
             </main>
         </div>
     </div>
@@ -168,10 +202,17 @@
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
 
-        // --- AUTH & TABS & DICE LOGIC (UNCHANGED) ---
-        // ... (codice omesso per brevità)
+        onAuthStateChanged(auth, user => { if (user) { document.getElementById('auth-container').style.display = 'none'; document.getElementById('app-container').classList.add('active'); document.getElementById('user-email').textContent = user.email; currentUserId = user.uid; loadAdventures(user.uid); } else { document.getElementById('app-container').classList.remove('active'); document.getElementById('auth-container').style.display = 'flex'; currentUserId = null; } });
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
 
-        // --- AI GENERATOR LOGIC ---
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
+
         const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
@@ -189,59 +230,57 @@
             resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
             saveToAdventureBtn.style.display = 'none';
 
-            if (type === 'Mappa') {
-                await generateMap(prompt);
-            } else {
-                await generateText(type, prompt);
+            try {
+                if (type === 'Mappa') {
+                    const imageUrl = await generateImage(`D&D battle map, top-down view, fantasy style, detailed, of: ${prompt}`);
+                    resultContainer.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-contain rounded-lg">`;
+                    saveToAdventureBtn.dataset.imageData = imageUrl;
+                } else {
+                    const [text, imageUrl] = await Promise.all([
+                        generateText(type, prompt),
+                        generateImage(`Fantasy illustration, digital art, character portrait of a ${prompt}`)
+                    ]);
+                    resultContainer.innerHTML = `
+                        <img src="${imageUrl}" class="w-full h-48 object-cover rounded-t-lg mb-2">
+                        <textarea class="w-full h-full bg-gray-700 rounded-b-lg p-3 font-sans text-sm">${text}</textarea>
+                    `;
+                    saveToAdventureBtn.dataset.imageData = imageUrl;
+                }
+                saveToAdventureBtn.dataset.type = type;
+                saveToAdventureBtn.style.display = 'block';
+            } catch (error) {
+                console.error("Errore generazione:", error);
+                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`;
             }
         });
 
         async function generateText(type, prompt) {
             let fullPrompt = '';
-            // ... (logica prompt testuale invariata)
-            try {
-                // ... (chiamata API Gemini invariata)
-                const text = result.candidates[0].content.parts[0].text;
-                resultContainer.innerHTML = '';
-                const editTextArea = document.createElement('textarea');
-                editTextArea.className = 'w-full h-full bg-gray-700 rounded-lg p-3 font-sans';
-                editTextArea.value = text;
-                resultContainer.appendChild(editTextArea);
-                if (type === 'Ambientazione' || type === 'PNG') {
-                    saveToAdventureBtn.dataset.type = type;
-                    saveToAdventureBtn.style.display = 'block';
-                }
-            } catch (error) {
-                // ... (gestione errore invariata)
+            if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del PNG. Inizia la risposta direttamente con il nome del PNG in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto fisico (viso, occhi, capelli, altezza, corporatura), la personalità e un segreto. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; }
+            else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Rispondi SOLO con la descrizione e la scheda del mostro. Inizia la risposta direttamente con il nome o la razza del mostro in grassetto. Basati su questa idea: "${prompt}". La risposta deve includere due sezioni: 1. Descrizione fisica concisa. 2. Scheda statistiche completa in formato D&D 5e (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi). Non aggiungere introduzioni o testo extra. Formatta in markdown.`; }
+            else { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome del ${type} in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto, le proprietà e uno spunto di trama. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; }
+            
+            const payload = { contents: [{ role: "user", parts: [{ text: fullPrompt }] }] };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`Errore API Testo: ${response.statusText}`);
+            const result = await response.json();
+            if (result.candidates && result.candidates.length > 0) {
+                return result.candidates[0].content.parts[0].text;
             }
+            throw new Error("Nessun testo valido ricevuto dall'API.");
         }
 
-        async function generateMap(prompt) {
-            const fullPrompt = `D&D battle map, top-down view, fantasy style, detailed, high resolution, of: ${prompt}`;
-            try {
-                const payload = { instances: [{ prompt: fullPrompt }], parameters: { "sampleCount": 1 } };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
-                const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`Errore API Immagine: ${response.statusText}`);
-                const result = await response.json();
-                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                    const base64Data = result.predictions[0].bytesBase64Encoded;
-                    const imageUrl = `data:image/png;base64,${base64Data}`;
-                    resultContainer.innerHTML = `<img src="${imageUrl}" class="w-full h-full object-contain rounded-lg">`;
-                    saveToAdventureBtn.dataset.type = 'Mappa';
-                    saveToAdventureBtn.dataset.imageData = imageUrl;
-                    saveToAdventureBtn.style.display = 'block';
-                } else {
-                    throw new Error("Nessuna immagine valida ricevuta dall'API.");
-                }
-            } catch (error) {
-                console.error("Errore generazione mappa:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore durante la generazione della mappa.</p>`;
+        async function generateImage(prompt) {
+            const payload = { instances: [{ prompt }], parameters: { "sampleCount": 1 } };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
+            const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+            if (!response.ok) throw new Error(`Errore API Immagine: ${response.statusText}`);
+            const result = await response.json();
+            if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
+                return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
             }
+            throw new Error("Nessuna immagine valida ricevuta dall'API.");
         }
 
         saveToAdventureBtn.addEventListener('click', async () => {
@@ -251,22 +290,25 @@
             if (group === null) return;
 
             let newNode;
+            const imageData = saveToAdventureBtn.dataset.imageData;
+
             if (type === 'Mappa') {
                 const title = prompt("Inserisci un titolo per questa mappa:");
                 if (!title) return;
-                newNode = { title, group, imageData: saveToAdventureBtn.dataset.imageData };
+                newNode = { title, group, imageData, content: "" };
             } else {
                 const editTextArea = resultContainer.querySelector('textarea');
                 if (!editTextArea) { alert("Nessun contenuto da salvare."); return; }
                 const contentToSave = editTextArea.value;
                 const lines = contentToSave.split('\n');
                 const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto";
-                newNode = { title, content: contentToSave, group };
+                newNode = { title, content: contentToSave, group, imageData };
             }
             
             const adventureRef = doc(db, currentAdventureDocPath);
             try {
-                const field = type === 'Mappa' ? 'maps' : (type === 'Ambientazione' ? 'environments' : 'pngs');
+                const fieldMap = { 'Mappa': 'maps', 'Ambientazione': 'environments', 'PNG': 'pngs', 'Tesoro': 'treasures' };
+                const field = fieldMap[type];
                 await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
                 saveToAdventureBtn.textContent = 'Salvato!';
                 setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
@@ -278,27 +320,67 @@
         // La funzione renderGroupedNodes ora deve gestire anche le mappe
         function renderGroupedNodes(type, nodes) {
             const listEl = document.getElementById(`${type}-list`);
-            // ... (logica gruppi invariata)
-            let nodesHtml = groups[groupName].map(node => {
-                let contentHtml = '';
-                if (type === 'maps') {
-                    contentHtml = `<img src="${node.imageData}" class="w-full rounded-md mt-2">`;
-                } else {
-                    contentHtml = `<div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>`;
-                }
-                // ... (resto dell'HTML del nodo, con il nuovo contentHtml)
-            }).join('');
-            // ...
+            listEl.innerHTML = '';
+            if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun elemento.</p>`; return; }
+            const groups = nodes.reduce((acc, node) => { const group = node.group || 'Senza Gruppo'; if (!acc[group]) acc[group] = []; acc[group].push(node); return acc; }, {});
+            for (const groupName in groups) {
+                const groupDetails = document.createElement('details');
+                groupDetails.className = 'bg-gray-700 rounded-lg';
+                let nodesHtml = groups[groupName].map(node => {
+                    let contentHtml = '';
+                    if (node.imageData) {
+                        contentHtml += `<img src="${node.imageData}" class="w-full rounded-md mt-2">`;
+                    }
+                    if (node.content) {
+                         contentHtml += `<div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>`;
+                    }
+                    return `
+                    <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
+                        <div class="node-view-mode">
+                             <details>
+                                <summary class="cursor-pointer text-base flex justify-between items-center">
+                                    <span>${node.title}</span>
+                                    <div class="flex-shrink-0">
+                                        <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
+                                        <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
+                                    </div>
+                                </summary>
+                                ${contentHtml}
+                            </details>
+                        </div>
+                        <div class="node-edit-mode hidden p-2">
+                            <textarea class="node-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.content}</textarea>
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
+                                <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
+                    </div>`;
+                }).join('');
+                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
+                listEl.appendChild(groupDetails);
+            }
         }
 
         function openAdventureDetail(userId, docId) {
-            // ...
+            adventureListView.style.display = 'none';
+            adventureDetailView.style.display = 'block';
+            currentAdventureDocPath = `users/${userId}/adventures/${docId}`;
+            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
             currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => {
-                // ...
+                if (doc.exists()) {
+                    currentAdventureData = doc.data();
+                    adventureDetailTitle.textContent = currentAdventureData.title;
+                    if (document.activeElement !== backgroundTextarea) { backgroundTextarea.value = currentAdventureData.background || ""; }
+                    renderBackgroundLinks();
                     renderGroupedNodes('maps', currentAdventureData.maps || []);
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                // ...
+                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
+                } else {
+                    console.error("Avventura non trovata!");
+                    backToListBtn.click();
+                }
             });
         }
         
