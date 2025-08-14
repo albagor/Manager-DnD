@@ -7,21 +7,24 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
         }
-        h1, h2, h3, h4, .tab-btn, .dice-btn, button, .role-btn {
+        h1, h2, h3, h4, .tab-btn, .dice-btn, button {
              font-family: 'MedievalSharp', cursive;
         }
-        #app-container, #adventure-detail-view, #player-view-container, #auth-container, #role-selection-container, #player-dashboard-container, .tab-content {
+        /* Hide all main containers by default */
+        #app-container, #adventure-detail-view, #player-view-container, #auth-container, .tab-content {
             display: none;
         }
-        #app-container.active, #adventure-detail-view.active, #player-view-container.active, #player-dashboard-container.active, .tab-content.active {
+        /* Show the active container/tab */
+        #app-container.active, #adventure-detail-view.active, #player-view-container.active, .tab-content.active {
             display: block;
         }
-        #auth-container.active, #role-selection-container.active, #initial-loader.active {
+        /* Auth container needs flex for centering */
+        #auth-container.active {
             display: flex;
         }
         .loader {
@@ -37,23 +40,19 @@
             100% { transform: rotate(360deg); }
         }
         .node-link {
-            color: #f87171;
+            color: #f87171; /* text-red-400 */
             cursor: pointer;
             text-decoration: underline;
         }
         .node-link:hover {
-            color: #fca5a5;
-        }
-        .stat-box {
-            background-color: #1f2937;
-            border: 1px solid #4b5563;
+            color: #fca5a5; /* text-red-300 */
         }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
     <!-- Initial Loading Indicator -->
-    <div id="initial-loader" class="min-h-screen items-center justify-center active">
+    <div id="initial-loader" class="min-h-screen flex items-center justify-center">
         <div class="loader"></div>
     </div>
 
@@ -78,18 +77,6 @@
                 </form>
                 <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
             </div>
-        </div>
-    </div>
-
-    <!-- Selezione Ruolo -->
-    <div id="role-selection-container" class="min-h-screen items-center justify-center p-4">
-        <div class="text-center">
-            <h1 class="text-4xl md:text-5xl font-bold text-red-500 mb-8 tracking-wider">Entra come...</h1>
-            <div class="flex flex-col md:flex-row gap-6">
-                <button id="role-dm-btn" class="role-btn bg-red-800 hover:bg-red-700 text-white font-bold py-6 px-12 rounded-lg text-3xl shadow-lg">Dungeon Master</button>
-                <button id="role-player-btn" class="role-btn bg-blue-800 hover:bg-blue-700 text-white font-bold py-6 px-12 rounded-lg text-3xl shadow-lg">Giocatore</button>
-            </div>
-            <button id="role-logout-btn" class="mt-8 text-lg text-gray-400 hover:text-red-300">Logout</button>
         </div>
     </div>
 
@@ -159,20 +146,12 @@
                                     <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
                                     <div id="pngs-list" class="space-y-2"></div>
                                 </div>
+                                <!-- NUOVA SEZIONE MAPPE -->
                                 <hr class="border-gray-600">
                                 <div>
                                     <h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3>
                                     <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button>
                                     <div id="maps-list" class="space-y-2"></div>
-                                </div>
-                                <hr class="border-gray-600">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-red-400 mb-2">Personaggi</h3>
-                                    <form id="add-player-form" class="space-y-2 mb-4">
-                                        <input type="email" id="player-email-input" class="w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Email del giocatore" required>
-                                        <button type="submit" class="w-full bg-blue-700 hover:bg-blue-800 text-white font-bold py-1 px-2 rounded-lg text-base">Invita Giocatore</button>
-                                    </form>
-                                    <div id="characters-list" class="space-y-2"></div>
                                 </div>
                             </aside>
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
@@ -200,38 +179,16 @@
         </div>
     </div>
     
-    <!-- Player Dashboard -->
-    <div id="player-dashboard-container" class="p-4 md:p-8">
-        <header class="flex justify-between items-center mb-8">
-            <div><h1 class="text-4xl md:text-5xl font-bold text-blue-500 tracking-wider">Le Mie Schede Personaggio</h1></div>
-            <div id="player-user-info" class="text-right"><p id="player-user-email" class="text-gray-300 font-sans"></p><button id="player-logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
-        </header>
-        <div id="player-sheets-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </div>
-
-
-    <!-- Contenitore Vista Giocatore (Pubblica) -->
+    <!-- Contenitore Vista Giocatore -->
     <div id="player-view-container" class="p-4 md:p-8">
         <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1>
-        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
-    </div>
-
-    <!-- Finestra Modale per Scheda Personaggio -->
-    <div id="sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-900 rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-500 flex flex-col">
-            <div class="flex justify-between items-center p-4 border-b border-gray-700 flex-shrink-0">
-                <h2 id="sheet-modal-title" class="text-3xl font-bold text-red-400">Scheda Personaggio</h2>
-                <button id="sheet-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
-            </div>
-            <div id="sheet-modal-content" class="p-6 overflow-y-auto flex-grow font-sans text-gray-300"></div>
-             <div id="sheet-modal-footer" class="p-4 border-t border-gray-700 flex-shrink-0 text-right">
-                <button id="sheet-save-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva Modifiche</button>
-            </div>
+        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Contenuti condivisi verranno inseriti qui -->
         </div>
     </div>
 
 
-    <!-- Finestra Modale per Nodi (Ambienti, PNG, ecc) -->
+    <!-- Finestra Modale per i Nodi -->
     <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
         <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500">
             <div class="flex justify-between items-center mb-4">
@@ -244,10 +201,9 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, where, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc, writeBatch, getDocs } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // --- CONFIGURAZIONE FIREBASE ---
         const firebaseConfig = {
             apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
             authDomain: "avventure-dnd.firebaseapp.com",
@@ -261,311 +217,560 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- STATO GLOBALE ---
-        let currentUser = null;
+        let currentUserId = null;
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
-        let openedSheetId = null;
 
-        // --- ROUTER PRINCIPALE DELL'APP ---
+        // --- GESTIONE VISTA GIOCATORE (Accesso Pubblico) ---
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
 
         if (playerViewId) {
-            showView('player-view-container');
+            document.getElementById('initial-loader').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('player-view-container').classList.add('active');
             loadPlayerView(playerViewId);
         }
 
-        onAuthStateChanged(auth, user => {
-            if (playerViewId) return;
-            currentUser = user;
-            if (user) {
-                showView('role-selection-container');
-            } else {
-                showView('auth-container');
-            }
-        });
-
-        // --- GESTIONE DELLA VISTA ---
-        function showView(viewId) {
-            ['initial-loader', 'auth-container', 'role-selection-container', 'app-container', 'player-dashboard-container', 'player-view-container'].forEach(id => {
-                document.getElementById(id).classList.remove('active');
-            });
-            const view = document.getElementById(viewId);
-            if(view) view.classList.add('active');
-        }
-        
-        // --- GESTIONE AUTENTICAZIONE ---
-        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-
-        // --- SELEZIONE RUOLO E LOGOUT ---
-        document.getElementById('role-dm-btn').addEventListener('click', () => {
-            showView('app-container');
-            document.getElementById('user-email').textContent = currentUser.email;
-            loadAdventures(currentUser.uid);
-        });
-        document.getElementById('role-player-btn').addEventListener('click', () => {
-            showView('player-dashboard-container');
-            document.getElementById('player-user-email').textContent = currentUser.email;
-            loadPlayerSheets(currentUser.email);
-        });
-        function handleLogout() { signOut(auth); showView('auth-container'); }
-        document.getElementById('logout-btn').addEventListener('click', handleLogout);
-        document.getElementById('player-logout-btn').addEventListener('click', handleLogout);
-        document.getElementById('role-logout-btn').addEventListener('click', handleLogout);
-
-        // --- VISTA PUBBLICA GIOCATORE ---
         function loadPlayerView(adventureId) {
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
             onSnapshot(publicAdventureRef, (doc) => {
-                const container = document.getElementById('player-shared-items');
                 if (doc.exists()) {
                     const data = doc.data();
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
+                    const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
-                    if (data.sharedItems && data.sharedItems.length > 0) {
-                        data.sharedItems.forEach(item => {
+                    
+                    const backgroundItem = data.sharedItems.find(item => item.title === '__ADVENTURE_BACKGROUND__');
+                    const otherItems = data.sharedItems.filter(item => item.title !== '__ADVENTURE_BACKGROUND__');
+
+                    if (backgroundItem) {
+                        const bgEl = document.createElement('div');
+                        bgEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6 col-span-full';
+                        bgEl.innerHTML = `
+                            <h3 class="text-2xl font-bold text-red-400 mb-2">Background dell'Avventura</h3>
+                            <p class="text-gray-300 font-sans">${(backgroundItem.publicContent || '').replace(/\n/g, '<br>')}</p>
+                        `;
+                        container.appendChild(bgEl);
+                    }
+
+                    if (otherItems.length > 0) {
+                        otherItems.forEach(item => {
                             const itemEl = document.createElement('div');
                             itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
                             const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
                             itemEl.innerHTML = `
-                                <h3 class="text-2xl font-bold text-red-400 mb-2">${item.title === '__ADVENTURE_BACKGROUND__' ? "Background dell'Avventura" : item.title}</h3>
+                                <h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>
                                 ${imageHtml}
                                 <p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>
                             `;
                             container.appendChild(itemEl);
                         });
-                    } else {
+                    }
+
+                    if (!backgroundItem && otherItems.length === 0) {
                          container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla.</p>';
                     }
+
                 } else {
                     document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
-                    container.innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o l\'avventura è stata cancellata.</p>';
+                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o l\'avventura è stata cancellata.</p>';
                 }
             });
         }
+        
+        // --- GESTIONE MASTER ---
+        onAuthStateChanged(auth, user => { 
+            if (playerViewId) return; // Do nothing if it's a player view
 
-        // --- GESTIONE SCHEDE PERSONAGGIO (VISTA GIOCATORE) ---
-        const playerSheetsList = document.getElementById('player-sheets-list');
-        async function loadPlayerSheets(playerEmail) {
-            if (!playerEmail) return;
-            const sheetsQuery = query(collection(db, "characterSheets"), where("playerEmail", "==", playerEmail));
-            onSnapshot(sheetsQuery, async (snapshot) => {
-                playerSheetsList.innerHTML = '';
-                if (snapshot.empty) {
-                    playerSheetsList.innerHTML = `<p class="text-gray-500 text-center col-span-full font-sans">Non sei stato ancora invitato a nessuna avventura.</p>`;
-                    return;
-                }
-                for (const docSnapshot of snapshot.docs) {
-                    const sheet = docSnapshot.data();
-                    let adventureTitle = "Avventura Sconosciuta";
-                    if (sheet.dmId && sheet.adventureId) {
-                        const adventureRef = doc(db, "users", sheet.dmId, "adventures", sheet.adventureId);
-                        const adventureSnap = await getDoc(adventureRef);
-                        if (adventureSnap.exists()) adventureTitle = adventureSnap.data().title;
-                    }
-                    const card = document.createElement('div');
-                    card.className = "bg-gray-800 p-6 rounded-lg shadow-lg flex flex-col justify-between";
-                    card.innerHTML = `
-                        <div>
-                            <h3 class="text-2xl font-bold text-blue-400">${sheet.characterName || 'Personaggio senza nome'}</h3>
-                            <p class="text-gray-400 font-sans">per l'avventura: <span class="font-bold">${adventureTitle}</span></p>
-                        </div>
-                        <button data-sheet-id="${docSnapshot.id}" class="view-sheet-btn mt-4 w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Apri Scheda</button>
-                    `;
-                    playerSheetsList.appendChild(card);
-                }
-            });
-        }
-        playerSheetsList.addEventListener('click', e => {
-            if (e.target.classList.contains('view-sheet-btn')) {
-                openCharacterSheetModal(e.target.dataset.sheetId, true);
-            }
+            document.getElementById('initial-loader').style.display = 'none';
+
+            if (user) { 
+                document.getElementById('auth-container').classList.remove('active');
+                document.getElementById('app-container').classList.add('active'); 
+                document.getElementById('user-email').textContent = user.email; 
+                currentUserId = user.uid; 
+                loadAdventures(user.uid); 
+            } else {
+                document.getElementById('app-container').classList.remove('active'); 
+                document.getElementById('auth-container').classList.add('active');
+                currentUserId = null; 
+            } 
         });
 
-        // --- GESTIONE SCHEDE PERSONAGGIO (MODALE E RENDER) ---
-        const sheetModal = document.getElementById('sheet-modal');
-        const sheetModalContent = document.getElementById('sheet-modal-content');
-        const sheetModalFooter = document.getElementById('sheet-modal-footer');
-        async function openCharacterSheetModal(sheetId, isEditable) {
-            openedSheetId = sheetId;
-            const sheetSnap = await getDoc(doc(db, "characterSheets", sheetId));
-            if (!sheetSnap.exists()) { alert("Scheda non trovata!"); return; }
-            const sheetData = sheetSnap.data();
-            renderCharacterSheet(sheetData, isEditable);
-            sheetModal.classList.remove('hidden');
-            sheetModalFooter.style.display = isEditable ? 'block' : 'none';
-        }
-        function renderCharacterSheet(data, isEditable) {
-            const inputClass = "w-full bg-gray-700 border border-gray-600 rounded p-2 text-white font-sans focus:outline-none focus:ring-2 focus:ring-blue-500";
-            const textareaClass = `${inputClass} h-24 resize-none`;
-            const disabled = isEditable ? '' : 'disabled';
-            const abilityScores = ['forza', 'destrezza', 'costituzione', 'intelligenza', 'saggezza', 'carisma'];
-            const skills = { 'acrobazia': 'destrezza', 'addestrare animali': 'saggezza', 'arcano': 'intelligenza', 'atletica': 'forza', 'furtività': 'destrezza', 'indagare': 'intelligenza', 'inganno': 'carisma', 'intimidire': 'carisma', 'intuizione': 'saggezza', 'intrattenere': 'carisma', 'medicina': 'saggezza', 'natura': 'intelligenza', 'percezione': 'saggezza', 'persuasione': 'carisma', 'rapidità di mano': 'destrezza', 'religione': 'intelligenza', 'sopravvivenza': 'saggezza', 'storia': 'intelligenza' };
-            let abilityScoresHtml = abilityScores.map(score => `<div class="stat-box rounded-lg text-center p-2"><label class="text-sm font-bold uppercase text-gray-400">${score.substring(0,3)}</label><input type="number" id="sheet-${score}" value="${data[score] || 10}" ${disabled} class="text-3xl text-center font-bold bg-transparent w-full focus:outline-none"><div class="text-lg bg-gray-700 rounded-full w-10 h-10 mx-auto flex items-center justify-center border border-gray-500" id="sheet-${score}-mod">${calculateModifier(data[score] || 10)}</div></div>`).join('');
-            let skillsHtml = Object.entries(skills).map(([skill, ability]) => `<div class="flex items-center gap-2"><input type="checkbox" id="sheet-skill-${skill.replace(/\s+/g, '-')}-prof" ${data.skills && data.skills[skill]?.proficient ? 'checked' : ''} ${disabled}><span class="w-8 text-right" id="sheet-skill-${skill.replace(/\s+/g, '-')}-mod">0</span><label for="sheet-skill-${skill.replace(/\s+/g, '-')}-prof" class="capitalize">${skill}</label></div>`).join('');
-            sheetModalContent.innerHTML = `
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
-                    <input type="text" id="sheet-characterName" placeholder="Nome Personaggio" value="${data.characterName || ''}" class="${inputClass} md:col-span-2 text-2xl" ${disabled}>
-                    <input type="text" id="sheet-playerName" placeholder="Nome Giocatore" value="${data.playerName || ''}" class="${inputClass}" ${disabled}>
-                </div>
-                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-                    <input type="text" id="sheet-classLevel" placeholder="Classe e Livello" value="${data.classLevel || ''}" class="${inputClass}" ${disabled}>
-                    <input type="text" id="sheet-race" placeholder="Razza" value="${data.race || ''}" class="${inputClass}" ${disabled}>
-                    <input type="text" id="sheet-background" placeholder="Background" value="${data.background || ''}" class="${inputClass}" ${disabled}>
-                </div>
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-3 gap-2">${abilityScoresHtml}</div>
-                        <div class="stat-box rounded-lg p-4 space-y-2"><h4 class="font-bold text-red-400 text-lg">Abilità</h4><div class="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-1 text-sm">${skillsHtml}</div></div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="grid grid-cols-3 gap-4 text-center">
-                            <div class="stat-box p-3 rounded-lg"><label class="block text-xs uppercase">Classe Armatura</label><input type="number" id="sheet-ac" value="${data.ac || 10}" class="text-3xl bg-transparent w-full text-center" ${disabled}></div>
-                            <div class="stat-box p-3 rounded-lg"><label class="block text-xs uppercase">Iniziativa</label><input type="text" id="sheet-initiative" value="${data.initiative || '+0'}" class="text-3xl bg-transparent w-full text-center" ${disabled}></div>
-                            <div class="stat-box p-3 rounded-lg"><label class="block text-xs uppercase">Velocità</label><input type="text" id="sheet-speed" value="${data.speed || '9m'}" class="text-3xl bg-transparent w-full text-center" ${disabled}></div>
-                        </div>
-                        <div class="stat-box p-4 rounded-lg"><label class="font-bold text-red-400">Punti Ferita</label><div class="grid grid-cols-2 gap-4 mt-2"><div><label class="text-xs">Massimi</label><input type="number" id="sheet-hpMax" value="${data.hpMax || 10}" class="${inputClass}" ${disabled}></div><div><label class="text-xs">Attuali</label><input type="number" id="sheet-hpCurrent" value="${data.hpCurrent || 10}" class="${inputClass}" ${disabled}></div></div></div>
-                        <div class="stat-box p-4 rounded-lg"><h4 class="font-bold text-red-400">Attacchi e Incantesimi</h4><textarea id="sheet-attacks" class="${textareaClass} mt-2" placeholder="Spada Lunga, +5, 1d8+3 tagliente..." ${disabled}>${data.attacks || ''}</textarea></div>
-                    </div>
-                    <div class="space-y-6">
-                        <div class="stat-box p-4 rounded-lg"><h4 class="font-bold text-red-400">Tratti e Privilegi</h4><textarea id="sheet-features" class="${textareaClass} mt-2" placeholder="Second Wind, Action Surge..." ${disabled}>${data.features || ''}</textarea></div>
-                        <div class="stat-box p-4 rounded-lg"><h4 class="font-bold text-red-400">Equipaggiamento</h4><textarea id="sheet-equipment" class="${textareaClass} mt-2" placeholder="Zaino, torcia, 10g..." ${disabled}>${data.equipment || ''}</textarea></div>
-                    </div>
-                </div>`;
-            if(isEditable) {
-                abilityScores.forEach(score => document.getElementById(`sheet-${score}`).addEventListener('input', updateAllModifiers));
-                document.getElementById('sheet-classLevel').addEventListener('input', updateAllModifiers);
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
+
+        const diceButtons = document.querySelectorAll('.dice-btn');
+        const resultsContainer = document.getElementById('dice-results-container');
+        const diceCountInput = document.getElementById('dice-count');
+        const diceModifierInput = document.getElementById('dice-modifier');
+        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
+        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
+
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
+        const generateBtn = document.getElementById('generate-btn');
+        const generatorType = document.getElementById('generator-type');
+        const generatorPrompt = document.getElementById('generator-prompt');
+        const resultContainer = document.getElementById('generator-result-container');
+        const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
+        
+        generateBtn.addEventListener('click', async () => {
+            const type = generatorType.value;
+            const prompt = generatorPrompt.value.trim();
+            if (!prompt) {
+                resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>';
+                return;
             }
-            updateAllModifiers();
-        }
-        function calculateModifier(score) { const mod = Math.floor((score - 10) / 2); return mod >= 0 ? `+${mod}` : mod; }
-        function getProficiencyBonus(level) { if (!level || typeof level !== 'string') return 2; const lvlNum = parseInt(level.match(/\d+/)?.[0] || 1); return Math.ceil(lvlNum / 4) + 1; }
-        function updateAllModifiers() {
-            const proficiencyBonus = getProficiencyBonus(document.getElementById('sheet-classLevel')?.value);
-            ['forza', 'destrezza', 'costituzione', 'intelligenza', 'saggezza', 'carisma'].forEach(score => {
-                const scoreValue = document.getElementById(`sheet-${score}`)?.value || 10;
-                const modValue = calculateModifier(parseInt(scoreValue));
-                const modEl = document.getElementById(`sheet-${score}-mod`);
-                if(modEl) modEl.textContent = modValue;
-            });
-            Object.entries({'acrobazia': 'destrezza', 'addestrare animali': 'saggezza', 'arcano': 'intelligenza', 'atletica': 'forza', 'furtività': 'destrezza', 'indagare': 'intelligenza', 'inganno': 'carisma', 'intimidire': 'carisma', 'intuizione': 'saggezza', 'intrattenere': 'carisma', 'medicina': 'saggezza', 'natura': 'intelligenza', 'percezione': 'saggezza', 'persuasione': 'carisma', 'rapidità di mano': 'destrezza', 'religione': 'intelligenza', 'sopravvivenza': 'saggezza', 'storia': 'intelligenza'}).forEach(([skill, ability]) => {
-                const abilityModValue = parseInt(document.getElementById(`sheet-${ability}-mod`)?.textContent || 0);
-                const isProficient = document.getElementById(`sheet-skill-${skill.replace(/\s+/g, '-')}-prof`)?.checked;
-                const totalMod = abilityModValue + (isProficient ? proficiencyBonus : 0);
-                const skillModEl = document.getElementById(`sheet-skill-${skill.replace(/\s+/g, '-')}-mod`);
-                if(skillModEl) skillModEl.textContent = totalMod >= 0 ? `+${totalMod}` : totalMod;
-            });
-        }
-        document.getElementById('sheet-modal-close-btn').addEventListener('click', () => { sheetModal.classList.add('hidden'); openedSheetId = null; });
-        document.getElementById('sheet-save-btn').addEventListener('click', async () => {
-            if (!openedSheetId) return;
-            const updatedData = {
-                characterName: document.getElementById('sheet-characterName').value, playerName: document.getElementById('sheet-playerName').value, classLevel: document.getElementById('sheet-classLevel').value, race: document.getElementById('sheet-race').value, background: document.getElementById('sheet-background').value, ac: parseInt(document.getElementById('sheet-ac').value) || 10, initiative: document.getElementById('sheet-initiative').value, speed: document.getElementById('sheet-speed').value, hpMax: parseInt(document.getElementById('sheet-hpMax').value) || 10, hpCurrent: parseInt(document.getElementById('sheet-hpCurrent').value) || 10, attacks: document.getElementById('sheet-attacks').value, features: document.getElementById('sheet-features').value, equipment: document.getElementById('sheet-equipment').value, skills: {},
-            };
-            ['forza', 'destrezza', 'costituzione', 'intelligenza', 'saggezza', 'carisma'].forEach(score => { updatedData[score] = parseInt(document.getElementById(`sheet-${score}`).value) || 10; });
-            Object.keys({'acrobazia': 'destrezza', 'addestrare animali': 'saggezza', 'arcano': 'intelligenza', 'atletica': 'forza', 'furtività': 'destrezza', 'indagare': 'intelligenza', 'inganno': 'carisma', 'intimidire': 'carisma', 'intuizione': 'saggezza', 'intrattenere': 'carisma', 'medicina': 'saggezza', 'natura': 'intelligenza', 'percezione': 'saggezza', 'persuasione': 'carisma', 'rapidità di mano': 'destrezza', 'religione': 'intelligenza', 'sopravvivenza': 'saggezza', 'storia': 'intelligenza'}).forEach(skill => { updatedData.skills[skill] = { proficient: document.getElementById(`sheet-skill-${skill.replace(/\s+/g, '-')}-prof`).checked }; });
+            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
+            saveToAdventureBtn.style.display = 'none';
+            await generateText(type, prompt);
+        });
+
+        async function generateText(type, prompt) {
+            let fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome in grassetto. Basati su questa idea: "${prompt}". Crea prima una descrizione pubblica (aspetto, personalità, ecc.). Poi, aggiungi una sezione separata per le note del master che inizia ESATTAMENTE con "---NOTE MASTER---" e che include segreti, statistiche o spunti di trama. Non aggiungere introduzioni o testo extra. Formatta tutto in markdown.`;
             try {
-                const sheetRef = doc(db, "characterSheets", openedSheetId);
-                await updateDoc(sheetRef, updatedData);
-                const saveBtn = document.getElementById('sheet-save-btn');
-                saveBtn.textContent = 'Salvato!'; saveBtn.classList.add('bg-green-600');
-                setTimeout(() => { saveBtn.textContent = 'Salva Modifiche'; saveBtn.classList.remove('bg-green-600'); }, 2000);
-            } catch (error) { console.error("Errore salvataggio scheda:", error); alert("Errore durante il salvataggio."); }
+                let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
+                const payload = { contents: chatHistory };
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`Errore API Testo: ${response.statusText}`);
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultContainer.innerHTML = '';
+                    const editTextArea = document.createElement('textarea');
+                    editTextArea.className = 'w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans';
+                    editTextArea.value = text;
+                    resultContainer.appendChild(editTextArea);
+                    saveToAdventureBtn.dataset.type = type;
+                    saveToAdventureBtn.style.display = 'block';
+                } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); }
+            } catch (error) { console.error("Errore generazione testo:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; }
+        }
+
+        saveToAdventureBtn.addEventListener('click', async () => {
+            if (!currentAdventureId) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; }
+            const editTextArea = resultContainer.querySelector('textarea');
+            if (!editTextArea) { alert("Nessun contenuto da salvare."); return; }
+            
+            const fullContent = editTextArea.value;
+            const separator = '---NOTE MASTER---';
+            let publicContent = fullContent;
+            let masterContent = '';
+
+            if (fullContent.includes(separator)) {
+                const parts = fullContent.split(separator);
+                publicContent = parts[0].trim();
+                masterContent = parts[1].trim();
+            }
+
+            const lines = publicContent.split('\n');
+            const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto";
+            const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo");
+            if (group === null) return;
+
+            const imageUrl = prompt("URL dell'immagine (opzionale):");
+
+            const newNode = { title, publicContent, masterContent, group, imageUrl: imageUrl || "" };
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            try {
+                const type = saveToAdventureBtn.dataset.type;
+                let field;
+                if (type === 'Ambientazione' || type === 'Tesoro') {
+                    field = 'environments';
+                } else if (type === 'Mappa') {
+                    field = 'maps';
+                } else {
+                    field = 'pngs';
+                }
+                await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
+                saveToAdventureBtn.textContent = 'Salvato!';
+                setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
+            } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); }
         });
 
-        // --- LOGICA DM ---
         const addAdventureForm = document.getElementById('add-adventure-form');
         const adventureTitleInput = document.getElementById('adventure-title-input');
         const adventuresList = document.getElementById('adventures-list');
         const adventureListView = document.getElementById('adventure-list-view');
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
-        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUser) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUser.uid, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUser.uid}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUser) { const newAdvRef = doc(collection(db, `users/${currentUser.uid}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUser.uid, background: "", environments: [], pngs: [], maps: [], playerEmails: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUser.uid, sharedItems: [] }); adventureTitleInput.value = ''; } });
+        const adventureDetailTitle = document.getElementById('adventure-detail-title');
+        const backgroundTextarea = document.getElementById('adventure-background-textarea');
+        const backgroundPreview = document.getElementById('background-preview');
+        const saveStatus = document.getElementById('save-status');
+        let backgroundSaveTimeout;
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: "", environments: [], pngs: [], maps: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, sharedItems: [] }); adventureTitleInput.value = ''; } });
+        function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        
         function openAdventureDetail(userId, docId) {
             adventureListView.style.display = 'none';
             adventureDetailView.style.display = 'block';
             currentAdventureId = docId;
+
+            updatePlayerShareLink(docId); 
+
             if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
             const adventureRef = doc(db, `users/${userId}/adventures`, docId);
             currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
                 if (doc.exists()) {
                     currentAdventureData = doc.data();
-                    document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
-                    if (document.activeElement !== document.getElementById('adventure-background-textarea')) {
-                        document.getElementById('adventure-background-textarea').value = currentAdventureData.background || "";
+                    adventureDetailTitle.textContent = currentAdventureData.title;
+                    if (document.activeElement !== backgroundTextarea) {
+                        backgroundTextarea.value = currentAdventureData.background || "";
                     }
-                    renderPlayerCharacters(currentAdventureData.playerEmails || [], docId);
+                    renderBackgroundLinks();
+                    renderGroupedNodes('environments', currentAdventureData.environments || []);
+                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                    renderGroupedNodes('maps', currentAdventureData.maps || []);
+                    updateShareBackgroundButtonState();
                 } else {
                     console.error("Avventura non trovata!");
                     backToListBtn.click();
                 }
             });
         }
-        const charactersListContainer = document.getElementById('characters-list');
-        const addPlayerForm = document.getElementById('add-player-form');
-        async function renderPlayerCharacters(playerEmails, adventureId) {
-            charactersListContainer.innerHTML = '';
-            if (!playerEmails || playerEmails.length === 0) {
-                charactersListContainer.innerHTML = `<p class="text-gray-500 font-sans text-sm">Nessun giocatore invitato.</p>`;
+        
+        function updatePlayerShareLink(adventureId) {
+            const shareContainer = document.getElementById('player-share-content');
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?player_view=${adventureId}`;
+
+            shareContainer.innerHTML = `
+                <p class="text-gray-300 font-sans mb-2">Condividi questo link con i tuoi giocatori:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="share-link-input" value="${shareUrl}" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" readonly>
+                    <button id="copy-share-link-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Copia</button>
+                </div>
+            `;
+            document.getElementById('copy-share-link-btn').addEventListener('click', (e) => {
+                const button = e.target;
+                const input = document.getElementById('share-link-input');
+                input.select();
+                input.setSelectionRange(0, 99999);
+                document.execCommand('copy');
+                button.textContent = 'Copiato!';
+                button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = 'Copia';
+                    button.classList.remove('bg-green-600');
+                    button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }, 2000);
+            });
+        }
+
+        function updateShareBackgroundButtonState() {
+            const isShared = currentAdventureData.sharedItems?.some(item => item.title === '__ADVENTURE_BACKGROUND__');
+            const shareBgBtn = document.getElementById('share-background-btn');
+            shareBgBtn.textContent = isShared ? 'Non Condividere Background' : 'Condividi Background';
+            shareBgBtn.className = `font-bold py-1 px-3 rounded-lg text-sm ${isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700'}`;
+        }
+
+        function renderGroupedNodes(type, nodes) {
+            const listEl = document.getElementById(`${type}-list`);
+            listEl.innerHTML = '';
+            let typeName = '';
+            if (type === 'pngs') typeName = 'PNG';
+            else if (type === 'environments') typeName = 'ambiente';
+            else if (type === 'maps') typeName = 'mappa';
+            
+            if (!nodes || nodes.length === 0) {
+                listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`;
                 return;
             }
-            for (const email of playerEmails) {
-                const q = query(collection(db, "characterSheets"), where("adventureId", "==", adventureId), where("playerEmail", "==", email));
-                const querySnapshot = await getDocs(q);
-                const playerEl = document.createElement('div');
-                playerEl.className = 'bg-gray-700 p-3 rounded-lg flex justify-between items-center';
-                if (querySnapshot.empty) {
-                     playerEl.innerHTML = `<span>${email} (non ha ancora creato la scheda)</span>`;
-                } else {
-                    const sheetDoc = querySnapshot.docs[0];
-                    const sheetData = sheetDoc.data();
-                    playerEl.innerHTML = `
-                        <button class="view-sheet-btn text-left flex-grow" data-sheet-id="${sheetDoc.id}">
-                            <span class="font-bold text-blue-300">${sheetData.characterName || 'Senza Nome'}</span>
-                            <span class="text-sm text-gray-400">(${email})</span>
-                        </button>
-                    `;
-                }
-                 charactersListContainer.appendChild(playerEl);
+
+            const groups = nodes.reduce((acc, node) => {
+                const group = node.group || 'Senza Gruppo';
+                if (!acc[group]) acc[group] = [];
+                acc[group].push(node);
+                return acc;
+            }, {});
+            for (const groupName in groups) {
+                const groupDetails = document.createElement('details');
+                groupDetails.className = 'bg-gray-700 rounded-lg';
+                let nodesHtml = groups[groupName].map(node => {
+                    const isShared = currentAdventureData.sharedItems?.some(item => item.title === node.title);
+                    const shareBtnClass = isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700';
+                    const shareBtnText = isShared ? 'Non Condividere' : 'Condividi';
+                    const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    return `
+                    <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
+                        <div class="node-view-mode">
+                             <details>
+                                <summary class="cursor-pointer text-base flex justify-between items-center">
+                                    <span>${node.title}</span>
+                                    <div class="flex-shrink-0">
+                                        <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
+                                        <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
+                                    </div>
+                                </summary>
+                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">
+                                    ${imageHtml}
+                                    <div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>
+                                    ${masterNotesHtml}
+                                    <button class="share-node-btn w-full mt-2 p-1 rounded-lg text-sm ${shareBtnClass}">${shareBtnText}</button>
+                                </div>
+                            </details>
+                        </div>
+                        <div class="node-edit-mode hidden p-2 space-y-2">
+                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
+                                <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
+                listEl.appendChild(groupDetails);
             }
         }
-        charactersListContainer.addEventListener('click', e => {
-             if (e.target.closest('.view-sheet-btn')) {
-                openCharacterSheetModal(e.target.closest('.view-sheet-btn').dataset.sheetId, false);
-            }
-        });
-        addPlayerForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            if (!currentAdventureId || !currentUser) return;
-            const emailInput = document.getElementById('player-email-input');
-            const playerEmail = emailInput.value.trim();
-            if (!playerEmail) return;
-            const adventureRef = doc(db, `users/${currentUser.uid}/adventures`, currentAdventureId);
-            await updateDoc(adventureRef, { playerEmails: arrayUnion(playerEmail) });
-            const sheetRef = doc(collection(db, "characterSheets"));
-            await setDoc(sheetRef, {
-                adventureId: currentAdventureId, playerEmail: playerEmail, dmId: currentUser.uid, characterName: "Nuovo Personaggio",
-                forza: 10, destrezza: 10, costituzione: 10, intelligenza: 10, saggezza: 10, carisma: 10,
-                skills: {}, hpMax: 10, hpCurrent: 10, ac: 10,
+        
+        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; renderBackgroundLinks(); backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureId) { const newBackground = backgroundTextarea.value; await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: newBackground }); const adventureSnap = await getDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId)); if (adventureSnap.exists()) { const currentSharedItems = adventureSnap.data().sharedItems || []; const isShared = currentSharedItems.some(item => item.title === '__ADVENTURE_BACKGROUND__'); if (isShared) { const newSharedItems = currentSharedItems.map(item => item.title === '__ADVENTURE_BACKGROUND__' ? { ...item, publicContent: newBackground } : item); await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { sharedItems: newSharedItems }); await updateDoc(doc(db, 'publicAdventures', currentAdventureId), { sharedItems: newSharedItems }); } } saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
+        
+        function renderBackgroundLinks() {
+            const text = backgroundTextarea.value;
+            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+            const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
+                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeExists) {
+                    return `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>`;
+                }
+                return `[[${nodeName}]]`;
             });
-            emailInput.value = '';
-        });
-        backToListBtn.addEventListener('click', () => {
-            adventureDetailView.style.display = 'none';
-            adventureListView.style.display = 'block';
-            currentAdventureId = null;
-            if (currentAdventureUnsubscribe) {
-                currentAdventureUnsubscribe();
-                currentAdventureUnsubscribe = null;
+            backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
+        }
+
+        const modal = document.getElementById('node-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        backgroundPreview.addEventListener('click', e => {
+            if (e.target.classList.contains('node-link')) {
+                e.preventDefault();
+                const nodeName = e.target.dataset.nodeName;
+                if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) { modal.classList.add('hidden'); return; }
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeData) {
+                    modalTitle.textContent = nodeData.title;
+                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : ''
+                    const masterNotesHtml = nodeData.masterContent ? `<div class="mt-4 pt-4 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-lg">Note Master</h4><div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    modalContent.innerHTML = imageHtml + (nodeData.publicContent || '').replace(/\n/g, '<br>') + masterNotesHtml;
+                    modal.classList.remove('hidden');
+                }
             }
         });
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureId = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per generare il link di condivisione.</p>';});
+        
+        document.querySelectorAll('.node-add-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if (!currentAdventureId) return;
+                const type = btn.dataset.type;
+
+                // NEW: Handle maps with an inline form
+                if (type === 'maps') {
+                    // Prevent creating multiple forms
+                    if (document.querySelector('.new-node-form-container')) return;
+
+                    const listEl = document.getElementById('maps-list');
+                    const formContainer = document.createElement('div');
+                    formContainer.className = 'p-2 mb-2 new-node-form-container';
+                    formContainer.innerHTML = `
+                        <div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500">
+                            <h4 class="text-lg text-green-400">Nuova Mappa</h4>
+                            <input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required>
+                            <input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div>
+                            <input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo">
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button>
+                                <button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
+                    `;
+                    // Add form to the top of the list
+                    listEl.prepend(formContainer);
+
+                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => {
+                        formContainer.remove();
+                    });
+
+                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+                        const title = formContainer.querySelector('.new-node-title').value.trim();
+                        if (!title) {
+                            alert('Il titolo è obbligatorio.');
+                            return;
+                        }
+
+                        const newNode = {
+                            title: title,
+                            imageUrl: formContainer.querySelector('.new-node-image-url').value.trim() || "",
+                            publicContent: formContainer.querySelector('.new-node-public-content').value.trim() || "",
+                            masterContent: formContainer.querySelector('.new-node-master-content').value.trim() || "",
+                            group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo",
+                        };
+
+                        const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+                        try {
+                            await updateDoc(adventureRef, { 'maps': arrayUnion(newNode) });
+                            formContainer.remove(); // Remove form on successful save
+                        } catch (error) {
+                            console.error("Errore aggiunta mappa:", error);
+                            alert("Si è verificato un errore durante il salvataggio della mappa.");
+                        }
+                    });
+
+                } else { // OLD: Keep prompt flow for other types (environments, pngs)
+                    let typeName = '';
+                    if (type === 'pngs') typeName = 'PNG';
+                    else if (type === 'environments') typeName = 'Ambiente';
+
+                    const title = prompt(`Titolo del nuovo ${typeName}:`);
+                    if (!title) return;
+                    
+                    const imageUrl = prompt("URL dell'immagine (opzionale):");
+                    const publicContent = prompt("Inserisci la descrizione pubblica:");
+                    const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
+                    const group = prompt(`Gruppo in cui inserire "${title}":`, 'Senza Gruppo');
+                    if (group === null) return;
+
+                    const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
+                    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+                    try { await updateDoc(adventureRef, { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
+                }
+            });
+        });
+
+        document.getElementById('adventure-detail-view').addEventListener('click', async (e) => {
+            const target = e.target;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+
+            // --- Share Background Button ---
+            if (target.id === 'share-background-btn') {
+                const adventureSnap = await getDoc(adventureRef);
+                if (!adventureSnap.exists()) return;
+
+                const currentSharedItems = adventureSnap.data().sharedItems || [];
+                const isShared = currentSharedItems.some(item => item.title === '__ADVENTURE_BACKGROUND__');
+                
+                const backgroundItem = { title: '__ADVENTURE_BACKGROUND__', publicContent: adventureSnap.data().background || '', imageUrl: '' };
+
+                if (isShared) {
+                    const newSharedItems = currentSharedItems.filter(item => item.title !== '__ADVENTURE_BACKGROUND__');
+                    await updateDoc(adventureRef, { sharedItems: newSharedItems });
+                    await updateDoc(publicAdventureRef, { sharedItems: newSharedItems });
+                } else {
+                    await updateDoc(adventureRef, { sharedItems: arrayUnion(backgroundItem) });
+                    await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(backgroundItem) });
+                }
+            }
+
+            // --- Node Buttons ---
+            const container = target.closest('.node-container');
+            if (!container) return;
+
+            const title = container.dataset.nodeTitle;
+            const type = container.dataset.nodeType;
+
+            if (target.classList.contains('delete-node-btn')) {
+                e.preventDefault();
+                if (confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
+                    const adventureSnap = await getDoc(adventureRef);
+                    if (adventureSnap.exists()) {
+                        const allNodes = adventureSnap.data()[type] || [];
+                        const nodeToDelete = allNodes.find(node => node.title === title);
+                        if (nodeToDelete) {
+                            try { 
+                                const sharedItemToDelete = adventureSnap.data().sharedItems?.find(item => item.title === title);
+                                await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) });
+                                if(sharedItemToDelete) {
+                                    await updateDoc(adventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                                    await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                                }
+                            } 
+                            catch (error) { console.error("Errore eliminazione:", error); }
+                        }
+                    }
+                }
+            } else if (target.classList.contains('edit-node-btn')) {
+                e.preventDefault();
+                container.querySelector('.node-view-mode').classList.add('hidden');
+                container.querySelector('.node-edit-mode').classList.remove('hidden');
+            } else if (target.classList.contains('cancel-edit-btn')) {
+                container.querySelector('.node-view-mode').classList.remove('hidden');
+                container.querySelector('.node-edit-mode').classList.add('hidden');
+            } else if (target.classList.contains('save-node-btn')) {
+                const newPublicContent = container.querySelector('.node-public-content-edit').value;
+                const newMasterContent = container.querySelector('.node-master-content-edit').value;
+                const newImageUrl = container.querySelector('.node-image-url-edit').value;
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeIndex = nodes.findIndex(node => node.title === title);
+                    if (nodeIndex !== -1) {
+                        const updatedNodes = [...nodes];
+                        const oldNode = updatedNodes[nodeIndex];
+                        const newNode = { ...oldNode, publicContent: newPublicContent, masterContent: newMasterContent, imageUrl: newImageUrl };
+                        updatedNodes[nodeIndex] = newNode;
+                        try {
+                            await updateDoc(adventureRef, { [type]: updatedNodes });
+                            if (currentAdventureData.sharedItems?.some(item => item.title === title)) {
+                                const sharedItems = currentAdventureData.sharedItems.map(item => item.title === title ? newNode : item);
+                                await updateDoc(adventureRef, { sharedItems });
+                                await updateDoc(publicAdventureRef, { sharedItems });
+                            }
+                        } catch (error) { console.error("Errore modifica:", error); }
+                    }
+                }
+            } else if (target.classList.contains('share-node-btn')) {
+                e.preventDefault();
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const allNodes = [...(adventureSnap.data().pngs || []), ...(adventureSnap.data().environments || []), ...(adventureSnap.data().maps || [])];
+                    const nodeToShare = allNodes.find(node => node.title === title);
+                    if (!nodeToShare) return;
+
+                    const currentSharedItems = adventureSnap.data().sharedItems || [];
+                    const isShared = currentSharedItems.some(item => item.title === title);
+                    
+                    try {
+                        if (isShared) {
+                            const newSharedItems = currentSharedItems.filter(item => item.title !== title);
+                            await updateDoc(adventureRef, { sharedItems: newSharedItems });
+                            await updateDoc(publicAdventureRef, { sharedItems: newSharedItems });
+                        } else {
+                            await updateDoc(adventureRef, { sharedItems: arrayUnion(nodeToShare) });
+                            await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(nodeToShare) });
+                        }
+                    } catch (error) {
+                        console.error("Errore condivisione:", error);
+                    }
+                }
+            }
+        });
+
     </script>
 </body>
 </html>
