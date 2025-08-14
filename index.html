@@ -107,4 +107,531 @@
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ri
+                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
+                                <div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div>
+                                <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
+                            </div>
+                            <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center">
+                                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div>
+                                <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div id="adventures" class="tab-content">
+                    <div id="adventure-list-view" class="active">
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                            <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
+                            <form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form>
+                            <div id="adventures-list" class="space-y-3"></div>
+                        </div>
+                    </div>
+                    <div id="adventure-detail-view" style="display: none;">
+                        <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                            <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3>
+                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button>
+                                    <div id="environments-list" class="space-y-2"></div>
+                                </div>
+                                <hr class="border-gray-600">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
+                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
+                                    <div id="pngs-list" class="space-y-2"></div>
+                                </div>
+                            </aside>
+                            <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
+                                <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
+                                <h3 class="text-2xl font-bold text-gray-300 mb-2">Background</h3>
+                                <textarea id="adventure-background-textarea" class="w-full h-64 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui il background..."></textarea>
+                                <div id="background-preview" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 overflow-y-auto font-sans mt-2"></div>
+                                <p id="save-status" class="text-sm text-gray-500 mt-2 h-4 font-sans"></p>
+                            </section>
+                        </div>
+                    </div>
+                </div>
+                 <div id="player-view-master" class="tab-content">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2>
+                        <div id="player-share-content">
+                            <p class="text-gray-400 font-sans mb-4">Apri un'avventura per generare il link di condivisione.</p>
+                        </div>
+                    </div>
+                 </div>
+            </main>
+        </div>
+    </div>
+    
+    <!-- Contenitore Vista Giocatore -->
+    <div id="player-view-container" class="p-4 md:p-8">
+        <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1>
+        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <!-- Contenuti condivisi verranno inseriti qui -->
+        </div>
+    </div>
+
+
+    <!-- Finestra Modale per i Nodi -->
+    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2>
+                <button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
+            authDomain: "avventure-dnd.firebaseapp.com",
+            projectId: "avventure-dnd",
+            storageBucket: "avventure-dnd.appspot.com",
+            messagingSenderId: "943269894603",
+            appId: "1:943269894603:web:b8851c9862d76486603e4e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUserId = null;
+        let currentAdventureId = null;
+        let currentAdventureData = {};
+        let currentAdventureUnsubscribe = null;
+
+        // --- GESTIONE VISTA GIOCATORE (Accesso Pubblico) ---
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerViewId = urlParams.get('player_view');
+
+        if (playerViewId) {
+            document.getElementById('auth-container').classList.remove('active');
+            document.getElementById('app-container').classList.remove('active');
+            document.getElementById('player-view-container').classList.add('active');
+            loadPlayerView(playerViewId);
+        }
+
+        function loadPlayerView(adventureId) {
+            const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
+            onSnapshot(publicAdventureRef, (doc) => {
+                if (doc.exists()) {
+                    const data = doc.data();
+                    document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
+                    const container = document.getElementById('player-shared-items');
+                    container.innerHTML = '';
+                    if (data.sharedItems && data.sharedItems.length > 0) {
+                        data.sharedItems.forEach(item => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
+                            itemEl.innerHTML = `
+                                <h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>
+                                ${imageHtml}
+                                <p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>
+                            `;
+                            container.appendChild(itemEl);
+                        });
+                    } else {
+                        container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla.</p>';
+                    }
+                } else {
+                    document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
+                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o l\'avventura è stata cancellata.</p>';
+                }
+            });
+        }
+        
+        // --- GESTIONE MASTER ---
+        onAuthStateChanged(auth, user => { 
+            if (user && !playerViewId) { 
+                document.getElementById('auth-container').classList.remove('active');
+                document.getElementById('app-container').classList.add('active'); 
+                document.getElementById('user-email').textContent = user.email; 
+                currentUserId = user.uid; 
+                loadAdventures(user.uid); 
+            } else if (!playerViewId) {
+                document.getElementById('app-container').classList.remove('active'); 
+                document.getElementById('auth-container').classList.add('active');
+                currentUserId = null; 
+            } 
+        });
+
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
+
+        const diceButtons = document.querySelectorAll('.dice-btn');
+        const resultsContainer = document.getElementById('dice-results-container');
+        const diceCountInput = document.getElementById('dice-count');
+        const diceModifierInput = document.getElementById('dice-modifier');
+        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
+        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
+
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
+        const generateBtn = document.getElementById('generate-btn');
+        const generatorType = document.getElementById('generator-type');
+        const generatorPrompt = document.getElementById('generator-prompt');
+        const resultContainer = document.getElementById('generator-result-container');
+        const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
+        
+        generateBtn.addEventListener('click', async () => {
+            const type = generatorType.value;
+            const prompt = generatorPrompt.value.trim();
+            if (!prompt) {
+                resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>';
+                return;
+            }
+            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
+            saveToAdventureBtn.style.display = 'none';
+            await generateText(type, prompt);
+        });
+
+        async function generateText(type, prompt) {
+            let fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome in grassetto. Basati su questa idea: "${prompt}". Crea prima una descrizione pubblica (aspetto, personalità, ecc.). Poi, aggiungi una sezione separata per le note del master che inizia ESATTAMENTE con "---NOTE MASTER---" e che include segreti, statistiche o spunti di trama. Non aggiungere introduzioni o testo extra. Formatta tutto in markdown.`;
+            try {
+                let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
+                const payload = { contents: chatHistory };
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`Errore API Testo: ${response.statusText}`);
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultContainer.innerHTML = '';
+                    const editTextArea = document.createElement('textarea');
+                    editTextArea.className = 'w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans';
+                    editTextArea.value = text;
+                    resultContainer.appendChild(editTextArea);
+                    saveToAdventureBtn.dataset.type = type;
+                    saveToAdventureBtn.style.display = 'block';
+                } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); }
+            } catch (error) { console.error("Errore generazione testo:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; }
+        }
+
+        saveToAdventureBtn.addEventListener('click', async () => {
+            if (!currentAdventureId) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; }
+            const editTextArea = resultContainer.querySelector('textarea');
+            if (!editTextArea) { alert("Nessun contenuto da salvare."); return; }
+            
+            const fullContent = editTextArea.value;
+            const separator = '---NOTE MASTER---';
+            let publicContent = fullContent;
+            let masterContent = '';
+
+            if (fullContent.includes(separator)) {
+                const parts = fullContent.split(separator);
+                publicContent = parts[0].trim();
+                masterContent = parts[1].trim();
+            }
+
+            const lines = publicContent.split('\n');
+            const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto";
+            const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo");
+            if (group === null) return;
+
+            const imageUrl = prompt("URL dell'immagine (opzionale):");
+
+            const newNode = { title, publicContent, masterContent, group, imageUrl: imageUrl || "" };
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            try {
+                const type = saveToAdventureBtn.dataset.type;
+                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : 'pngs';
+                await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
+                saveToAdventureBtn.textContent = 'Salvato!';
+                setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
+            } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); }
+        });
+
+        const addAdventureForm = document.getElementById('add-adventure-form');
+        const adventureTitleInput = document.getElementById('adventure-title-input');
+        const adventuresList = document.getElementById('adventures-list');
+        const adventureListView = document.getElementById('adventure-list-view');
+        const adventureDetailView = document.getElementById('adventure-detail-view');
+        const backToListBtn = document.getElementById('back-to-list-btn');
+        const adventureDetailTitle = document.getElementById('adventure-detail-title');
+        const backgroundTextarea = document.getElementById('adventure-background-textarea');
+        const backgroundPreview = document.getElementById('background-preview');
+        const saveStatus = document.getElementById('save-status');
+        let backgroundSaveTimeout;
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: "", environments: [], pngs: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, sharedItems: [] }); adventureTitleInput.value = ''; } });
+        function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        
+        function openAdventureDetail(userId, docId) {
+            adventureListView.style.display = 'none';
+            adventureDetailView.style.display = 'block';
+            currentAdventureId = docId;
+
+            // Generate the share link once when the detail view is opened.
+            updatePlayerShareLink(docId); 
+
+            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
+            const adventureRef = doc(db, `users/${userId}/adventures`, docId);
+            currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
+                if (doc.exists()) {
+                    currentAdventureData = doc.data();
+                    adventureDetailTitle.textContent = currentAdventureData.title;
+                    if (document.activeElement !== backgroundTextarea) {
+                        backgroundTextarea.value = currentAdventureData.background || "";
+                    }
+                    renderBackgroundLinks();
+                    renderGroupedNodes('environments', currentAdventureData.environments || []);
+                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                } else {
+                    console.error("Avventura non trovata!");
+                    backToListBtn.click();
+                }
+            });
+        }
+        
+        function updatePlayerShareLink(adventureId) {
+            const shareContainer = document.getElementById('player-share-content');
+            // Re-written URL generation to be more robust
+            const baseUrl = window.location.href.split('?')[0];
+            const shareUrl = `${baseUrl}?player_view=${adventureId}`;
+
+            shareContainer.innerHTML = `
+                <p class="text-gray-300 font-sans mb-2">Condividi questo link con i tuoi giocatori:</p>
+                <div class="flex gap-2">
+                    <input type="text" id="share-link-input" value="${shareUrl}" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" readonly>
+                    <button id="copy-share-link-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Copia</button>
+                </div>
+            `;
+            document.getElementById('copy-share-link-btn').addEventListener('click', (e) => {
+                const button = e.target;
+                const input = document.getElementById('share-link-input');
+                input.select();
+                input.setSelectionRange(0, 99999); // For mobile devices
+                document.execCommand('copy');
+                button.textContent = 'Copiato!';
+                button.classList.remove('bg-blue-600', 'hover:bg-blue-700');
+                button.classList.add('bg-green-600');
+                setTimeout(() => {
+                    button.textContent = 'Copia';
+                    button.classList.remove('bg-green-600');
+                    button.classList.add('bg-blue-600', 'hover:bg-blue-700');
+                }, 2000);
+            });
+        }
+
+        function renderGroupedNodes(type, nodes) {
+            const listEl = document.getElementById(`${type}-list`);
+            listEl.innerHTML = '';
+            if (!nodes || nodes.length === 0) {
+                listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${type === 'pngs' ? 'PNG' : 'ambiente'}.</p>`;
+                return;
+            }
+            const groups = nodes.reduce((acc, node) => {
+                const group = node.group || 'Senza Gruppo';
+                if (!acc[group]) acc[group] = [];
+                acc[group].push(node);
+                return acc;
+            }, {});
+            for (const groupName in groups) {
+                const groupDetails = document.createElement('details');
+                groupDetails.className = 'bg-gray-700 rounded-lg';
+                let nodesHtml = groups[groupName].map(node => {
+                    const isShared = currentAdventureData.sharedItems?.some(item => item.title === node.title);
+                    const shareBtnClass = isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700';
+                    const shareBtnText = isShared ? 'Non Condividere' : 'Condividi';
+                    const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    return `
+                    <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
+                        <div class="node-view-mode">
+                             <details>
+                                <summary class="cursor-pointer text-base flex justify-between items-center">
+                                    <span>${node.title}</span>
+                                    <div class="flex-shrink-0">
+                                        <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
+                                        <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
+                                    </div>
+                                </summary>
+                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">
+                                    ${imageHtml}
+                                    <div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>
+                                    ${masterNotesHtml}
+                                    <button class="share-node-btn w-full mt-2 p-1 rounded-lg text-sm ${shareBtnClass}">${shareBtnText}</button>
+                                </div>
+                            </details>
+                        </div>
+                        <div class="node-edit-mode hidden p-2 space-y-2">
+                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
+                                <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
+                    </div>
+                `}).join('');
+                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
+                listEl.appendChild(groupDetails);
+            }
+        }
+        
+        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; renderBackgroundLinks(); backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureId) { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: backgroundTextarea.value }); saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
+        
+        function renderBackgroundLinks() {
+            const text = backgroundTextarea.value;
+            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
+            const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
+                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeExists) {
+                    return `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>`;
+                }
+                return `[[${nodeName}]]`;
+            });
+            backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
+        }
+
+        const modal = document.getElementById('node-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        backgroundPreview.addEventListener('click', e => {
+            if (e.target.classList.contains('node-link')) {
+                e.preventDefault();
+                const nodeName = e.target.dataset.nodeName;
+                if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) { modal.classList.add('hidden'); return; }
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
+                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeData) {
+                    modalTitle.textContent = nodeData.title;
+                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const masterNotesHtml = nodeData.masterContent ? `<div class="mt-4 pt-4 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-lg">Note Master</h4><div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    modalContent.innerHTML = imageHtml + (nodeData.publicContent || '').replace(/\n/g, '<br>') + masterNotesHtml;
+                    modal.classList.remove('hidden');
+                }
+            }
+        });
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureId = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per generare il link di condivisione.</p>';});
+        
+        document.querySelectorAll('.node-add-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!currentAdventureId) return;
+                const type = btn.dataset.type;
+                const title = prompt(`Titolo del nuovo ${type === 'pngs' ? 'PNG' : 'Ambiente'}:`);
+                if (!title) return;
+                const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
+                if (group === null) return;
+                const publicContent = prompt("Inserisci la descrizione pubblica:");
+                const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
+                const imageUrl = prompt("URL dell'immagine (opzionale):");
+                const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
+                const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+                try { await updateDoc(adventureRef, { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
+            });
+        });
+
+        document.getElementById('adventures').addEventListener('click', async (e) => {
+            const target = e.target;
+            const container = target.closest('.node-container');
+            if (!container) return;
+
+            const title = container.dataset.nodeTitle;
+            const type = container.dataset.nodeType;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+
+            if (target.classList.contains('delete-node-btn')) {
+                e.preventDefault();
+                if (confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
+                    const adventureSnap = await getDoc(adventureRef);
+                    if (adventureSnap.exists()) {
+                        const allNodes = adventureSnap.data()[type] || [];
+                        const nodeToDelete = allNodes.find(node => node.title === title);
+                        if (nodeToDelete) {
+                            try { 
+                                const sharedItemToDelete = adventureSnap.data().sharedItems?.find(item => item.title === title);
+                                await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) });
+                                if(sharedItemToDelete) {
+                                    await updateDoc(adventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                                    await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                                }
+                            } 
+                            catch (error) { console.error("Errore eliminazione:", error); }
+                        }
+                    }
+                }
+            } else if (target.classList.contains('edit-node-btn')) {
+                e.preventDefault();
+                container.querySelector('.node-view-mode').classList.add('hidden');
+                container.querySelector('.node-edit-mode').classList.remove('hidden');
+            } else if (target.classList.contains('cancel-edit-btn')) {
+                container.querySelector('.node-view-mode').classList.remove('hidden');
+                container.querySelector('.node-edit-mode').classList.add('hidden');
+            } else if (target.classList.contains('save-node-btn')) {
+                const newPublicContent = container.querySelector('.node-public-content-edit').value;
+                const newMasterContent = container.querySelector('.node-master-content-edit').value;
+                const newImageUrl = container.querySelector('.node-image-url-edit').value;
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeIndex = nodes.findIndex(node => node.title === title);
+                    if (nodeIndex !== -1) {
+                        const updatedNodes = [...nodes];
+                        const oldNode = updatedNodes[nodeIndex];
+                        const newNode = { ...oldNode, publicContent: newPublicContent, masterContent: newMasterContent, imageUrl: newImageUrl };
+                        updatedNodes[nodeIndex] = newNode;
+                        try {
+                            await updateDoc(adventureRef, { [type]: updatedNodes });
+                            // Se il nodo era condiviso, aggiorna anche la versione pubblica
+                            if (currentAdventureData.sharedItems?.some(item => item.title === title)) {
+                                const sharedItems = currentAdventureData.sharedItems.map(item => item.title === title ? newNode : item);
+                                await updateDoc(adventureRef, { sharedItems });
+                                await updateDoc(publicAdventureRef, { sharedItems });
+                            }
+                        } catch (error) { console.error("Errore modifica:", error); }
+                    }
+                }
+            } else if (target.classList.contains('share-node-btn')) {
+                e.preventDefault();
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const allNodes = [...(adventureSnap.data().pngs || []), ...(adventureSnap.data().environments || [])];
+                    const nodeToShare = allNodes.find(node => node.title === title);
+                    if (!nodeToShare) return;
+
+                    const currentSharedItems = adventureSnap.data().sharedItems || [];
+                    const isShared = currentSharedItems.some(item => item.title === title);
+                    
+                    try {
+                        if (isShared) {
+                            const itemToRemove = currentSharedItems.find(item => item.title === title);
+                            if(itemToRemove) {
+                                await updateDoc(adventureRef, { sharedItems: arrayRemove(itemToRemove) });
+                                await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(itemToRemove) });
+                            }
+                        } else {
+                            await updateDoc(adventureRef, { sharedItems: arrayUnion(nodeToShare) });
+                            await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(nodeToShare) });
+                        }
+                    } catch (error) {
+                        console.error("Errore condivisione:", error);
+                    }
+                }
+            }
+        });
+
+    </script>
+</body>
+</ht
