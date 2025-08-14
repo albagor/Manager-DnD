@@ -583,32 +583,82 @@
         backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureId = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per generare il link di condivisione.</p>';});
         
         document.querySelectorAll('.node-add-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
+            btn.addEventListener('click', async (e) => {
                 if (!currentAdventureId) return;
                 const type = btn.dataset.type;
-                
-                let typeName = '';
-                if (type === 'pngs') typeName = 'PNG';
-                else if (type === 'environments') typeName = 'Ambiente';
-                else if (type === 'maps') typeName = 'Mappa';
 
-                const title = prompt(`Titolo della nuova ${typeName}:`);
-                if (!title) return;
-                
-                let imageUrlPrompt = "URL dell'immagine (opzionale):";
+                // NEW: Handle maps with an inline form
                 if (type === 'maps') {
-                    imageUrlPrompt = "URL dell'immagine della mappa:";
+                    // Prevent creating multiple forms
+                    if (document.querySelector('.new-node-form-container')) return;
+
+                    const listEl = document.getElementById('maps-list');
+                    const formContainer = document.createElement('div');
+                    formContainer.className = 'p-2 mb-2 new-node-form-container';
+                    formContainer.innerHTML = `
+                        <div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500">
+                            <h4 class="text-lg text-green-400">Nuova Mappa</h4>
+                            <input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required>
+                            <input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div>
+                            <input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo">
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button>
+                                <button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
+                    `;
+                    // Add form to the top of the list
+                    listEl.prepend(formContainer);
+
+                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => {
+                        formContainer.remove();
+                    });
+
+                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+                        const title = formContainer.querySelector('.new-node-title').value.trim();
+                        if (!title) {
+                            alert('Il titolo è obbligatorio.');
+                            return;
+                        }
+
+                        const newNode = {
+                            title: title,
+                            imageUrl: formContainer.querySelector('.new-node-image-url').value.trim() || "",
+                            publicContent: formContainer.querySelector('.new-node-public-content').value.trim() || "",
+                            masterContent: formContainer.querySelector('.new-node-master-content').value.trim() || "",
+                            group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo",
+                        };
+
+                        const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+                        try {
+                            await updateDoc(adventureRef, { 'maps': arrayUnion(newNode) });
+                            formContainer.remove(); // Remove form on successful save
+                        } catch (error) {
+                            console.error("Errore aggiunta mappa:", error);
+                            alert("Si è verificato un errore durante il salvataggio della mappa.");
+                        }
+                    });
+
+                } else { // OLD: Keep prompt flow for other types (environments, pngs)
+                    let typeName = '';
+                    if (type === 'pngs') typeName = 'PNG';
+                    else if (type === 'environments') typeName = 'Ambiente';
+
+                    const title = prompt(`Titolo del nuovo ${typeName}:`);
+                    if (!title) return;
+                    
+                    const imageUrl = prompt("URL dell'immagine (opzionale):");
+                    const publicContent = prompt("Inserisci la descrizione pubblica:");
+                    const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
+                    const group = prompt(`Gruppo in cui inserire "${title}":`, 'Senza Gruppo');
+                    if (group === null) return;
+
+                    const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
+                    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+                    try { await updateDoc(adventureRef, { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
                 }
-                const imageUrl = prompt(imageUrlPrompt);
-
-                const publicContent = prompt("Inserisci la descrizione pubblica:");
-                const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
-                const group = prompt(`Gruppo in cui inserire "${title}":`, 'Senza Gruppo');
-                if (group === null) return;
-
-                const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
-                const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-                try { await updateDoc(adventureRef, { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
             });
         });
 
