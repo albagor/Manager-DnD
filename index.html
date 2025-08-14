@@ -15,15 +15,12 @@
         h1, h2, h3, h4, .tab-btn, .dice-btn, button, .role-btn {
              font-family: 'MedievalSharp', cursive;
         }
-        /* Hide all main containers by default */
         #app-container, #adventure-detail-view, #player-view-container, #auth-container, #role-selection-container, #player-dashboard-container, .tab-content {
             display: none;
         }
-        /* Show the active container/tab */
         #app-container.active, #adventure-detail-view.active, #player-view-container.active, #player-dashboard-container.active, .tab-content.active {
             display: block;
         }
-        /* Flex containers for centering */
         #auth-container.active, #role-selection-container.active, #initial-loader.active {
             display: flex;
         }
@@ -40,16 +37,16 @@
             100% { transform: rotate(360deg); }
         }
         .node-link {
-            color: #f87171; /* text-red-400 */
+            color: #f87171;
             cursor: pointer;
             text-decoration: underline;
         }
         .node-link:hover {
-            color: #fca5a5; /* text-red-300 */
+            color: #fca5a5;
         }
         .stat-box {
-            background-color: #1f2937; /* bg-gray-800 */
-            border: 1px solid #4b5563; /* border-gray-600 */
+            background-color: #1f2937;
+            border: 1px solid #4b5563;
         }
     </style>
 </head>
@@ -209,18 +206,14 @@
             <div><h1 class="text-4xl md:text-5xl font-bold text-blue-500 tracking-wider">Le Mie Schede Personaggio</h1></div>
             <div id="player-user-info" class="text-right"><p id="player-user-email" class="text-gray-300 font-sans"></p><button id="player-logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
         </header>
-        <div id="player-sheets-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Le schede dei personaggi del giocatore verranno caricate qui -->
-        </div>
+        <div id="player-sheets-list" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
 
     <!-- Contenitore Vista Giocatore (Pubblica) -->
     <div id="player-view-container" class="p-4 md:p-8">
         <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1>
-        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            <!-- Contenuti condivisi verranno inseriti qui -->
-        </div>
+        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6"></div>
     </div>
 
     <!-- Finestra Modale per Scheda Personaggio -->
@@ -230,9 +223,7 @@
                 <h2 id="sheet-modal-title" class="text-3xl font-bold text-red-400">Scheda Personaggio</h2>
                 <button id="sheet-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
             </div>
-            <div id="sheet-modal-content" class="p-6 overflow-y-auto flex-grow font-sans text-gray-300">
-                <!-- Il contenuto della scheda verrà renderizzato qui dinamicamente -->
-            </div>
+            <div id="sheet-modal-content" class="p-6 overflow-y-auto flex-grow font-sans text-gray-300"></div>
              <div id="sheet-modal-footer" class="p-4 border-t border-gray-700 flex-shrink-0 text-right">
                 <button id="sheet-save-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva Modifiche</button>
             </div>
