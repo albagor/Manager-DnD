@@ -213,7 +213,7 @@
         diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
         function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
 
-        const GEMINI_API_KEY = ""; // CHIAVE RIMOSSA PER SICUREZZA
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw"; // CHIAVE RIMOSSA PER SICUREZZA
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
         const generatorPrompt = document.getElementById('generator-prompt');
