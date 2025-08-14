@@ -97,7 +97,7 @@
                     </div>
                 </div>
                 <div id="ai-generator" class="tab-content">
-                     <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
@@ -153,6 +153,17 @@
                     </div>
                  </div>
             </main>
+        </div>
+    </div>
+
+    <!-- Finestra Modale per i Nodi -->
+    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500">
+            <div class="flex justify-between items-center mb-4">
+                <h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2>
+                <button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div>
         </div>
     </div>
 
@@ -261,17 +272,26 @@
                 const groupDetails = document.createElement('details');
                 groupDetails.className = 'bg-gray-700 rounded-lg';
                 let nodesHtml = groups[groupName].map(node => `
-                    <div class="p-2 border-t border-gray-600">
-                        <details>
-                            <summary class="cursor-pointer text-base flex justify-between items-center">
-                                <span>${node.title}</span>
-                                <div class="flex-shrink-0">
-                                    <button data-type="${type}" data-title="${node.title}" class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
-                                    <button data-type="${type}" data-title="${node.title}" class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
-                                </div>
-                            </summary>
-                            <div class="p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>
-                        </details>
+                    <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
+                        <div class="node-view-mode">
+                             <details>
+                                <summary class="cursor-pointer text-base flex justify-between items-center">
+                                    <span>${node.title}</span>
+                                    <div class="flex-shrink-0">
+                                        <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
+                                        <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
+                                    </div>
+                                </summary>
+                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>
+                            </details>
+                        </div>
+                        <div class="node-edit-mode hidden p-2">
+                            <textarea class="node-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.content}</textarea>
+                            <div class="flex gap-2 mt-2">
+                                <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
+                                <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                            </div>
+                        </div>
                     </div>
                 `).join('');
                 groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
@@ -294,22 +314,33 @@
             backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
         }
 
+        const modal = document.getElementById('node-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
         backgroundPreview.addEventListener('click', e => {
             if (e.target.classList.contains('node-link')) {
                 e.preventDefault();
                 const nodeName = e.target.dataset.nodeName;
-                const summaries = document.querySelectorAll('#environments-list summary, #pngs-list summary');
-                summaries.forEach(summary => {
-                    if (summary.textContent.trim().includes(nodeName)) {
-                        let parent = summary.parentElement;
-                        while(parent && parent.tagName === 'DETAILS') {
-                            parent.open = true;
-                            parent = parent.parentElement;
-                        }
-                    }
-                });
+                
+                if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) {
+                    modal.classList.add('hidden');
+                    return;
+                }
+
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
+                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                
+                if (nodeData) {
+                    modalTitle.textContent = nodeData.title;
+                    modalContent.innerHTML = nodeData.content.replace(/\n/g, '<br>');
+                    modal.classList.remove('hidden');
+                }
             }
         });
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
 
         backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureDocPath = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } });
         
@@ -333,34 +364,47 @@
 
         document.getElementById('adventures').addEventListener('click', async (e) => {
             const target = e.target;
-            if (target.classList.contains('delete-node-btn') || target.classList.contains('edit-node-btn')) {
+            const container = target.closest('.node-container');
+            if (!container) return;
+
+            const title = container.dataset.nodeTitle;
+            const type = container.dataset.nodeType;
+            
+            if (target.classList.contains('delete-node-btn')) {
                 e.preventDefault();
-                const title = target.dataset.title;
-                const type = target.dataset.type;
-
-                if (!currentAdventureDocPath) return;
-
+                if (currentAdventureDocPath && confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
+                    const adventureRef = doc(db, currentAdventureDocPath);
+                    const adventureSnap = await getDoc(adventureRef);
+                    if (adventureSnap.exists()) {
+                        const nodes = adventureSnap.data()[type] || [];
+                        const nodeToDelete = nodes.find(node => node.title === title);
+                        if (nodeToDelete) {
+                            try { await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) }); } 
+                            catch (error) { console.error("Errore eliminazione:", error); }
+                        }
+                    }
+                }
+            } else if (target.classList.contains('edit-node-btn')) {
+                e.preventDefault();
+                container.querySelector('.node-view-mode').classList.add('hidden');
+                container.querySelector('.node-edit-mode').classList.remove('hidden');
+            } else if (target.classList.contains('cancel-edit-btn')) {
+                container.querySelector('.node-view-mode').classList.remove('hidden');
+                container.querySelector('.node-edit-mode').classList.add('hidden');
+            } else if (target.classList.contains('save-node-btn')) {
+                const newContent = container.querySelector('.node-content-edit').value;
                 const adventureRef = doc(db, currentAdventureDocPath);
                 const adventureSnap = await getDoc(adventureRef);
-                if (!adventureSnap.exists()) return;
-
-                const nodes = adventureSnap.data()[type] || [];
-                const nodeIndex = nodes.findIndex(node => node.title === title);
-                if (nodeIndex === -1) return;
-
-                if (target.classList.contains('delete-node-btn')) {
-                    if (confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
-                        try {
-                            await updateDoc(adventureRef, { [type]: arrayRemove(nodes[nodeIndex]) });
-                        } catch (error) { console.error("Errore eliminazione:", error); }
-                    }
-                } else if (target.classList.contains('edit-node-btn')) {
-                    const newContent = prompt(`Modifica la descrizione per "${title}":`, nodes[nodeIndex].content);
-                    if (newContent !== null) {
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeIndex = nodes.findIndex(node => node.title === title);
+                    if (nodeIndex !== -1) {
                         const updatedNodes = [...nodes];
                         updatedNodes[nodeIndex].content = newContent;
                         try {
                             await updateDoc(adventureRef, { [type]: updatedNodes });
+                            container.querySelector('.node-view-mode').classList.remove('hidden');
+                            container.querySelector('.node-edit-mode').classList.add('hidden');
                         } catch (error) { console.error("Errore modifica:", error); }
                     }
                 }
