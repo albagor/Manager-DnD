@@ -15,16 +15,16 @@
         h1, h2, h3, h4, .tab-btn, .dice-btn, button {
              font-family: 'MedievalSharp', cursive;
         }
-        /* Hide all main containers by default */
-        #app-container, #adventure-detail-view, #player-view-container, #auth-container, .tab-content {
+        /* Hide app containers by default */
+        #app-container, #adventure-detail-view, #player-view-container, .tab-content {
             display: none;
         }
         /* Show the active container/tab */
         #app-container.active, #adventure-detail-view.active, #player-view-container.active, .tab-content.active {
             display: block;
         }
-        /* Auth container needs flex for centering */
-        #auth-container.active {
+        /* Auth container is a flexbox for centering */
+        #auth-container {
             display: flex;
         }
         .loader {
@@ -50,11 +50,6 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
-
-    <!-- Initial Loading Indicator -->
-    <div id="initial-loader" class="min-h-screen flex items-center justify-center">
-        <div class="loader"></div>
-    </div>
 
     <!-- Contenitore Autenticazione -->
     <div id="auth-container" class="min-h-screen items-center justify-center p-4">
@@ -217,9 +212,8 @@
         const playerViewId = urlParams.get('player_view');
 
         if (playerViewId) {
-            document.getElementById('initial-loader').style.display = 'none';
-            document.getElementById('auth-container').classList.remove('active');
-            document.getElementById('app-container').classList.remove('active');
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'none';
             document.getElementById('player-view-container').classList.add('active');
             loadPlayerView(playerViewId);
         }
@@ -258,17 +252,15 @@
         onAuthStateChanged(auth, user => { 
             if (playerViewId) return; // Do nothing if it's a player view
 
-            document.getElementById('initial-loader').style.display = 'none';
-
             if (user) { 
-                document.getElementById('auth-container').classList.remove('active');
+                document.getElementById('auth-container').style.display = 'none';
                 document.getElementById('app-container').classList.add('active'); 
                 document.getElementById('user-email').textContent = user.email; 
                 currentUserId = user.uid; 
                 loadAdventures(user.uid); 
             } else {
                 document.getElementById('app-container').classList.remove('active'); 
-                document.getElementById('auth-container').classList.add('active');
+                document.getElementById('auth-container').style.display = 'flex';
                 currentUserId = null; 
             } 
         });
@@ -644,15 +636,4 @@
 
     </script>
 </body>
-</html>" code between  and  in the most up-to-date Canvas "D&D Adventure Manager v6.4 - Sharing Fix" document above and am asking a query about/based on this code below.
-Instructions to follow:
-  * Don't output/edit the document if the query is Direct/Simple. For example, if the query asks for a simple explanation, output a direct answer.
-  * Make sure to **edit** the document if the query shows the intent of editing the document, in which case output the entire edited document, **not just that section or the edits**.
-    * Don't output the same document/empty document and say that you have edited it.
-    * Don't change unrelated code in the document.
-  * Don't output  and  in your final response.
-  * Any references like "this" or "selected code" refers to the code between  and  tags.
-  * Just acknowledge my request in the introduction.
-  * Make sure to refer to the document as "Canvas" in your response.
-
-vorrei che il background dell'avventura possa essere condiviso, come se fosse un PNG o un ambiente, con i giocat
+</html>
