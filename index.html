@@ -213,6 +213,13 @@
         const tabContents = document.querySelectorAll('.tab-content');
         tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
 
+        const diceButtons = document.querySelectorAll('.dice-btn');
+        const resultsContainer = document.getElementById('dice-results-container');
+        const diceCountInput = document.getElementById('dice-count');
+        const diceModifierInput = document.getElementById('dice-modifier');
+        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
+        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
+
         const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
@@ -315,9 +322,44 @@
             } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); }
         });
 
-        // --- ADVENTURE LOGIC ---
-        // ... (codice per creare, caricare, modificare, cancellare avventure e nodi)
-        // La funzione renderGroupedNodes ora deve gestire anche le mappe
+        const addAdventureForm = document.getElementById('add-adventure-form');
+        const adventureTitleInput = document.getElementById('adventure-title-input');
+        const adventuresList = document.getElementById('adventures-list');
+        const adventureListView = document.getElementById('adventure-list-view');
+        const adventureDetailView = document.getElementById('adventure-detail-view');
+        const backToListBtn = document.getElementById('back-to-list-btn');
+        const adventureDetailTitle = document.getElementById('adventure-detail-title');
+        const backgroundTextarea = document.getElementById('adventure-background-textarea');
+        const backgroundPreview = document.getElementById('background-preview');
+        const saveStatus = document.getElementById('save-status');
+        let backgroundSaveTimeout;
+        addAdventureForm.addEventListener('submit', e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) saveNewAdventure(currentUserId, title); adventureTitleInput.value = ''; });
+        async function saveNewAdventure(userId, title) { const collectionPath = `users/${userId}/adventures`; try { await addDoc(collection(db, collectionPath), { title, background: "", environments: [], pngs: [], treasures: [], maps: [], createdAt: serverTimestamp() }); } catch (e) { console.error("Errore salvataggio: ", e); } }
+        function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath), orderBy("createdAt", "desc")); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { const docPath = `users/${currentUserId}/adventures/${docId}`; if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, docPath)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        
+        function openAdventureDetail(userId, docId) {
+            adventureListView.style.display = 'none';
+            adventureDetailView.style.display = 'block';
+            currentAdventureDocPath = `users/${userId}/adventures/${docId}`;
+            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
+            currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => {
+                if (doc.exists()) {
+                    currentAdventureData = doc.data();
+                    adventureDetailTitle.textContent = currentAdventureData.title;
+                    if (document.activeElement !== backgroundTextarea) { backgroundTextarea.value = currentAdventureData.background || ""; }
+                    renderBackgroundLinks();
+                    renderGroupedNodes('maps', currentAdventureData.maps || []);
+                    renderGroupedNodes('environments', currentAdventureData.environments || []);
+                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
+                } else {
+                    console.error("Avventura non trovata!");
+                    backToListBtn.click();
+                }
+            });
+        }
+
         function renderGroupedNodes(type, nodes) {
             const listEl = document.getElementById(`${type}-list`);
             listEl.innerHTML = '';
@@ -361,30 +403,136 @@
                 listEl.appendChild(groupDetails);
             }
         }
-
-        function openAdventureDetail(userId, docId) {
-            adventureListView.style.display = 'none';
-            adventureDetailView.style.display = 'block';
-            currentAdventureDocPath = `users/${userId}/adventures/${docId}`;
-            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
-            currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => {
-                if (doc.exists()) {
-                    currentAdventureData = doc.data();
-                    adventureDetailTitle.textContent = currentAdventureData.title;
-                    if (document.activeElement !== backgroundTextarea) { backgroundTextarea.value = currentAdventureData.background || ""; }
-                    renderBackgroundLinks();
-                    renderGroupedNodes('maps', currentAdventureData.maps || []);
-                    renderGroupedNodes('environments', currentAdventureData.environments || []);
-                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
-                } else {
-                    console.error("Avventura non trovata!");
-                    backToListBtn.click();
-                }
-            });
-        }
         
-        // ... (tutto il resto del codice è per lo più invariato)
+        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; renderBackgroundLinks(); backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureDocPath) { await updateDoc(doc(db, currentAdventureDocPath), { background: backgroundTextarea.value }); saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
+        
+        function renderBackgroundLinks() {
+            const text = backgroundTextarea.value;
+            const allNodes = [
+                ...(currentAdventureData.maps || []),
+                ...(currentAdventureData.environments || []), 
+                ...(currentAdventureData.pngs || []),
+                ...(currentAdventureData.treasures || [])
+            ];
+            const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
+                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeExists) {
+                    return `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>`;
+                }
+                return `[[${nodeName}]]`;
+            });
+            backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
+        }
+
+        const modal = document.getElementById('node-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        backgroundPreview.addEventListener('click', e => {
+            if (e.target.classList.contains('node-link')) {
+                e.preventDefault();
+                const nodeName = e.target.dataset.nodeName;
+                
+                if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) {
+                    modal.classList.add('hidden');
+                    return;
+                }
+
+                const allNodes = [
+                    ...(currentAdventureData.maps || []),
+                    ...(currentAdventureData.environments || []), 
+                    ...(currentAdventureData.pngs || []),
+                    ...(currentAdventureData.treasures || [])
+                ];
+                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                
+                if (nodeData) {
+                    modalTitle.textContent = nodeData.title;
+                    let contentHtml = '';
+                    if (nodeData.imageData) {
+                        contentHtml += `<img src="${nodeData.imageData}" class="w-full rounded-md mb-4">`;
+                    }
+                    if (nodeData.content) {
+                        contentHtml += nodeData.content.replace(/\n/g, '<br>');
+                    }
+                    modalContent.innerHTML = contentHtml;
+                    modal.classList.remove('hidden');
+                }
+            }
+        });
+        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
+        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+
+        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureDocPath = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } });
+        
+        document.querySelectorAll('.node-add-btn').forEach(btn => {
+            btn.addEventListener('click', async () => {
+                if (!currentAdventureDocPath) return;
+                const type = btn.dataset.type;
+                const typeName = { environments: 'Ambiente', pngs: 'PNG', maps: 'Mappa', treasures: 'Tesoro'}[type];
+                const title = prompt(`Titolo del nuovo ${typeName}:`);
+                if (!title) return;
+                const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
+                if (group === null) return;
+                const content = prompt("Inserisci una breve descrizione:");
+                
+                const newNode = { title, content: content || "", group };
+                const adventureRef = doc(db, currentAdventureDocPath);
+                try {
+                    await updateDoc(adventureRef, { [type]: arrayUnion(newNode) });
+                } catch (error) { console.error("Errore aggiunta nodo:", error); }
+            });
+        });
+
+        document.getElementById('adventures').addEventListener('click', async (e) => {
+            const target = e.target;
+            const container = target.closest('.node-container');
+            if (!container) return;
+
+            const title = container.dataset.nodeTitle;
+            const type = container.dataset.nodeType;
+            
+            if (target.classList.contains('delete-node-btn')) {
+                e.preventDefault();
+                if (currentAdventureDocPath && confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
+                    const adventureRef = doc(db, currentAdventureDocPath);
+                    const adventureSnap = await getDoc(adventureRef);
+                    if (adventureSnap.exists()) {
+                        const nodes = adventureSnap.data()[type] || [];
+                        const nodeToDelete = nodes.find(node => node.title === title);
+                        if (nodeToDelete) {
+                            try { await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) }); } 
+                            catch (error) { console.error("Errore eliminazione:", error); }
+                        }
+                    }
+                }
+            } else if (target.classList.contains('edit-node-btn')) {
+                e.preventDefault();
+                container.querySelector('.node-view-mode').classList.add('hidden');
+                container.querySelector('.node-edit-mode').classList.remove('hidden');
+            } else if (target.classList.contains('cancel-edit-btn')) {
+                container.querySelector('.node-view-mode').classList.remove('hidden');
+                container.querySelector('.node-edit-mode').classList.add('hidden');
+            } else if (target.classList.contains('save-node-btn')) {
+                const newContent = container.querySelector('.node-content-edit').value;
+                const adventureRef = doc(db, currentAdventureDocPath);
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeIndex = nodes.findIndex(node => node.title === title);
+                    if (nodeIndex !== -1) {
+                        const updatedNodes = [...nodes];
+                        updatedNodes[nodeIndex].content = newContent;
+                        try {
+                            await updateDoc(adventureRef, { [type]: updatedNodes });
+                            container.querySelector('.node-view-mode').classList.remove('hidden');
+                            container.querySelector('.node-edit-mode').classList.add('hidden');
+                        } catch (error) { console.error("Errore modifica:", error); }
+                    }
+                }
+            }
+        });
 
     </script>
 </body>
