@@ -112,7 +112,7 @@
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
+                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div>
                                 <div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div>
                                 <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
                             </div>
@@ -145,6 +145,13 @@
                                     <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
                                     <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
                                     <div id="pngs-list" class="space-y-2"></div>
+                                </div>
+                                <!-- NUOVA SEZIONE MAPPE -->
+                                <hr class="border-gray-600">
+                                <div>
+                                    <h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3>
+                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button>
+                                    <div id="maps-list" class="space-y-2"></div>
                                 </div>
                             </aside>
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
@@ -378,7 +385,14 @@
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             try {
                 const type = saveToAdventureBtn.dataset.type;
-                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : 'pngs';
+                let field;
+                if (type === 'Ambientazione' || type === 'Tesoro') {
+                    field = 'environments';
+                } else if (type === 'Mappa') {
+                    field = 'maps';
+                } else {
+                    field = 'pngs';
+                }
                 await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
                 saveToAdventureBtn.textContent = 'Salvato!';
                 setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
@@ -396,7 +410,7 @@
         const backgroundPreview = document.getElementById('background-preview');
         const saveStatus = document.getElementById('save-status');
         let backgroundSaveTimeout;
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: "", environments: [], pngs: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, sharedItems: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: "", environments: [], pngs: [], maps: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, sharedItems: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
         
@@ -419,6 +433,7 @@
                     renderBackgroundLinks();
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                    renderGroupedNodes('maps', currentAdventureData.maps || []);
                     updateShareBackgroundButtonState();
                 } else {
                     console.error("Avventura non trovata!");
@@ -466,10 +481,16 @@
         function renderGroupedNodes(type, nodes) {
             const listEl = document.getElementById(`${type}-list`);
             listEl.innerHTML = '';
+            let typeName = '';
+            if (type === 'pngs') typeName = 'PNG';
+            else if (type === 'environments') typeName = 'ambiente';
+            else if (type === 'maps') typeName = 'mappa';
+            
             if (!nodes || nodes.length === 0) {
-                listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${type === 'pngs' ? 'PNG' : 'ambiente'}.</p>`;
+                listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`;
                 return;
             }
+
             const groups = nodes.reduce((acc, node) => {
                 const group = node.group || 'Senza Gruppo';
                 if (!acc[group]) acc[group] = [];
@@ -524,7 +545,7 @@
         
         function renderBackgroundLinks() {
             const text = backgroundTextarea.value;
-            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
+            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
             const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
                 const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 if (nodeExists) {
@@ -545,7 +566,7 @@
                 e.preventDefault();
                 const nodeName = e.target.dataset.nodeName;
                 if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) { modal.classList.add('hidden'); return; }
-                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
                 const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 if (nodeData) {
                     modalTitle.textContent = nodeData.title;
@@ -565,13 +586,26 @@
             btn.addEventListener('click', async () => {
                 if (!currentAdventureId) return;
                 const type = btn.dataset.type;
-                const title = prompt(`Titolo del nuovo ${type === 'pngs' ? 'PNG' : 'Ambiente'}:`);
+                
+                let typeName = '';
+                if (type === 'pngs') typeName = 'PNG';
+                else if (type === 'environments') typeName = 'Ambiente';
+                else if (type === 'maps') typeName = 'Mappa';
+
+                const title = prompt(`Titolo della nuova ${typeName}:`);
                 if (!title) return;
-                const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
-                if (group === null) return;
+                
+                let imageUrlPrompt = "URL dell'immagine (opzionale):";
+                if (type === 'maps') {
+                    imageUrlPrompt = "URL dell'immagine della mappa:";
+                }
+                const imageUrl = prompt(imageUrlPrompt);
+
                 const publicContent = prompt("Inserisci la descrizione pubblica:");
                 const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
-                const imageUrl = prompt("URL dell'immagine (opzionale):");
+                const group = prompt(`Gruppo in cui inserire "${title}":`, 'Senza Gruppo');
+                if (group === null) return;
+
                 const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
                 const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
                 try { await updateDoc(adventureRef, { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
@@ -664,7 +698,7 @@
                 e.preventDefault();
                 const adventureSnap = await getDoc(adventureRef);
                 if (adventureSnap.exists()) {
-                    const allNodes = [...(adventureSnap.data().pngs || []), ...(adventureSnap.data().environments || [])];
+                    const allNodes = [...(adventureSnap.data().pngs || []), ...(adventureSnap.data().environments || []), ...(adventureSnap.data().maps || [])];
                     const nodeToShare = allNodes.find(node => node.title === title);
                     if (!nodeToShare) return;
 
