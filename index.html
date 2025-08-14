@@ -245,7 +245,7 @@
                 } else {
                     const [text, imageUrl] = await Promise.all([
                         generateText(type, prompt),
-                        generateImage(`Fantasy illustration, digital art, character portrait of a ${prompt}`)
+                        generateImage(`Fantasy illustration, digital art, of a ${type}: ${prompt}`)
                     ]);
                     resultContainer.innerHTML = `
                         <img src="${imageUrl}" class="w-full h-48 object-cover rounded-t-lg mb-2">
@@ -257,7 +257,7 @@
                 saveToAdventureBtn.style.display = 'block';
             } catch (error) {
                 console.error("Errore generazione:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`;
+                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. ${error.message}</p>`;
             }
         });
 
@@ -270,24 +270,29 @@
             const payload = { contents: [{ role: "user", parts: [{ text: fullPrompt }] }] };
             const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) throw new Error(`Errore API Testo: ${response.statusText}`);
+            if (!response.ok) throw new Error(`API Testo: ${response.statusText}`);
             const result = await response.json();
             if (result.candidates && result.candidates.length > 0) {
                 return result.candidates[0].content.parts[0].text;
             }
-            throw new Error("Nessun testo valido ricevuto dall'API.");
+            throw new Error("Nessun testo valido dall'API.");
         }
 
         async function generateImage(prompt) {
-            const payload = { instances: [{ prompt }], parameters: { "sampleCount": 1 } };
-            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
+            const payload = {
+                contents: [{ parts: [{ text: prompt }] }],
+                generationConfig: { responseModalities: ['IMAGE'] },
+            };
+            const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-preview-image-generation:generateContent?key=${GEMINI_API_KEY}`;
             const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-            if (!response.ok) throw new Error(`Errore API Immagine: ${response.statusText}`);
+            if (!response.ok) throw new Error(`API Immagine: ${response.statusText}`);
             const result = await response.json();
-            if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                return `data:image/png;base64,${result.predictions[0].bytesBase64Encoded}`;
+            const base64Data = result?.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData?.data;
+            if (base64Data) {
+                return `data:image/png;base64,${base64Data}`;
             }
-            throw new Error("Nessuna immagine valida ricevuta dall'API.");
+            if (result?.promptFeedback?.blockReason) { throw new Error(`Immagine bloccata per: ${result.promptFeedback.blockReason}`); }
+            throw new Error("Nessuna immagine valida dall'API.");
         }
 
         saveToAdventureBtn.addEventListener('click', async () => {
