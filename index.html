@@ -265,7 +265,10 @@
                         <details>
                             <summary class="cursor-pointer text-base flex justify-between items-center">
                                 <span>${node.title}</span>
-                                <button data-type="${type}" data-title="${node.title}" class="delete-node-btn text-gray-400 hover:text-red-500 font-bold">&times;</button>
+                                <div class="flex-shrink-0">
+                                    <button data-type="${type}" data-title="${node.title}" class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
+                                    <button data-type="${type}" data-title="${node.title}" class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
+                                </div>
                             </summary>
                             <div class="p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>
                         </details>
@@ -318,8 +321,9 @@
                 if (!title) return;
                 const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
                 if (group === null) return;
+                const content = prompt("Inserisci una breve descrizione:");
                 
-                const newNode = { title, content: "", group };
+                const newNode = { title, content: content || "", group };
                 const adventureRef = doc(db, currentAdventureDocPath);
                 try {
                     await updateDoc(adventureRef, { [type]: arrayUnion(newNode) });
@@ -328,21 +332,36 @@
         });
 
         document.getElementById('adventures').addEventListener('click', async (e) => {
-            if (e.target.classList.contains('delete-node-btn')) {
+            const target = e.target;
+            if (target.classList.contains('delete-node-btn') || target.classList.contains('edit-node-btn')) {
                 e.preventDefault();
-                const titleToDelete = e.target.dataset.title;
-                const type = e.target.dataset.type;
-                if (currentAdventureDocPath && confirm(`Sei sicuro di voler eliminare "${titleToDelete}"?`)) {
-                    const adventureRef = doc(db, currentAdventureDocPath);
-                    const adventureSnap = await getDoc(adventureRef);
-                    if (adventureSnap.exists()) {
-                        const nodes = adventureSnap.data()[type] || [];
-                        const nodeToDelete = nodes.find(node => node.title === titleToDelete);
-                        if (nodeToDelete) {
-                            try {
-                                await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) });
-                            } catch (error) { console.error("Errore eliminazione:", error); }
-                        }
+                const title = target.dataset.title;
+                const type = target.dataset.type;
+
+                if (!currentAdventureDocPath) return;
+
+                const adventureRef = doc(db, currentAdventureDocPath);
+                const adventureSnap = await getDoc(adventureRef);
+                if (!adventureSnap.exists()) return;
+
+                const nodes = adventureSnap.data()[type] || [];
+                const nodeIndex = nodes.findIndex(node => node.title === title);
+                if (nodeIndex === -1) return;
+
+                if (target.classList.contains('delete-node-btn')) {
+                    if (confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
+                        try {
+                            await updateDoc(adventureRef, { [type]: arrayRemove(nodes[nodeIndex]) });
+                        } catch (error) { console.error("Errore eliminazione:", error); }
+                    }
+                } else if (target.classList.contains('edit-node-btn')) {
+                    const newContent = prompt(`Modifica la descrizione per "${title}":`, nodes[nodeIndex].content);
+                    if (newContent !== null) {
+                        const updatedNodes = [...nodes];
+                        updatedNodes[nodeIndex].content = newContent;
+                        try {
+                            await updateDoc(adventureRef, { [type]: updatedNodes });
+                        } catch (error) { console.error("Errore modifica:", error); }
                     }
                 }
             }
