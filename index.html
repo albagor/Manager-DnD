@@ -15,10 +15,10 @@
         h1, h2, h3, h4, .tab-btn, .dice-btn, button {
              font-family: 'MedievalSharp', cursive;
         }
-        .tab-content, #app-container, #adventure-detail-view {
+        .tab-content, #app-container {
             display: none;
         }
-        .tab-content.active, #app-container.active, #adventure-detail-view.active {
+        .tab-content.active, #app-container.active {
             display: block;
         }
         .dice-result {
@@ -36,7 +36,6 @@
             from { opacity: 0; transform: translateY(-10px); }
             to { opacity: 1; transform: translateY(0); }
         }
-        /* Stile per l'indicatore di caricamento */
         .loader {
             border: 4px solid #f3f3f3;
             border-top: 4px solid #ef4444;
@@ -103,7 +102,6 @@
                 </div>
             </header>
 
-            <!-- Navigazione a Tab -->
             <div class="mb-8">
                 <div class="border-b border-gray-700">
                     <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
@@ -115,14 +113,43 @@
                 </div>
             </div>
 
-            <!-- Contenuto delle Sezioni -->
             <main>
-                <div id="dice-roller" class="tab-content active">...</div>
-                <div id="ai-generator" class="tab-content">...</div>
+                <div id="dice-roller" class="tab-content active">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button>
+                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button>
+                        </div>
+                        <div class="flex flex-wrap items-center gap-4 mb-6 font-sans">
+                            <div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
+                            <div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
+                        </div>
+                        <div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div>
+                    </div>
+                </div>
+                <div id="ai-generator" class="tab-content">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
+                                <div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div>
+                                <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
+                            </div>
+                            <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col">
+                                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div>
+                                <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
 
-                <!-- Sezione Le Mie Avventure -->
                 <div id="adventures" class="tab-content">
-                    <!-- Vista Lista Avventure -->
                     <div id="adventure-list-view" class="active">
                         <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                             <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
@@ -130,52 +157,41 @@
                                 <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required>
                                 <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
                             </form>
-                            <div id="adventures-list" class="space-y-3">
-                                <p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>
-                            </div>
+                            <div id="adventures-list" class="space-y-3"></div>
                         </div>
                     </div>
-                    <!-- Vista Dettaglio Avventura -->
-                    <div id="adventure-detail-view">
+                    <div id="adventure-detail-view" style="display: none;">
                         <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <!-- Colonna Sinistra: Ambienti -->
                             <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg">
                                 <h3 class="text-2xl font-bold text-red-400 mb-4">Ambienti</h3>
-                                <div id="environments-list" class="space-y-2">
-                                    <!-- Esempio di ambiente -->
-                                    <details class="bg-gray-700 rounded-lg">
-                                        <summary class="p-2 cursor-pointer text-lg">Taverna del Drago Assopito</summary>
-                                        <div class="p-2 border-t border-gray-600 font-sans">
-                                            <p>Contenuto della taverna...</p>
-                                        </div>
-                                    </details>
-                                    <p class="text-gray-500 text-sm font-sans">Aggiungi nuovi ambienti...</p>
-                                </div>
+                                <div id="environments-list" class="space-y-2"></div>
                             </aside>
-                            <!-- Colonna Destra: Contenuto Principale -->
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
-                                <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4">Titolo Avventura</h2>
+                                <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
                                 <h3 class="text-2xl font-bold text-gray-300 mb-2">Background</h3>
-                                <textarea id="adventure-background-textarea" class="w-full h-96 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui il background dell'avventura..."></textarea>
+                                <textarea id="adventure-background-textarea" class="w-full h-96 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui il background..."></textarea>
                                 <p id="save-status" class="text-sm text-gray-500 mt-2 h-4 font-sans"></p>
                             </section>
                         </div>
                     </div>
                 </div>
 
-                 <div id="player-view" class="tab-content">...</div>
+                 <div id="player-view" class="tab-content">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Vista Giocatore</h2>
+                        <p class="text-gray-400 font-sans">Questa sezione mostrerà solo le informazioni che decidi di condividere con i tuoi giocatori.</p>
+                    </div>
+                 </div>
             </main>
         </div>
     </div>
 
     <script type="module">
-        // Import Firebase
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, orderBy, serverTimestamp, getDoc, updateDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, orderBy, serverTimestamp, getDoc, updateDoc, arrayUnion } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Configurazione del tuo progetto Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
             authDomain: "avventure-dnd.firebaseapp.com",
@@ -189,51 +205,59 @@
         const db = getFirestore(app);
         const auth = getAuth(app);
 
-        // --- Elementi DOM ---
-        const authContainer = document.getElementById('auth-container');
-        const appContainer = document.getElementById('app-container');
         let currentUserId = null;
-        
-        // --- Logica di Autenticazione ---
+        let currentAdventureDocPath = null;
+        let currentAdventureUnsubscribe = null;
+
         onAuthStateChanged(auth, user => {
             if (user) {
-                authContainer.style.display = 'none';
-                appContainer.classList.add('active');
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').classList.add('active');
                 document.getElementById('user-email').textContent = user.email;
                 currentUserId = user.uid;
                 loadAdventures(user.uid);
             } else {
-                appContainer.classList.remove('active');
-                authContainer.style.display = 'flex';
+                document.getElementById('app-container').classList.remove('active');
+                document.getElementById('auth-container').style.display = 'flex';
                 currentUserId = null;
             }
         });
-        // (listeners per login, register, logout omessi per brevità, sono invariati)
+        
         document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
         document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
         document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
         document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
         document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
 
-        // --- Logica UI Tabs ---
         const tabButtons = document.querySelectorAll('.tab-btn');
         const tabContents = document.querySelectorAll('.tab-content');
         tabButtons.forEach(button => {
             button.addEventListener('click', () => {
-                tabButtons.forEach(btn => {
-                    btn.classList.remove('active', 'text-red-400', 'border-red-400');
-                    btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300');
-                });
+                tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); });
                 tabContents.forEach(content => content.classList.remove('active'));
-                
                 button.classList.add('active', 'text-red-400', 'border-red-400');
                 button.classList.remove('text-gray-400');
                 document.getElementById(button.dataset.tab).classList.add('active');
             });
         });
 
-        // --- Logica Avventure ---
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const diceButtons = document.querySelectorAll('.dice-btn');
+        const resultsContainer = document.getElementById('dice-results-container');
+        const diceCountInput = document.getElementById('dice-count');
+        const diceModifierInput = document.getElementById('dice-modifier');
+        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
+        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
+
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
+        const generateBtn = document.getElementById('generate-btn');
+        const generatorType = document.getElementById('generator-type');
+        const generatorPrompt = document.getElementById('generator-prompt');
+        const resultContainer = document.getElementById('generator-result-container');
+        const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
+        generateBtn.addEventListener('click', async () => { const type = generatorType.value; const prompt = generatorPrompt.value.trim(); if (!prompt) { resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>'; return; } resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>'; saveToAdventureBtn.style.display = 'none'; let fullPrompt = ''; if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Genera una descrizione concisa per un PNG: "${prompt}". Descrivi in poche parole viso, occhi, capelli, altezza e corporatura. Aggiungi una frase sulla personalità e un possibile segreto. Formatta in markdown.`; } else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Crea un mostro unico: "${prompt}". La risposta DEVE includere: 1. Breve descrizione fisica. 2. Scheda statistiche completa (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi).`; } else { fullPrompt = `Sei un DM di D&D 5e. Genera una descrizione concisa per un ${type}: "${prompt}". Fornisci 2-3 frasi chiave per aspetto e atmosfera, e uno spunto di trama. Sii breve. Usa markdown.`; } try { let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }]; const payload = { contents: chatHistory }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Errore API: ${response.statusText}`); const result = await response.json(); if (result.candidates && result.candidates.length > 0) { const text = result.candidates[0].content.parts[0].text; let htmlContent = text.replace(/### (.*)/g, '<h3 class="text-xl font-bold text-red-400 mt-4 mb-2">$1</h3>').replace(/## (.*)/g, '<h2 class="text-2xl font-bold text-red-400 mt-4 mb-2">$1</h2>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>'); resultContainer.innerHTML = `<div class="text-gray-300">${htmlContent}</div>`; if (type === 'Ambientazione') { saveToAdventureBtn.dataset.generatedContent = text; saveToAdventureBtn.style.display = 'block'; } } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); } } catch (error) { console.error("Errore generazione:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; } });
+        saveToAdventureBtn.addEventListener('click', async () => { if (!currentAdventureDocPath) { alert("Devi prima aprire un'avventura per poter salvare un ambiente."); return; } const contentToSave = saveToAdventureBtn.dataset.generatedContent; const lines = contentToSave.split('\n'); const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Ambiente"; const newEnvironment = { title, content: contentToSave }; const adventureRef = doc(db, currentAdventureDocPath); try { await updateDoc(adventureRef, { environments: arrayUnion(newEnvironment) }); saveToAdventureBtn.textContent = 'Salvato!'; setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000); } catch (error) { console.error("Errore salvataggio ambiente:", error); alert("Errore durante il salvataggio."); } });
+
+        const appId = 'default-app-id';
         const addAdventureForm = document.getElementById('add-adventure-form');
         const adventureTitleInput = document.getElementById('adventure-title-input');
         const adventuresList = document.getElementById('adventures-list');
@@ -244,103 +268,14 @@
         const backgroundTextarea = document.getElementById('adventure-background-textarea');
         const saveStatus = document.getElementById('save-status');
         let backgroundSaveTimeout;
-
-        // Salva una nuova avventura
-        addAdventureForm.addEventListener('submit', e => {
-            e.preventDefault();
-            const title = adventureTitleInput.value.trim();
-            if (title && currentUserId) saveNewAdventure(currentUserId, title);
-            adventureTitleInput.value = '';
-        });
-        async function saveNewAdventure(userId, title) {
-            const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`;
-            try { await addDoc(collection(db, collectionPath), { 
-                title, 
-                background: "", // Aggiunge campo background vuoto
-                environments: [], // Aggiunge campo ambienti vuoto
-                createdAt: serverTimestamp() 
-            }); } 
-            catch (e) { console.error("Errore salvataggio: ", e); }
-        }
-
-        // Carica la lista delle avventure
-        function loadAdventures(userId) {
-            const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`;
-            const q = query(collection(db, collectionPath), orderBy("createdAt", "desc"));
-            onSnapshot(q, snapshot => {
-                adventuresList.innerHTML = '';
-                if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; }
-                snapshot.forEach(doc => {
-                    const adventure = doc.data();
-                    const el = document.createElement('div');
-                    el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center';
-                    el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button>
-                                    <button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`;
-                    adventuresList.appendChild(el);
-                });
-            });
-        }
-        
-        // Gestisce i click nella lista (apri o cancella)
-        adventuresList.addEventListener('click', async e => {
-            const target = e.target;
-            const docId = target.dataset.id;
-            if (!docId || !currentUserId) return;
-
-            if (target.classList.contains('adventure-link')) {
-                openAdventureDetail(currentUserId, docId);
-            } else if (target.classList.contains('delete-btn')) {
-                const docPath = `/artifacts/${appId}/users/${currentUserId}/adventures/${docId}`;
-                if (confirm('Sei sicuro di voler eliminare questa avventura?')) {
-                    try { await deleteDoc(doc(db, docPath)); } 
-                    catch (error) { console.error("Errore eliminazione: ", error); }
-                }
-            }
-        });
-
-        // Apre la vista di dettaglio
-        async function openAdventureDetail(userId, docId) {
-            adventureListView.classList.remove('active');
-            adventureDetailView.classList.add('active');
-            
-            const docPath = `/artifacts/${appId}/users/${userId}/adventures/${docId}`;
-            const docSnap = await getDoc(doc(db, docPath));
-
-            if (docSnap.exists()) {
-                const adventure = docSnap.data();
-                adventureDetailTitle.textContent = adventure.title;
-                backgroundTextarea.value = adventure.background || "";
-                backgroundTextarea.dataset.docPath = docPath; // Salva il path per usi futuri
-                // Qui popoleremo la lista degli ambienti
-            } else {
-                console.error("Avventura non trovata!");
-            }
-        }
-
-        // Salva le modifiche al background
-        backgroundTextarea.addEventListener('keyup', () => {
-            clearTimeout(backgroundSaveTimeout);
-            saveStatus.textContent = 'Sto scrivendo...';
-            backgroundSaveTimeout = setTimeout(async () => {
-                saveStatus.textContent = 'Salvataggio...';
-                const docPath = backgroundTextarea.dataset.docPath;
-                if (docPath) {
-                    await updateDoc(doc(db, docPath), {
-                        background: backgroundTextarea.value
-                    });
-                    saveStatus.textContent = 'Salvato!';
-                    setTimeout(() => saveStatus.textContent = '', 2000);
-                }
-            }, 1000); // Salva 1 secondo dopo che l'utente smette di scrivere
-        });
-
-        // Torna alla lista
-        backToListBtn.addEventListener('click', () => {
-            adventureDetailView.classList.remove('active');
-            adventureListView.classList.add('active');
-        });
-
-        // (Logica Tira Dadi e Generatore AI omessa per brevità, è invariata)
+        addAdventureForm.addEventListener('submit', e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) saveNewAdventure(currentUserId, title); adventureTitleInput.value = ''; });
+        async function saveNewAdventure(userId, title) { const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`; try { await addDoc(collection(db, collectionPath), { title, background: "", environments: [], createdAt: serverTimestamp() }); } catch (e) { console.error("Errore salvataggio: ", e); } }
+        function loadAdventures(userId) { const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`; const q = query(collection(db, collectionPath), orderBy("createdAt", "desc")); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { const docPath = `/artifacts/${appId}/users/${currentUserId}/adventures/${docId}`; if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, docPath)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        function openAdventureDetail(userId, docId) { adventureListView.style.display = 'none'; adventureDetailView.style.display = 'block'; currentAdventureDocPath = `/artifacts/${appId}/users/${userId}/adventures/${docId}`; if (currentAdventureUnsubscribe) currentAdventureUnsubscribe(); currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => { if (doc.exists()) { const adventure = doc.data(); adventureDetailTitle.textContent = adventure.title; if (document.activeElement !== backgroundTextarea) { backgroundTextarea.value = adventure.background || ""; } renderEnvironments(adventure.environments || []); } else { console.error("Avventura non trovata!"); } }); }
+        function renderEnvironments(environments) { const listEl = document.getElementById('environments-list'); listEl.innerHTML = ''; if (environments.length === 0) { listEl.innerHTML = '<p class="text-gray-500 text-sm font-sans">Nessun ambiente salvato.</p>'; return; } environments.forEach(env => { const details = document.createElement('details'); details.className = 'bg-gray-700 rounded-lg'; details.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${env.title}</summary><div class="p-2 border-t border-gray-600 font-sans text-sm">${env.content.replace(/\n/g, '<br>')}</div>`; listEl.appendChild(details); }); }
+        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureDocPath) { await updateDoc(doc(db, currentAdventureDocPath), { background: backgroundTextarea.value }); saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
+        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureDocPath = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } });
 
     </script>
 </body>
