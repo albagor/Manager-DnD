@@ -99,6 +99,14 @@
                 <div id="ai-generator" class="tab-content">
                      <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+                        <div class="bg-gray-700 p-4 rounded-lg mb-6 font-sans">
+                            <label for="api-key-input" class="block text-gray-300 text-sm font-bold mb-2">Chiave API Google AI</label>
+                            <div class="flex gap-2">
+                                <input type="password" id="api-key-input" class="flex-grow bg-gray-600 border border-gray-500 rounded-lg p-2 text-white focus:outline-none focus:ring-2 focus:ring-red-500" placeholder="Incolla qui la tua chiave API">
+                                <button id="save-api-key-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-base">Salva</button>
+                            </div>
+                            <p class="text-xs text-gray-400 mt-2">La tua chiave è necessaria per la generazione AI e verrà salvata solo nel tuo browser. <a href="https://aistudio.google.com/app/apikey" target="_blank" class="text-red-400 hover:underline">Ottieni una chiave qui.</a></p>
+                        </div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
                                 <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="Immagine">Immagine</option><option value="PNG">Personaggio (PNG)</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
@@ -213,7 +221,22 @@
         diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
         function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
 
-        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw"; // CHIAVE RIMOSSA PER SICUREZZA
+        const apiKeyInput = document.getElementById('api-key-input');
+        const saveApiKeyBtn = document.getElementById('save-api-key-btn');
+        let geminiApiKey = localStorage.getItem('geminiApiKey') || '';
+        if (geminiApiKey) { apiKeyInput.value = geminiApiKey; }
+        saveApiKeyBtn.addEventListener('click', () => {
+            geminiApiKey = apiKeyInput.value.trim();
+            if (geminiApiKey) {
+                localStorage.setItem('geminiApiKey', geminiApiKey);
+                saveApiKeyBtn.textContent = 'Salvata!';
+                setTimeout(() => { saveApiKeyBtn.textContent = 'Salva'; }, 2000);
+            } else {
+                localStorage.removeItem('geminiApiKey');
+                alert("Chiave API rimossa.");
+            }
+        });
+
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
         const generatorPrompt = document.getElementById('generator-prompt');
@@ -221,13 +244,22 @@
         const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
         const generateImageBtn = document.getElementById('generate-image-btn');
 
+        function checkApiKey() {
+            if (!geminiApiKey) {
+                resultContainer.innerHTML = `<p class="text-yellow-400 text-center">Per favore, inserisci e salva la tua chiave API di Google AI per usare questa funzione.</p>`;
+                return false;
+            }
+            return true;
+        }
+
         async function generateImage(prompt) {
+            if (!checkApiKey()) return;
             resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
             saveToAdventureBtn.style.display = 'none';
             generateImageBtn.style.display = 'none';
             try {
                 const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${geminiApiKey}`;
                 const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (!response.ok) {
                     const errorBody = await response.text();
@@ -242,11 +274,12 @@
                 }
             } catch (error) {
                 console.error("Errore generazione immagine:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore durante la generazione dell'immagine. Riprova.</p>`;
+                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore durante la generazione dell'immagine. Controlla la tua chiave API e riprova.</p>`;
             }
         }
 
         generateBtn.addEventListener('click', async () => {
+            if (!checkApiKey()) return;
             const type = generatorType.value;
             const prompt = generatorPrompt.value.trim();
             if (!prompt) {
@@ -268,7 +301,7 @@
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
                 const payload = { contents: chatHistory };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
                 const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (!response.ok) {
                     const errorBody = await response.text();
@@ -292,11 +325,12 @@
                 }
             } catch (error) {
                 console.error("Errore generazione testo:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`;
+                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Controlla la tua chiave API e riprova.</p>`;
             }
         });
 
         generateImageBtn.addEventListener('click', async () => {
+            if (!checkApiKey()) return;
             const textArea = resultContainer.querySelector('textarea');
             if (!textArea) {
                 resultContainer.innerHTML = `<p class="text-yellow-400 text-center">Nessuna descrizione testuale da cui generare un'immagine.</p>`;
@@ -312,7 +346,7 @@
                 const promptCreationPrompt = `Crea un prompt conciso in inglese per un generatore di immagini stile D&D fantasy art, basandoti su questa descrizione: "${description}". Il prompt deve essere una serie di parole chiave e frasi brevi separate da virgole, focalizzandosi sugli aspetti visivi come aspetto, vestiti, equipaggiamento e atmosfera. Non superare le 70 parole. Esempio: 'Grumpy dwarf innkeeper, bald with a long braided beard, muscular arms, wearing a leather apron, fantasy tavern background, warm lighting.' Rispondi solo con il prompt.`;
                 let chatHistory = [{ role: "user", parts: [{ text: promptCreationPrompt }] }];
                 const payload = { contents: chatHistory };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${geminiApiKey}`;
                 const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
                 if (!response.ok) {
                     const errorBody = await response.text();
