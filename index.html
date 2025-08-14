@@ -51,8 +51,13 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-    <!-- Contenitore Autenticazione - Active by default -->
-    <div id="auth-container" class="min-h-screen items-center justify-center p-4 active">
+    <!-- Initial Loading Indicator -->
+    <div id="initial-loader" class="min-h-screen flex items-center justify-center">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Contenitore Autenticazione -->
+    <div id="auth-container" class="min-h-screen items-center justify-center p-4">
         <div class="w-full max-w-md">
             <div class="bg-gray-800 shadow-lg rounded-lg p-8">
                 <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
@@ -212,6 +217,7 @@
         const playerViewId = urlParams.get('player_view');
 
         if (playerViewId) {
+            document.getElementById('initial-loader').style.display = 'none';
             document.getElementById('auth-container').classList.remove('active');
             document.getElementById('app-container').classList.remove('active');
             document.getElementById('player-view-container').classList.add('active');
@@ -250,13 +256,17 @@
         
         // --- GESTIONE MASTER ---
         onAuthStateChanged(auth, user => { 
-            if (user && !playerViewId) { 
+            if (playerViewId) return; // Do nothing if it's a player view
+
+            document.getElementById('initial-loader').style.display = 'none';
+
+            if (user) { 
                 document.getElementById('auth-container').classList.remove('active');
                 document.getElementById('app-container').classList.add('active'); 
                 document.getElementById('user-email').textContent = user.email; 
                 currentUserId = user.uid; 
                 loadAdventures(user.uid); 
-            } else if (!playerViewId) {
+            } else {
                 document.getElementById('app-container').classList.remove('active'); 
                 document.getElementById('auth-container').classList.add('active');
                 currentUserId = null; 
@@ -513,7 +523,7 @@
                 const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 if (nodeData) {
                     modalTitle.textContent = nodeData.title;
-                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : ''
                     const masterNotesHtml = nodeData.masterContent ? `<div class="mt-4 pt-4 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-lg">Note Master</h4><div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
                     modalContent.innerHTML = imageHtml + (nodeData.publicContent || '').replace(/\n/g, '<br>') + masterNotesHtml;
                     modal.classList.remove('hidden');
@@ -634,4 +644,15 @@
 
     </script>
 </body>
-</ht
+</html>" code between  and  in the most up-to-date Canvas "D&D Adventure Manager v6.4 - Sharing Fix" document above and am asking a query about/based on this code below.
+Instructions to follow:
+  * Don't output/edit the document if the query is Direct/Simple. For example, if the query asks for a simple explanation, output a direct answer.
+  * Make sure to **edit** the document if the query shows the intent of editing the document, in which case output the entire edited document, **not just that section or the edits**.
+    * Don't output the same document/empty document and say that you have edited it.
+    * Don't change unrelated code in the document.
+  * Don't output  and  in your final response.
+  * Any references like "this" or "selected code" refers to the code between  and  tags.
+  * Just acknowledge my request in the introduction.
+  * Make sure to refer to the document as "Canvas" in your response.
+
+vorrei che il background dell'avventura possa essere condiviso, come se fosse un PNG o un ambiente, con i giocat
