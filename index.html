@@ -308,6 +308,13 @@
             const view = document.getElementById(viewId);
             if(view) view.classList.add('active');
         }
+        
+        // --- GESTIONE AUTENTICAZIONE ---
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+
 
         // --- SELEZIONE RUOLO E LOGOUT ---
         document.getElementById('role-dm-btn').addEventListener('click', () => {
@@ -323,7 +330,6 @@
 
         function handleLogout() {
             signOut(auth);
-            // Nascondi tutte le viste principali e torna al login
             showView('auth-container');
         }
         document.getElementById('logout-btn').addEventListener('click', handleLogout);
@@ -350,7 +356,6 @@
                     const sheet = docSnapshot.data();
                     
                     let adventureTitle = "Avventura Sconosciuta";
-                    // FIX: Correctly look up the adventure document using the DM's ID
                     if (sheet.dmId && sheet.adventureId) {
                         const adventureRef = doc(db, "users", sheet.dmId, "adventures", sheet.adventureId);
                         const adventureSnap = await getDoc(adventureRef);
@@ -491,14 +496,13 @@
                 </div>
             `;
             
-            // Add event listeners to update modifiers dynamically
             if(isEditable) {
                 abilityScores.forEach(score => {
                     document.getElementById(`sheet-${score}`).addEventListener('input', updateAllModifiers);
                 });
                 document.getElementById('sheet-classLevel').addEventListener('input', updateAllModifiers);
             }
-            updateAllModifiers(); // Initial calculation
+            updateAllModifiers();
         }
 
         function calculateModifier(score) {
@@ -515,7 +519,6 @@
         function updateAllModifiers() {
             const proficiencyBonus = getProficiencyBonus(document.getElementById('sheet-classLevel')?.value);
             
-            // Update ability modifiers
             ['forza', 'destrezza', 'costituzione', 'intelligenza', 'saggezza', 'carisma'].forEach(score => {
                 const scoreValue = document.getElementById(`sheet-${score}`)?.value || 10;
                 const modValue = calculateModifier(parseInt(scoreValue));
@@ -523,7 +526,6 @@
                 if(modEl) modEl.textContent = modValue;
             });
 
-            // Update skill modifiers
             Object.entries({
                 'acrobazia': 'destrezza', 'addestrare animali': 'saggezza', 'arcano': 'intelligenza', 'atletica': 'forza',
                 'furtività': 'destrezza', 'indagare': 'intelligenza', 'inganno': 'carisma', 'intimidire': 'carisma',
@@ -546,7 +548,6 @@
 
         document.getElementById('sheet-save-btn').addEventListener('click', async () => {
             if (!openedSheetId) return;
-
             const updatedData = {
                 characterName: document.getElementById('sheet-characterName').value,
                 playerName: document.getElementById('sheet-playerName').value,
@@ -563,11 +564,9 @@
                 equipment: document.getElementById('sheet-equipment').value,
                 skills: {},
             };
-            
             ['forza', 'destrezza', 'costituzione', 'intelligenza', 'saggezza', 'carisma'].forEach(score => {
                 updatedData[score] = parseInt(document.getElementById(`sheet-${score}`).value) || 10;
             });
-
             Object.keys({
                 'acrobazia': 'destrezza', 'addestrare animali': 'saggezza', 'arcano': 'intelligenza', 'atletica': 'forza',
                 'furtività': 'destrezza', 'indagare': 'intelligenza', 'inganno': 'carisma', 'intimidire': 'carisma',
@@ -579,7 +578,6 @@
                     proficient: document.getElementById(`sheet-skill-${skill.replace(/\s+/g, '-')}-prof`).checked
                 };
             });
-
             try {
                 const sheetRef = doc(db, "characterSheets", openedSheetId);
                 await updateDoc(sheetRef, updatedData);
@@ -605,13 +603,14 @@
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
         
+        function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUser) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUser.uid, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUser.uid}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUser) { const newAdvRef = doc(collection(db, `users/${currentUser.uid}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUser.uid, background: "", environments: [], pngs: [], maps: [], playerEmails: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUser.uid, sharedItems: [] }); adventureTitleInput.value = ''; } });
+        
         function openAdventureDetail(userId, docId) {
             adventureListView.style.display = 'none';
             adventureDetailView.style.display = 'block';
             currentAdventureId = docId;
-
-            updatePlayerShareLink(docId); 
-
             if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
             const adventureRef = doc(db, `users/${userId}/adventures`, docId);
             currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
@@ -621,12 +620,7 @@
                     if (document.activeElement !== document.getElementById('adventure-background-textarea')) {
                         document.getElementById('adventure-background-textarea').value = currentAdventureData.background || "";
                     }
-                    renderBackgroundLinks();
-                    renderGroupedNodes('environments', currentAdventureData.environments || []);
-                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                    renderGroupedNodes('maps', currentAdventureData.maps || []);
                     renderPlayerCharacters(currentAdventureData.playerEmails || [], docId);
-                    updateShareBackgroundButtonState();
                 } else {
                     console.error("Avventura non trovata!");
                     backToListBtn.click();
@@ -634,24 +628,19 @@
             });
         }
         
-        // --- RENDER PERSONAGGI PER DM ---
         const charactersListContainer = document.getElementById('characters-list');
         const addPlayerForm = document.getElementById('add-player-form');
-
         async function renderPlayerCharacters(playerEmails, adventureId) {
             charactersListContainer.innerHTML = '';
             if (!playerEmails || playerEmails.length === 0) {
                 charactersListContainer.innerHTML = `<p class="text-gray-500 font-sans text-sm">Nessun giocatore invitato.</p>`;
                 return;
             }
-
             for (const email of playerEmails) {
                 const q = query(collection(db, "characterSheets"), where("adventureId", "==", adventureId), where("playerEmail", "==", email));
                 const querySnapshot = await getDocs(q);
-                
                 const playerEl = document.createElement('div');
                 playerEl.className = 'bg-gray-700 p-3 rounded-lg flex justify-between items-center';
-
                 if (querySnapshot.empty) {
                      playerEl.innerHTML = `<span>${email} (non ha ancora creato la scheda)</span>`;
                 } else {
@@ -667,51 +656,31 @@
                  charactersListContainer.appendChild(playerEl);
             }
         }
-        
         charactersListContainer.addEventListener('click', e => {
              if (e.target.closest('.view-sheet-btn')) {
                 const sheetId = e.target.closest('.view-sheet-btn').dataset.sheetId;
-                openCharacterSheetModal(sheetId, false); // false = not editable for DM
+                openCharacterSheetModal(sheetId, false);
             }
         });
-
         addPlayerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             if (!currentAdventureId || !currentUser) return;
-
             const emailInput = document.getElementById('player-email-input');
             const playerEmail = emailInput.value.trim();
             if (!playerEmail) return;
-
             const adventureRef = doc(db, `users/${currentUser.uid}/adventures`, currentAdventureId);
-            
-            // 1. Aggiungi email all'array nell'avventura
-            await updateDoc(adventureRef, {
-                playerEmails: arrayUnion(playerEmail)
-            });
-
-            // 2. Crea una scheda personaggio vuota per quel giocatore e avventura
+            await updateDoc(adventureRef, { playerEmails: arrayUnion(playerEmail) });
             const sheetRef = doc(collection(db, "characterSheets"));
-            // FIX: Add dmId and default fields to the new sheet
             await setDoc(sheetRef, {
                 adventureId: currentAdventureId,
                 playerEmail: playerEmail,
                 dmId: currentUser.uid, 
                 characterName: "Nuovo Personaggio",
                 forza: 10, destrezza: 10, costituzione: 10, intelligenza: 10, saggezza: 10, carisma: 10,
-                skills: {},
-                hpMax: 10, hpCurrent: 10, ac: 10,
+                skills: {}, hpMax: 10, hpCurrent: 10, ac: 10,
             });
-
             emailInput.value = '';
         });
-
-        // --- IL RESTO DEL CODICE RIMANE QUI ---
-        // Funzioni come loadAdventures, gestione nodi, AI generator, ecc.
-        // Omesse per brevità ma sono identiche alle versioni precedenti e necessarie.
-        // La logica principale è stata corretta e ripristinata.
-        // Assicurarsi che tutte le funzioni e gli event listener originali siano presenti.
-        // ... (resto del codice JS omesso per brevità)
     </script>
 </body>
 </html>
