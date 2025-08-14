@@ -101,18 +101,13 @@
                         <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="Immagine">Immagine</option><option value="PNG">Personaggio (PNG)</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
+                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
                                 <div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div>
                                 <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
                             </div>
                             <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col">
-                                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div>
-                                <div id="generator-actions" class="flex-shrink-0">
-                                    <div class="flex gap-4 mt-4">
-                                        <button id="save-to-adventure-btn" class="hidden flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva Testo</button>
-                                        <button id="generate-image-btn" class="hidden flex-1 bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera Immagine</button>
-                                    </div>
-                                </div>
+                                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div>
+                                <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
                             </div>
                         </div>
                     </div>
@@ -213,123 +208,14 @@
         diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
         function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
 
-        const GEMINI_API_KEY = ""; // CHIAVE RIMOSSA PER SICUREZZA
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
         const generatorPrompt = document.getElementById('generator-prompt');
         const resultContainer = document.getElementById('generator-result-container');
         const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
-        const generateImageBtn = document.getElementById('generate-image-btn');
-
-        async function generateImage(prompt) {
-            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
-            saveToAdventureBtn.style.display = 'none';
-            generateImageBtn.style.display = 'none';
-            try {
-                const payload = { instances: [{ prompt: prompt }], parameters: { "sampleCount": 1 } };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/imagen-3.0-generate-002:predict?key=${GEMINI_API_KEY}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) {
-                    const errorBody = await response.text();
-                    throw new Error(`Errore API Immagine (${response.status}): ${response.statusText} - ${errorBody}`);
-                }
-                const result = await response.json();
-                if (result.predictions && result.predictions.length > 0 && result.predictions[0].bytesBase64Encoded) {
-                    const base64Data = result.predictions[0].bytesBase64Encoded;
-                    resultContainer.innerHTML = `<img src="data:image/png;base64,${base64Data}" alt="Immagine generata dall'IA" class="w-full h-auto object-contain rounded-lg">`;
-                } else {
-                    throw new Error("Nessuna immagine valida ricevuta dall'API.");
-                }
-            } catch (error) {
-                console.error("Errore generazione immagine:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore durante la generazione dell'immagine. Riprova.</p>`;
-            }
-        }
-
-        generateBtn.addEventListener('click', async () => {
-            const type = generatorType.value;
-            const prompt = generatorPrompt.value.trim();
-            if (!prompt) {
-                resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>';
-                return;
-            }
-            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
-            saveToAdventureBtn.style.display = 'none';
-            generateImageBtn.style.display = 'none';
-
-            if (type === 'Immagine') {
-                const imagePrompt = `D&D fantasy art, digital painting, epic, detailed, high quality. ${prompt}`;
-                await generateImage(imagePrompt);
-                return;
-            }
-
-            let fullPrompt = '';
-            if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del PNG. Inizia la risposta direttamente con il nome del PNG in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto fisico (viso, occhi, capelli, altezza, corporatura), la personalità e un segreto. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Rispondi SOLO con la descrizione e la scheda del mostro. Inizia la risposta direttamente con il nome o la razza del mostro in grassetto. Basati su questa idea: "${prompt}". La risposta deve includere due sezioni: 1. Descrizione fisica concisa. 2. Scheda statistiche completa in formato D&D 5e (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi). Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome del ${type} in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto, le proprietà e uno spunto di trama. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; }
-            try {
-                let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
-                const payload = { contents: chatHistory };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) {
-                    const errorBody = await response.text();
-                    throw new Error(`Errore API Testo (${response.status}): ${response.statusText} - ${errorBody}`);
-                }
-                const result = await response.json();
-                if (result.candidates && result.candidates.length > 0) {
-                    const text = result.candidates[0].content.parts[0].text;
-                    resultContainer.innerHTML = '';
-                    const editTextArea = document.createElement('textarea');
-                    editTextArea.className = 'w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans';
-                    editTextArea.value = text;
-                    resultContainer.appendChild(editTextArea);
-                    generateImageBtn.style.display = 'block';
-                    if (type === 'Ambientazione' || type === 'PNG') {
-                        saveToAdventureBtn.dataset.type = type;
-                        saveToAdventureBtn.style.display = 'block';
-                    }
-                } else {
-                    throw new Error("Nessun contenuto testuale valido ricevuto dall'API.");
-                }
-            } catch (error) {
-                console.error("Errore generazione testo:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`;
-            }
-        });
-
-        generateImageBtn.addEventListener('click', async () => {
-            const textArea = resultContainer.querySelector('textarea');
-            if (!textArea) {
-                resultContainer.innerHTML = `<p class="text-yellow-400 text-center">Nessuna descrizione testuale da cui generare un'immagine.</p>`;
-                return;
-            }
-            const description = textArea.value;
-            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
-            saveToAdventureBtn.style.display = 'none';
-            generateImageBtn.style.display = 'none';
-
-            try {
-                // Step 1: Chiedi a Gemini di creare un prompt per l'immagine
-                const promptCreationPrompt = `Crea un prompt conciso in inglese per un generatore di immagini stile D&D fantasy art, basandoti su questa descrizione: "${description}". Il prompt deve essere una serie di parole chiave e frasi brevi separate da virgole, focalizzandosi sugli aspetti visivi come aspetto, vestiti, equipaggiamento e atmosfera. Non superare le 70 parole. Esempio: 'Grumpy dwarf innkeeper, bald with a long braided beard, muscular arms, wearing a leather apron, fantasy tavern background, warm lighting.' Rispondi solo con il prompt.`;
-                let chatHistory = [{ role: "user", parts: [{ text: promptCreationPrompt }] }];
-                const payload = { contents: chatHistory };
-                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
-                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
-                if (!response.ok) {
-                    const errorBody = await response.text();
-                    throw new Error(`Errore API per prompt (${response.status}): ${response.statusText} - ${errorBody}`);
-                }
-                const result = await response.json();
-                const imagePrompt = result.candidates[0].content.parts[0].text;
-
-                // Step 2: Genera l'immagine con il prompt creato
-                await generateImage(imagePrompt);
-            } catch (error) {
-                console.error("Errore nel processo di generazione immagine da testo:", error);
-                resultContainer.innerHTML = `<p class="text-red-500 text-center">Errore nella creazione del prompt per l'immagine. Riprova.</p>`;
-            }
-        });
-
-        saveToAdventureBtn.addEventListener('click', async () => { if (!currentAdventureDocPath) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; } const editTextArea = resultContainer.querySelector('textarea'); if (!editTextArea) { alert("Nessun contenuto testuale da salvare."); return; } const contentToSave = editTextArea.value; const type = saveToAdventureBtn.dataset.type; const lines = contentToSave.split('\n'); const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto"; const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo"); if (group === null) return; const newNode = { title, content: contentToSave, group }; const adventureRef = doc(db, currentAdventureDocPath); try { const field = type === 'Ambientazione' ? 'environments' : 'pngs'; await updateDoc(adventureRef, { [field]: arrayUnion(newNode) }); saveToAdventureBtn.textContent = 'Salvato!'; setTimeout(() => { saveToAdventureBtn.textContent = 'Salva Testo'; }, 2000); } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); } });
+        generateBtn.addEventListener('click', async () => { const type = generatorType.value; const prompt = generatorPrompt.value.trim(); if (!prompt) { resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>'; return; } resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>'; saveToAdventureBtn.style.display = 'none'; let fullPrompt = ''; if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del PNG. Inizia la risposta direttamente con il nome del PNG in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto fisico (viso, occhi, capelli, altezza, corporatura), la personalità e un segreto. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Rispondi SOLO con la descrizione e la scheda del mostro. Inizia la risposta direttamente con il nome o la razza del mostro in grassetto. Basati su questa idea: "${prompt}". La risposta deve includere due sezioni: 1. Descrizione fisica concisa. 2. Scheda statistiche completa in formato D&D 5e (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi). Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome del ${type} in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto, le proprietà e uno spunto di trama. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } try { let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }]; const payload = { contents: chatHistory }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Errore API: ${response.statusText}`); const result = await response.json(); if (result.candidates && result.candidates.length > 0) { const text = result.candidates[0].content.parts[0].text; resultContainer.innerHTML = ''; const editTextArea = document.createElement('textarea'); editTextArea.className = 'w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans'; editTextArea.value = text; resultContainer.appendChild(editTextArea); if (type === 'Ambientazione' || type === 'PNG') { saveToAdventureBtn.dataset.type = type; saveToAdventureBtn.style.display = 'block'; } } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); } } catch (error) { console.error("Errore generazione:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; } });
+        saveToAdventureBtn.addEventListener('click', async () => { if (!currentAdventureDocPath) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; } const editTextArea = resultContainer.querySelector('textarea'); if (!editTextArea) { alert("Nessun contenuto da salvare."); return; } const contentToSave = editTextArea.value; const type = saveToAdventureBtn.dataset.type; const lines = contentToSave.split('\n'); const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto"; const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo"); if (group === null) return; const newNode = { title, content: contentToSave, group }; const adventureRef = doc(db, currentAdventureDocPath); try { const field = type === 'Ambientazione' ? 'environments' : 'pngs'; await updateDoc(adventureRef, { [field]: arrayUnion(newNode) }); saveToAdventureBtn.textContent = 'Salvato!'; setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000); } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); } });
 
         const addAdventureForm = document.getElementById('add-adventure-form');
         const adventureTitleInput = document.getElementById('adventure-title-input');
