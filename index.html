@@ -305,11 +305,7 @@
         }
 
         // --- Logica Generatore AI ---
-        // =======================================================================
-        // AZIONE RICHIESTA: Incolla qui la tua chiave API di Google AI Studio
-        // =======================================================================
         const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
-        // =======================================================================
 
         const generateBtn = document.getElementById('generate-btn');
         const generatorType = document.getElementById('generator-type');
@@ -317,10 +313,6 @@
         const resultContainer = document.getElementById('generator-result-container');
         
         generateBtn.addEventListener('click', async () => {
-            if (GEMINI_API_KEY === "INCOLLA_LA_TUA_CHIAVE_API_QUI") {
-                 resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Per favore, inserisci una chiave API valida nel codice per usare il generatore.</p>';
-                return;
-            }
             const type = generatorType.value;
             const prompt = generatorPrompt.value.trim();
             if (!prompt) {
@@ -328,7 +320,16 @@
                 return;
             }
             resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
-            const fullPrompt = `Sei un Dungeon Master esperto di Dungeons & Dragons 5e. Genera una descrizione concisa e d'impatto per un ${type}, basandoti sull'idea: "${prompt}". Fornisci 2-3 frasi chiave per aspetto, carattere e un possibile spunto di trama. Sii breve e diretto. Usa markdown per formattare.`;
+            
+            let fullPrompt = '';
+            if (type === 'PNG') {
+                fullPrompt = `Sei un Dungeon Master esperto di Dungeons & Dragons 5e. Genera una descrizione molto concisa per un PNG basato su questa idea: "${prompt}". Concentrati sull'aspetto fisico: descrivi in poche parole viso, occhi, capelli, altezza e corporatura. Aggiungi una frase sulla sua personalità e un possibile segreto o motivazione. Formatta in modo chiaro usando markdown.`;
+            } else if (type === 'Mostro') {
+                fullPrompt = `Sei un Dungeon Master esperto di Dungeons & Dragons 5e e un game designer. Crea un mostro unico basato su questa idea: "${prompt}". Il mostro deve essere coerente con le regole di D&D 5e. La risposta DEVE includere due sezioni separate: 1. Una breve descrizione fisica e del suo comportamento. 2. Una scheda delle statistiche completa in formato D&D 5e che includa: Classe Armatura, Punti Ferita (con la formula dei dadi), Velocità, le sei caratteristiche (FOR, DES, COS, INT, SAG, CAR) con i loro modificatori, Abilità, Sensi (es. Scurovisione), Linguaggi, Grado di Sfida (GS) e una sezione "Azioni" con almeno un attacco (specificando il bonus al tiro per colpire e i danni). Assegna al mostro una classe o un ruolo che si adatti alla descrizione fornita.`;
+            } else {
+                fullPrompt = `Sei un Dungeon Master esperto di Dungeons & Dragons 5e. Genera una descrizione concisa e d'impatto per un ${type}, basandoti sull'idea: "${prompt}". Fornisci 2-3 frasi chiave per l'aspetto e l'atmosfera, e un possibile spunto di trama o un segreto. Sii breve e diretto. Usa markdown per formattare.`;
+            }
+
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
                 const payload = { contents: chatHistory };
