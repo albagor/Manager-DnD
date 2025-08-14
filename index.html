@@ -15,10 +15,10 @@
         h1, h2, h3, h4, .tab-btn, .dice-btn, button {
              font-family: 'MedievalSharp', cursive;
         }
-        .tab-content, #app-container {
+        .tab-content, #app-container, #adventure-detail-view {
             display: none;
         }
-        .tab-content.active, #app-container.active {
+        .tab-content.active, #app-container.active, #adventure-detail-view.active {
             display: block;
         }
         .dice-result {
@@ -165,6 +165,15 @@
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
                             <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg">
                                 <h3 class="text-2xl font-bold text-red-400 mb-4">Ambienti</h3>
+                                <button id="add-environment-btn" class="w-full mb-4 bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-2 rounded-lg text-lg">Nuovo Ambiente</button>
+                                <form id="new-environment-form" class="hidden mb-4 space-y-2">
+                                    <input type="text" id="new-env-title" placeholder="Titolo ambiente" class="w-full bg-gray-700 rounded-lg p-2 text-sm font-sans" required>
+                                    <textarea id="new-env-content" placeholder="Descrizione..." class="w-full bg-gray-700 rounded-lg p-2 text-sm font-sans" rows="3"></textarea>
+                                    <div class="flex gap-2">
+                                        <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
+                                        <button type="button" id="cancel-env-btn" class="flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
+                                    </div>
+                                </form>
                                 <div id="environments-list" class="space-y-2"></div>
                             </aside>
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
@@ -272,11 +281,53 @@
         async function saveNewAdventure(userId, title) { const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`; try { await addDoc(collection(db, collectionPath), { title, background: "", environments: [], createdAt: serverTimestamp() }); } catch (e) { console.error("Errore salvataggio: ", e); } }
         function loadAdventures(userId) { const collectionPath = `/artifacts/${appId}/users/${userId}/adventures`; const q = query(collection(db, collectionPath), orderBy("createdAt", "desc")); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { const docPath = `/artifacts/${appId}/users/${currentUserId}/adventures/${docId}`; if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, docPath)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
-        function openAdventureDetail(userId, docId) { adventureListView.style.display = 'none'; adventureDetailView.style.display = 'block'; currentAdventureDocPath = `/artifacts/${appId}/users/${userId}/adventures/${docId}`; if (currentAdventureUnsubscribe) currentAdventureUnsubscribe(); currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => { if (doc.exists()) { const adventure = doc.data(); adventureDetailTitle.textContent = adventure.title; if (document.activeElement !== backgroundTextarea) { backgroundTextarea.value = adventure.background || ""; } renderEnvironments(adventure.environments || []); } else { console.error("Avventura non trovata!"); } }); }
+        
+        function openAdventureDetail(userId, docId) {
+            adventureListView.style.display = 'none';
+            adventureDetailView.style.display = 'block';
+            currentAdventureDocPath = `/artifacts/${appId}/users/${userId}/adventures/${docId}`;
+            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
+            currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => {
+                if (doc.exists()) {
+                    const adventure = doc.data();
+                    adventureDetailTitle.textContent = adventure.title;
+                    if (document.activeElement !== backgroundTextarea) {
+                        backgroundTextarea.value = adventure.background || "";
+                    }
+                    renderEnvironments(adventure.environments || []);
+                } else {
+                    console.error("Avventura non trovata!");
+                    backToListBtn.click();
+                }
+            });
+        }
+
         function renderEnvironments(environments) { const listEl = document.getElementById('environments-list'); listEl.innerHTML = ''; if (environments.length === 0) { listEl.innerHTML = '<p class="text-gray-500 text-sm font-sans">Nessun ambiente salvato.</p>'; return; } environments.forEach(env => { const details = document.createElement('details'); details.className = 'bg-gray-700 rounded-lg'; details.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${env.title}</summary><div class="p-2 border-t border-gray-600 font-sans text-sm">${env.content.replace(/\n/g, '<br>')}</div>`; listEl.appendChild(details); }); }
         backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureDocPath) { await updateDoc(doc(db, currentAdventureDocPath), { background: backgroundTextarea.value }); saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
         backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureDocPath = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } });
+        
+        const addEnvBtn = document.getElementById('add-environment-btn');
+        const newEnvForm = document.getElementById('new-environment-form');
+        const cancelEnvBtn = document.getElementById('cancel-env-btn');
+        addEnvBtn.addEventListener('click', () => newEnvForm.classList.toggle('hidden'));
+        cancelEnvBtn.addEventListener('click', () => newEnvForm.classList.add('hidden'));
+        newEnvForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            if (!currentAdventureDocPath) return;
+            const title = document.getElementById('new-env-title').value.trim();
+            const content = document.getElementById('new-env-content').value.trim();
+            if (!title) return;
+            const newEnvironment = { title, content };
+            const adventureRef = doc(db, currentAdventureDocPath);
+            try {
+                await updateDoc(adventureRef, { environments: arrayUnion(newEnvironment) });
+                newEnvForm.reset();
+                newEnvForm.classList.add('hidden');
+            } catch (error) {
+                console.error("Errore salvataggio ambiente:", error);
+            }
+        });
 
     </script>
 </body>
-</html>
+</ht
