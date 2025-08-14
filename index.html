@@ -228,8 +228,7 @@
         });
 
         async function generateText(type, prompt) {
-            let fullPrompt = '';
-            if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del PNG. Inizia la risposta direttamente con il nome del PNG in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto fisico (viso, occhi, capelli, altezza, corporatura), la personalità e un segreto. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Rispondi SOLO con la descrizione e la scheda del mostro. Inizia la risposta direttamente con il nome o la razza del mostro in grassetto. Basati su questa idea: "${prompt}". La risposta deve includere due sezioni: 1. Descrizione fisica concisa. 2. Scheda statistiche completa in formato D&D 5e (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi). Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome del ${type} in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto, le proprietà e uno spunto di trama. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; }
+            let fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome in grassetto. Basati su questa idea: "${prompt}". Crea prima una descrizione pubblica (aspetto, personalità, ecc.). Poi, aggiungi una sezione separata per le note del master che inizia ESATTAMENTE con "---NOTE MASTER---" e che include segreti, statistiche o spunti di trama. Non aggiungere introduzioni o testo extra. Formatta tutto in markdown.`;
             try {
                 let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }];
                 const payload = { contents: chatHistory };
@@ -244,10 +243,8 @@
                     editTextArea.className = 'w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans';
                     editTextArea.value = text;
                     resultContainer.appendChild(editTextArea);
-                    if (type === 'Ambientazione' || type === 'PNG') {
-                        saveToAdventureBtn.dataset.type = type;
-                        saveToAdventureBtn.style.display = 'block';
-                    }
+                    saveToAdventureBtn.dataset.type = type;
+                    saveToAdventureBtn.style.display = 'block';
                 } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); }
             } catch (error) { console.error("Errore generazione testo:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; }
         }
@@ -256,16 +253,30 @@
             if (!currentAdventureDocPath) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; }
             const editTextArea = resultContainer.querySelector('textarea');
             if (!editTextArea) { alert("Nessun contenuto da salvare."); return; }
-            const contentToSave = editTextArea.value;
-            const type = saveToAdventureBtn.dataset.type;
-            const lines = contentToSave.split('\n');
+            
+            const fullContent = editTextArea.value;
+            const separator = '---NOTE MASTER---';
+            let publicContent = fullContent;
+            let masterContent = '';
+
+            if (fullContent.includes(separator)) {
+                const parts = fullContent.split(separator);
+                publicContent = parts[0].trim();
+                masterContent = parts[1].trim();
+            }
+
+            const lines = publicContent.split('\n');
             const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto";
             const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo");
             if (group === null) return;
-            const newNode = { title, content: contentToSave, group, imageUrl: "" };
+
+            const imageUrl = prompt("URL dell'immagine (opzionale):");
+
+            const newNode = { title, publicContent, masterContent, group, imageUrl: imageUrl || "" };
             const adventureRef = doc(db, currentAdventureDocPath);
             try {
-                const field = type === 'Ambientazione' ? 'environments' : 'pngs';
+                const type = saveToAdventureBtn.dataset.type;
+                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : 'pngs';
                 await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
                 saveToAdventureBtn.textContent = 'Salvato!';
                 setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
@@ -328,6 +339,12 @@
                 groupDetails.className = 'bg-gray-700 rounded-lg';
                 let nodesHtml = groups[groupName].map(node => {
                     const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const masterNotesHtml = node.masterContent ? `
+                        <div class="mt-2 pt-2 border-t border-dashed border-yellow-500">
+                            <h4 class="text-yellow-400 font-bold text-sm">Note Master</h4>
+                            <div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div>
+                        </div>
+                    ` : '';
                     return `
                     <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
                         <div class="node-view-mode">
@@ -341,13 +358,15 @@
                                 </summary>
                                 <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">
                                     ${imageHtml}
-                                    ${(node.content || '').replace(/\n/g, '<br>')}
+                                    <div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>
+                                    ${masterNotesHtml}
                                 </div>
                             </details>
                         </div>
-                        <div class="node-edit-mode hidden p-2">
-                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans mb-2" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
-                            <textarea class="node-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.content || ''}</textarea>
+                        <div class="node-edit-mode hidden p-2 space-y-2">
+                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
                             <div class="flex gap-2 mt-2">
                                 <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
                                 <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
@@ -396,7 +415,13 @@
                 if (nodeData) {
                     modalTitle.textContent = nodeData.title;
                     const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
-                    modalContent.innerHTML = imageHtml + (nodeData.content || '').replace(/\n/g, '<br>');
+                    const masterNotesHtml = nodeData.masterContent ? `
+                        <div class="mt-4 pt-4 border-t border-dashed border-yellow-500">
+                            <h4 class="text-yellow-400 font-bold text-lg">Note Master</h4>
+                            <div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div>
+                        </div>
+                    ` : '';
+                    modalContent.innerHTML = imageHtml + (nodeData.publicContent || '').replace(/\n/g, '<br>') + masterNotesHtml;
                     modal.classList.remove('hidden');
                 }
             }
@@ -414,10 +439,11 @@
                 if (!title) return;
                 const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
                 if (group === null) return;
-                const content = prompt("Inserisci una breve descrizione:");
+                const publicContent = prompt("Inserisci la descrizione pubblica:");
+                const masterContent = prompt("Inserisci le note per il master (private, opzionale):");
                 const imageUrl = prompt("URL dell'immagine (opzionale):");
                 
-                const newNode = { title, content: content || "", group, imageUrl: imageUrl || "" };
+                const newNode = { title, publicContent: publicContent || "", masterContent: masterContent || "", group, imageUrl: imageUrl || "" };
                 const adventureRef = doc(db, currentAdventureDocPath);
                 try {
                     await updateDoc(adventureRef, { [type]: arrayUnion(newNode) });
@@ -461,11 +487,13 @@
                     const originalNode = nodes.find(node => node.title === title);
                     if (originalNode) {
                         container.querySelector('.node-image-url-edit').value = originalNode.imageUrl || '';
-                        container.querySelector('.node-content-edit').value = originalNode.content || '';
+                        container.querySelector('.node-public-content-edit').value = originalNode.publicContent || '';
+                        container.querySelector('.node-master-content-edit').value = originalNode.masterContent || '';
                     }
                 }
             } else if (target.classList.contains('save-node-btn')) {
-                const newContent = container.querySelector('.node-content-edit').value;
+                const newPublicContent = container.querySelector('.node-public-content-edit').value;
+                const newMasterContent = container.querySelector('.node-master-content-edit').value;
                 const newImageUrl = container.querySelector('.node-image-url-edit').value;
                 const adventureRef = doc(db, currentAdventureDocPath);
                 const adventureSnap = await getDoc(adventureRef);
@@ -474,7 +502,8 @@
                     const nodeIndex = nodes.findIndex(node => node.title === title);
                     if (nodeIndex !== -1) {
                         const updatedNodes = [...nodes];
-                        updatedNodes[nodeIndex].content = newContent;
+                        updatedNodes[nodeIndex].publicContent = newPublicContent;
+                        updatedNodes[nodeIndex].masterContent = newMasterContent;
                         updatedNodes[nodeIndex].imageUrl = newImageUrl;
                         try {
                             await updateDoc(adventureRef, { [type]: updatedNodes });
