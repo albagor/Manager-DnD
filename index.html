@@ -3,414 +3,1253 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&D Adventure Manager</title>
+    <title>Scheda Degenza Paziente Interattiva</title>
+
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
+
+    <script>
+      const firebaseConfig = {
+        apiKey: "AIzaSyCy9YtgkIEoye2v4XJmXWv-wcHCY2XtgLU",
+        authDomain: "cartella-clinica-veterinaria.firebaseapp.com",
+        projectId: "cartella-clinica-veterinaria",
+        storageBucket: "cartella-clinica-veterinaria.firebasestorage.app",
+        messagingSenderId: "331086829436",
+        appId: "1:331086829436:web:06a9a6bb54003c95f7b6f9"
+      };
+      firebase.initializeApp(firebaseConfig);
+    </script>
+
     <script src="https://cdn.tailwindcss.com"></script>
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        h1, h2, h3, h4, .tab-btn, .dice-btn, button {
-             font-family: 'MedievalSharp', cursive;
-        }
-        .tab-content, #app-container, #adventure-detail-view {
-            display: none;
-        }
-        .tab-content.active, #app-container.active, #adventure-detail-view.active {
-            display: block;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ef4444;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .node-link {
-            color: #f87171; /* text-red-400 */
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .node-link:hover {
-            color: #fca5a5; /* text-red-300 */
-        }
-    </style>
-</head>
-<body class="bg-gray-900 text-white">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Contenitore Autenticazione -->
-    <div id="auth-container" class="min-h-screen flex items-center justify-center p-4">
-        <div class="w-full max-w-md">
-            <div class="bg-gray-800 shadow-lg rounded-lg p-8">
-                <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
-                <form id="login-form">
-                    <h2 class="text-2xl text-center mb-4">Accedi</h2>
-                    <div class="mb-4"><label for="login-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="login-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <div class="mb-6"><label for="login-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="login-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Accedi</button>
-                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Non hai un account? <a href="#" id="show-register" class="text-red-400 hover:text-red-300">Registrati</a></p>
-                </form>
-                <form id="register-form" style="display: none;">
-                    <h2 class="text-2xl text-center mb-4">Crea un Account</h2>
-                    <div class="mb-4"><label for="register-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="register-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <div class="mb-6"><label for="register-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="register-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Registrati</button>
-                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Hai già un account? <a href="#" id="show-login" class="text-red-400 hover:text-red-300">Accedi</a></p>
-                </form>
-                <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
-            </div>
+    <style>
+    body { font-family: 'Inter', sans-serif; }
+    .form-section-title { font-size: 1.5rem; font-weight: 700; color: #2563eb; margin-bottom: 0.5rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e5e7eb; }
+    .form-section-subtitle { color: #6b7280; margin-bottom: 1.5rem; }
+    .dynamic-input-container input { margin-bottom: 0.5rem; }
+    .group-header { cursor: pointer; user-select: none; }
+
+    /* Stili per la Stampa */
+    @media print {
+        body {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            margin: 0;
+            padding: 0;
+        }
+        .no-print { display: none !important; }
+        .printable-area {
+            box-shadow: none !important;
+            border: none !important;
+            margin: 0 !important;
+            padding: 1cm !important;
+        }
+        
+        .printable-data {
+            display: block !important;
+            background: none !important;
+            border: none !important;
+            padding: 0 !important;
+            font-size: 10pt !important;
+            line-height: 1.4 !important;
+            color: black !important;
+            width: 100% !important;
+            resize: none !important;
+            overflow: hidden !important;
+            -webkit-box-shadow: none !important;
+            box-shadow: none !important;
+            -webkit-text-fill-color: black !important;
+            text-fill-color: black !important;
+        }
+
+        input, select, textarea {
+            font-size: 10pt !important;
+        }
+
+        input[type="checkbox"] + label {
+            display: inline-block !important;
+        }
+        
+        textarea.printable-data {
+            height: auto !important;
+            min-height: unset !important;
+            white-space: pre-wrap !important;
+        }
+
+        .p-4.border.rounded-lg, .p-4.border.rounded-lg.bg-gray-50 {
+            border: 1px solid #ddd !important;
+            padding: 0.5rem !important;
+            margin-bottom: 0.5rem !important;
+        }
+
+        .form-section-title {
+            margin-top: 1.2rem !important;
+            margin-bottom: 0.4rem !important;
+            padding-bottom: 0.25rem !important;
+            border-bottom: 1px solid black !important;
+            color: black !important;
+            font-size: 1.1rem !important;
+        }
+        .form-section-subtitle { display: none !important; }
+
+        .group-content { display: block !important; }
+        .group-header .toggle-icon { display: none !important; }
+
+        /* REGOLE PER OTTIMIZZAZIONE STAMPA */
+        .print-hide {
+            display: none !important;
+        }
+        .print-hidden-original {
+            display: none !important;
+        }
+
+        .form-section {
+            padding: 0.5rem 0 !important;
+            margin: 0 !important;
+            border: none !important;
+        }
+        hr.border-dashed {
+            display: none !important;
+        }
+
+        .form-section, .monitoring-group, .therapy-group {
+            page-break-inside: avoid;
+        }
+
+        #medical-evaluation-section,
+        #monitoring-entries-container,
+        #therapy-log-container {
+            page-break-before: auto;
+        }
+
+        /* NUOVE REGOLE SPECIFICHE PER STAMPA VALUTAZIONE */
+        body.print-evaluation-only .form-section {
+            display: none !important;
+        }
+        body.print-evaluation-only #medical-evaluation-section {
+            display: block !important;
+        }
+        body.print-evaluation-only #medical-evaluation-section > .flex.justify-between.items-start {
+            display: none !important;
+        }
+    }
+</style>
+</head>
+<body class="bg-gray-100 text-gray-800">
+
+    <div id="login-screen" class="fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center p-4 z-50">
+        <div class="bg-white p-8 rounded-xl shadow-lg w-full max-w-md text-center">
+            <h2 class="text-2xl font-bold text-gray-800 mb-4">Accedi al Sistema</h2>
+            <p class="text-sm text-gray-600 mb-6">Inserisci le tue credenziali per continuare.</p>
+            <form id="login-form" class="space-y-4">
+                <input type="email" id="login-email" placeholder="Email" required class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <input type="password" id="login-password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg focus:ring-blue-500 focus:border-blue-500">
+                <button type="submit" class="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition">Accedi</button>
+            </form>
+            <p id="login-error" class="mt-4 text-red-600 text-sm hidden">Credenziali non valide. Riprova.</p>
         </div>
     </div>
+    
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
 
-    <!-- Contenitore App Principale -->
-    <div id="app-container">
-        <div class="container mx-auto p-4 md:p-8">
-            <header class="flex justify-between items-center mb-8">
-                <div><h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1><p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili.</p></div>
-                <div id="user-info" class="text-right"><p id="user-email" class="text-gray-300 font-sans"></p><button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
-            </header>
-            <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view">Vista Giocatore</button></nav></div></div>
-            <main>
-                <div id="dice-roller" class="tab-content active">
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                        <h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2>
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6">
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button>
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button>
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button>
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button>
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button>
-                            <button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button>
+        <div class="flex justify-between items-center mb-6 no-print">
+            <h1 class="text-3xl font-bold text-gray-800">Cartella Clinica</h1>
+            <div class="flex space-x-2">
+                 <button type="button" id="logout-btn" class="px-5 py-2 border border-red-500 text-red-600 font-semibold rounded-lg hover:bg-red-50 transition">
+                    Logout
+                </button>
+                <button type="button" id="new-card-btn" class="px-5 py-2 bg-indigo-600 text-white font-semibold rounded-lg hover:bg-indigo-700 transition">
+                    + Crea Nuova Scheda
+                </button>
+            </div>
+        </div>
+
+        <div id="form-section" class="printable-area bg-white rounded-xl shadow-lg p-6 sm:p-8 mb-8">
+            <div id="patient-info-header-print" class="patient-info-print-only hidden p-4 mb-4 border-b-2 border-black">
+                <h1 class="text-xl font-bold" id="print-header-title"></h1>
+                <p class="text-sm" id="print-header-date"></p>
+            </div>
+
+            <form id="patient-form">
+                <div class="form-section">
+                    <h2 class="form-section-title">Anagrafica Paziente</h2>
+                    <p class="form-section-subtitle">Dati identificativi del paziente e del proprietario.</p>
+                    <div class="space-y-6 form-section-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="entryDate" class="block text-sm font-medium text-gray-700 mb-1">Data di Ingresso</label><input type="date" id="entryDate" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="ownerLastname" class="block text-sm font-medium text-gray-700 mb-1">Cognome Proprietario <span class="text-red-500">*</span></label><input type="text" id="ownerLastname" placeholder="Es. Rossi" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data" required></div>
                         </div>
-                        <div class="flex flex-wrap items-center gap-4 mb-6 font-sans">
-                            <div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
-                            <div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="phone" class="block text-sm font-medium text-gray-700 mb-1">Telefono</label><input type="tel" id="phone" placeholder="Es. 3331234567" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="altContact" class="block text-sm font-medium text-gray-700 mb-1">Persona diversa da contattare</label><input type="text" id="altContact" placeholder="Nome e telefono" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
                         </div>
-                        <div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div>
+                        <hr class="my-6 border-t border-gray-200">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="patientName" class="block text-sm font-medium text-gray-700 mb-1">Nome Paziente <span class="text-red-500">*</span></label><input type="text" id="patientName" placeholder="Es. Fido" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data" required></div>
+                            <div><label for="species" class="block text-sm font-medium text-gray-700 mb-1">Specie</label><input type="text" id="species" placeholder="Es. Cane" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div><label for="sex" class="block text-sm font-medium text-gray-700 mb-1">Sesso</label><select id="sex" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Maschio</option><option>Femmina</option><option>Castrato</option><option>Sterilizzata</option></select></div>
+                            <div><label for="age" class="block text-sm font-medium text-gray-700 mb-1">Età</label><input type="text" id="age" placeholder="Es. 2 anni" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="weight" class="block text-sm font-medium text-gray-700 mb-1">Peso (kg) <span class="text-red-500">*</span></label><input type="number" step="0.1" id="weight" placeholder="Es. 10.5" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data" required></div>
+                            <div><label for="microchip" class="block text-sm font-medium text-gray-700 mb-1">Microchip</label><input type="text" id="microchip" placeholder="Numero microchip" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                        </div>
+
+                        <!-- Buttons for Discharge/Deceased -->
+                        <div class="flex space-x-4 pt-4 border-t border-gray-200">
+                            <button type="button" id="discharge-btn" class="w-full px-4 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 transition no-print">Dimissioni</button>
+                            <button type="button" id="deceased-btn" class="w-full px-4 py-2 bg-red-600 text-white font-semibold rounded-lg hover:bg-red-700 transition no-print">Decesso</button>
+                        </div>
+
+                        <!-- Discharge Section (Hidden by default) -->
+                        <div id="discharge-section" class="hidden space-y-4 pt-4 border-t border-blue-200">
+                            <h3 class="text-lg font-semibold text-blue-700">Dati Dimissioni</h3>
+                            <div>
+                                <label for="dischargeDate" class="block text-sm font-medium text-gray-700 mb-1">Data di Dimissioni</label>
+                                <input type="date" id="dischargeDate" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data">
+                            </div>
+                            <div>
+                                <label for="dischargeNotes" class="block text-sm font-medium text-gray-700 mb-1">Note Dimissioni</label>
+                                <textarea id="dischargeNotes" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea>
+                            </div>
+                        </div>
+
+                        <!-- Deceased Section (Hidden by default) -->
+                        <div id="deceased-section" class="hidden space-y-4 pt-4 border-t border-red-200">
+                            <h3 class="text-lg font-semibold text-red-700">Dati Decesso</h3>
+                            <div>
+                                <label for="deceasedDateTime" class="block text-sm font-medium text-gray-700 mb-1">Data e Ora del Decesso</label>
+                                <input type="datetime-local" id="deceasedDateTime" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data">
+                            </div>
+                            <div>
+                                <label for="deceasedNotes" class="block text-sm font-medium text-gray-700 mb-1">Note Decesso</label>
+                                <textarea id="deceasedNotes" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div id="ai-generator" class="tab-content">
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                        <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <h2 class="form-section-title">Storico Paziente e Anamnesi</h2>
+                    <div class="space-y-6 form-section-content">
+                        <div><label for="reasonForHospitalization" class="block text-sm font-medium text-gray-700 mb-1">Motivo di Ricovero</label><textarea id="reasonForHospitalization" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                             <div>
-                                <div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Tesoro">Tesoro</option></select></div>
-                                <div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div>
-                                <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
+                                <label for="vaccinations" class="block text-sm font-medium text-gray-700 mb-1">Vaccinazioni</label>
+                                <select id="vaccinations" data-other-container="vaccinations-other-container" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg conditional-select printable-data"><option>Regolari</option><option>Irregolari</option><option>Non note</option><option>Nessuna</option><option value="Altro">Altro</option></select>
+                                <div id="vaccinations-other-container" class="mt-2 hidden"><label for="vaccinations-other" class="block text-sm font-medium text-gray-700 mb-1">Altro (specificare)</label><input type="text" id="vaccinations-other" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
                             </div>
-                            <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col">
-                                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div>
-                                <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+                            <div>
+                                <label for="parasiteTreatments" class="block text-sm font-medium text-gray-700 mb-1">Antiparassitari</label>
+                                <select id="parasiteTreatments" data-other-container="parasite-treatments-other-container" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg conditional-select printable-data"><option>Regolari</option><option>Irregolari</option><option>Non note</option><option>Nessuna</option><option value="Altro">Altro</option></select>
+                                <div id="parasite-treatments-other-container" class="mt-2 hidden"><label for="parasite-treatments-other" class="block text-sm font-medium text-gray-700 mb-1">Altro (specificare)</label><input type="text" id="parasite-treatments-other" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
                             </div>
                         </div>
+                        <div><label for="previousPathologies" class="block text-sm font-medium text-gray-700 mb-1">Patologie Pregresse</label><textarea id="previousPathologies" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
                     </div>
                 </div>
-                <div id="adventures" class="tab-content">
-                    <div id="adventure-list-view" class="active">
-                        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                            <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
-                            <form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form>
-                            <div id="adventures-list" class="space-y-3"></div>
-                        </div>
-                    </div>
-                    <div id="adventure-detail-view" style="display: none;">
-                        <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                            <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3>
-                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button>
-                                    <div id="environments-list" class="space-y-2"></div>
-                                </div>
-                                <hr class="border-gray-600">
-                                <div>
-                                    <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
-                                    <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
-                                    <div id="pngs-list" class="space-y-2"></div>
-                                </div>
-                            </aside>
-                            <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
-                                <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
-                                <h3 class="text-2xl font-bold text-gray-300 mb-2">Background</h3>
-                                <textarea id="adventure-background-textarea" class="w-full h-64 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui il background..."></textarea>
-                                <div id="background-preview" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 overflow-y-auto font-sans mt-2"></div>
-                                <p id="save-status" class="text-sm text-gray-500 mt-2 h-4 font-sans"></p>
-                            </section>
-                        </div>
-                    </div>
-                </div>
-                 <div id="player-view" class="tab-content">
-                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-                        <h2 class="text-3xl font-bold mb-4 text-red-400">Vista Giocatore</h2>
-                        <p class="text-gray-400 font-sans">Questa sezione mostrerà solo le informazioni che decidi di condividere con i tuoi giocatori.</p>
-                    </div>
-                 </div>
-            </main>
-        </div>
-    </div>
 
-    <!-- Finestra Modale per i Nodi -->
-    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500">
-            <div class="flex justify-between items-center mb-4">
-                <h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2>
-                <button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <h2 class="form-section-title">Esame Clinico Obbiettivo d'Ingresso</h2>
+                    <div class="space-y-6 form-section-content">
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="mentalState" class="block text-sm font-medium text-gray-700 mb-1">Stato mentale/Reattività</label>
+                                <select id="mentalState" data-other-container="mental-state-other-container" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg conditional-select printable-data"><option>Normale</option><option>Depresso</option><option>Optunded</option><option>Stuporoso</option><option>Coma</option><option>Iperestesia</option><option value="Altro">Altro</option></select>
+                                <div id="mental-state-other-container" class="mt-2 hidden"><label for="mentalStateOther" class="block text-sm font-medium text-gray-700 mb-1">Altro cosa?</label><input type="text" id="mentalStateOther" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            </div>
+                            <div>
+                                <label for="gait" class="block text-sm font-medium text-gray-700 mb-1">Andatura</label>
+                                <select id="gait" data-other-container="gait-other-container" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg conditional-select printable-data" data-condition-value="Zoppia"><option>Normale</option><option>Atassia</option><option>Paresi</option><option>Paralisi</option><option value="Zoppia">Zoppia</option></select>
+                                <div id="gait-other-container" class="mt-2 hidden"><label for="gaitOther" class="block text-sm font-medium text-gray-700 mb-1">Zoppia quale arto?</label><input type="text" id="gaitOther" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <div><label for="temperature" class="block text-sm font-medium text-gray-700 mb-1">Temperatura (°C)</label><input type="number" step="0.1" id="temperature" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="capillaryRefillTime" class="block text-sm font-medium text-gray-700 mb-1">Tempo Riempimento Capillare (s)</label><input type="number" step="0.1" id="capillaryRefillTime" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="mucousMembranes" class="block text-sm font-medium text-gray-700 mb-1">Colore Mucose</label><input type="text" id="mucousMembranes" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                            <div><label for="hydration" class="block text-sm font-medium text-gray-700 mb-1">Idratazione</label><select id="hydration" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Normale</option><option>Lieve</option><option>Moderata</option><option>Grave</option></select></div>
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div>
+                                <label for="lymphNodes" class="block text-sm font-medium text-gray-700 mb-1">Linfonodi Periferici</label>
+                                <select id="lymphNodes" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Normali</option><option>Aumentati</option></select>
+                            </div>
+                            <div><label for="abdominalPalpation" class="block text-sm font-medium text-gray-700 mb-1">Palpazione Addominale</label><select id="abdominalPalpation" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Normale</option><option>Dolente</option><option>Tesa</option><option>Masse/Organomegalia</option></select></div>
+                        </div>
+                        <div><label for="lymphNodesOther" class="block text-sm font-medium text-gray-700 mb-1">Linfonodi quali?</label><input type="text" id="lymphNodesOther" placeholder="Es. prescapolari, poplitei" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="cardiacAuscultation" class="block text-sm font-medium text-gray-700 mb-1">Auscultazione Cardiaca</label><select id="cardiacAuscultation" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Normale</option><option>Soffio</option><option>Battito doppio</option><option>Battito alternato</option><option>Accelerato</option><option>Bradicardico</option><option>Soffocato</option></select></div>
+                            <div><label for="pulmonaryAuscultation" class="block text-sm font-medium text-gray-700 mb-1">Auscultazione Polmonare</label><select id="pulmonaryAuscultation" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"><option>Normale</option><option>Ronchi</option><option>Crepitii</option><option>Fischi</option></select></div>
+                        </div>
+                        <div>
+                            <label for="cns" class="block text-sm font-medium text-gray-700 mb-1">Sistema Nervoso Centrale</label>
+                            <p class="text-xs text-gray-500 mb-1">(riflessi, reazioni posturali, collaborativo o non collaborativo, sedato)</p>
+                            <textarea id="cns" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
+                        <div><label for="otherFindings" class="block text-sm font-medium text-gray-700 mb-1">Altri Rilievi Significativi</label><textarea id="otherFindings" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
+                    </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <h2 class="form-section-title">Trattamento in Atto (a casa) e Terapie all'Ingresso</h2>
+                    <div class="space-y-6 form-section-content">
+                        <div><label for="homeTreatments" class="block text-sm font-medium text-gray-700 mb-1">Fluidi o farmaci A CASA (dosaggio, via e frequenza)</label><textarea id="homeTreatments" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
+                        <div><label for="admissionTherapy" class="block text-sm font-medium text-gray-700 mb-1">Terapia medica ALL'ATTO DEL RICOVERO</label><textarea id="admissionTherapy" rows="3" class="w-full px-4 py-2 bg-gray-50 border border-gray-300 rounded-lg printable-data"></textarea></div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-2">
+                                <label class="block text-sm font-medium text-gray-700">Esami da Eseguire (mettere una spunta)</label>
+                                <button type="button" id="add-custom-exam-btn" class="no-print px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition">+ Aggiungi altro esame</button>
+                            </div>
+                            <div id="exams-to-perform-list" class="space-y-3 printable-data">
+                                <div class="flex items-center"><input id="exam-cbc" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-cbc" class="ml-2">Emocromo</label></div>
+                                <div>
+                                    <div class="flex items-center"><input id="exam-biochem" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-biochem" class="ml-2">Biochimico</label></div>
+                                    <div class="ml-6 mt-1"><label for="exam-biochem-other" class="text-sm">Che tipo di biochimico?</label><input type="text" id="exam-biochem-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center"><input id="exam-snap" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-snap" class="ml-2">Snap Test</label></div>
+                                    <div class="ml-6 mt-1"><label for="exam-snap-other" class="text-sm">Quale snap test?</label><input type="text" id="exam-snap-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div class="flex items-center"><input id="exam-urinalysis" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-urinalysis" class="ml-2">Esame Urine (chimico e fisico)</label></div>
+                                <div class="flex items-center"><input id="exam-pucu" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-pucu" class="ml-2">Pu/Cu</label></div>
+                                <div>
+                                    <div class="flex items-center"><input id="exam-rx" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-rx" class="ml-2">Rx</label></div>
+                                    <div class="ml-6 mt-1"><label for="exam-rx-other" class="text-sm">Quante?</label><input type="number" id="exam-rx-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div class="flex items-center"><input id="exam-ultrasound" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-ultrasound" class="ml-2">Ecografia specialistica</label></div>
+                                <div class="flex items-center"><input id="exam-ecofast" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-ecofast" class="ml-2">Ecofast</label></div>
+                                <div class="flex items-center"><input id="exam-emogas" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-emogas" class="ml-2">Emogas</label></div>
+                                <div>
+                                    <div class="flex items-center"><input id="exam-surgery" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-surgery" class="ml-2">Chirurgia</label></div>
+                                    <div class="ml-6 mt-1"><label for="exam-surgery-other" class="text-sm">Che intervento?</label><input type="text" id="exam-surgery-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div>
+                                    <div class="flex items-center"><input id="exam-lab" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-lab" class="ml-2">Laboratorio</label></div>
+                                    <div class="ml-6 mt-1"><label for="exam-lab-other" class="text-sm">Che richiesta?</label><input type="text" id="exam-lab-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div class="flex items-center"><input id="exam-other" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="exam-other" class="ml-2">Altro</label></div>
+                                <div class="ml-6 mt-1"><label for="exam-other-other" class="text-sm">Altro cosa?</label><input type="text" id="exam-other-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                        </div>
+
+                        <div class="mt-6 pt-6 border-t border-gray-200">
+                            <label class="block text-sm font-medium text-gray-700 mb-2">Esami Effettivamente Eseguiti</label>
+                            <div class="space-y-3 printable-data">
+                                <div class="flex items-center"><input id="executed-exam-cbc" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-cbc" class="ml-2">Emocromo</label></div>
+                                <div>
+                                    <div class="flex items-center">
+                                        <input id="executed-exam-biochem" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-biochem" class="ml-2">Biochimico</label>
+                                    </div>
+                                    <div class="ml-6 mt-1"><label for="executed-exam-biochem-other" class="text-sm">Quale?</label><input type="text" id="executed-exam-biochem-other" class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data"></div>
+                                </div>
+                                <div class="flex items-center"><input id="executed-exam-snap" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-snap" class="ml-2">Snap Test</label></div>
+                                <div class="flex items-center"><input id="executed-exam-urinalysis" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-urinalysis" class="ml-2">Esame Urine (chimico e fisico)</label></div>
+                                <div class="flex items-center"><input id="executed-exam-pucu" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-pucu" class="ml-2">Pu/Cu</label></div>
+                                <div class="flex items-center"><input id="executed-exam-rx" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-rx" class="ml-2">Rx</label></div>
+                                <div class="flex items-center"><input id="executed-exam-ultrasound" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-ultrasound" class="ml-2">Ecografia specialistica</label></div>
+                                <div class="flex items-center"><input id="executed-exam-ecofast" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-ecofast" class="ml-2">Ecofast</label></div>
+                                <div class="flex items-center"><input id="executed-exam-emogas" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-emogas" class="ml-2">Emogas</label></div>
+                                <div class="flex items-center"><input id="executed-exam-surgery" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-surgery" class="ml-2">Chirurgia</label></div>
+                                <div class="flex items-center"><input id="executed-exam-lab" type="checkbox" class="h-4 w-4 rounded printable-data"><label for="executed-exam-lab" class="ml-2">Laboratorio</label></div>
+                                <div class="pt-2">
+                                    <label for="executed-exam-other-text" class="block text-sm font-medium text-gray-700 mb-1">Altro (eseguito)</label>
+                                    <input type="text" id="executed-exam-other-text" placeholder="Specificare altri esami eseguiti..." class="w-full mt-1 px-2 py-1 bg-gray-50 border rounded-md printable-data">
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <h2 class="form-section-title">Terapia Effettiva da Eseguire (Compilazione Medica)</h2>
+                    <div class="space-y-6 form-section-content">
+                        <div class="flex justify-between items-center mb-1">
+                            <label class="block text-sm font-medium text-gray-700">Terapia con Flebo</label>
+                            <button type="button" id="add-infusion-btn" class="no-print px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition">+ Aggiungi Flebo</button>
+                        </div>
+                        <div id="dynamic-infusion-inputs" class="dynamic-input-container space-y-4 printable-data">
+                            <div class="infusion-row p-4 border rounded-lg bg-gray-50 relative">
+                                <button type="button" class="remove-infusion-btn absolute top-2 right-2 text-red-500 hover:text-red-700 no-print">&times;</button>
+                                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Tipo di Flebo</label><input type="text" data-field="ivFluids" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Volume</label><input type="text" data-field="ivVolume" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Via di Somministrazione</label><input type="text" data-field="ivRoute" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+                                    <div><label class="block text-sm font-medium text-gray-700 mb-1">Velocità</label><select data-field="ivRate" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"><option>Bolo veloce</option><option>Bolo lento</option><option>Goccia veloce</option><option>Goccia lenta</option><option>Pompa ad infusione</option></select></div>
+                                </div>
+                                <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">Pompa infusione ml/kg/h</label><input type="text" data-field="ivRateOther" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+                            </div>
+                        </div>
+
+                        <div>
+                            <div class="flex justify-between items-center mb-1">
+                                <label class="block text-sm font-medium text-gray-700">Tipo di Farmaci da Somministrare</label>
+                                <button type="button" id="add-drug-btn" class="no-print px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600 transition">+ Aggiungi Farmaco</button>
+                            </div>
+                            <div id="dynamic-drug-inputs" class="dynamic-input-container printable-data">
+                                <input type="text" placeholder="Nome farmaco..." class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <h2 class="form-section-title">Chirurgia</h2>
+                    <div class="space-y-6 form-section-content">
+                        <div><label for="surgeryDescription" class="block text-sm font-medium text-gray-700 mb-1">Descrizione intervento chirurgico</label><textarea id="surgeryDescription" rows="4" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                        <div><label for="surgeryCondition" class="block text-sm font-medium text-gray-700 mb-1">Condizione da trattare</label><textarea id="surgeryCondition" rows="4" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                    </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div id="important-message-section" class="form-section">
+                    <div id="important-message-container" class="form-section-content">
+                        </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div id="medical-evaluation-section" class="form-section">
+                    <div class="flex justify-between items-start">
+                        <div>
+                            <h2 class="form-section-title">Valutazione Medica</h2>
+                            <p class="form-section-subtitle">Valutazione, decorso e dimissioni (Compilazione Medica).</p>
+                        </div>
+                        <div class="flex space-x-2 no-print">
+                            <button type="button" id="add-important-message-btn" class="px-4 py-2 border border-yellow-500 text-yellow-600 font-semibold rounded-lg hover:bg-yellow-50 transition duration-200 whitespace-nowrap">+ Messaggio</button>
+                            <button type="button" id="print-evaluation-button" class="px-4 py-2 border border-blue-500 text-blue-500 font-semibold rounded-lg hover:bg-blue-50 transition duration-200 whitespace-nowrap">Stampa Valutazione</button>
+                        </div>
+                    </div>
+                    <div class="space-y-6 form-section-content">
+                        <div><label for="medicalCourse" class="block text-sm font-medium text-gray-700 mb-1">Valutazione e Decorso Medico</label><textarea id="medicalCourse" rows="8" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                        <div><label for="dischargeConditions" class="block text-sm font-medium text-gray-700 mb-1">Condizioni all'Atto delle Dimissioni (con eventuale diagnosi)</label><textarea id="dischargeConditions" rows="8" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                        <div><label for="homeTherapy" class="block text-sm font-medium text-gray-700 mb-1">Terapie da Continuare a Casa</label><textarea id="homeTherapy" rows="8" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                        <div><label for="followUp" class="block text-sm font-medium text-gray-700 mb-1">Follow-up</label><textarea id="followUp" rows="3" class="w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data"></textarea></div>
+                        
+                    </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="form-section-title">Monitoraggio Parametri Vitali</h2>
+                        <button type="button" id="add-monitoring-btn" class="no-print px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">Aggiungi Monitoraggio</button>
+                    </div>
+                    <div id="monitoring-entries-container" class="space-y-4 form-section-content printable-data">
+                        </div>
+                </div>
+
+                <hr class="my-8 border-t-2 border-dashed border-gray-300">
+                <div class="form-section">
+                    <div class="flex justify-between items-center mb-4">
+                        <h2 class="form-section-title">Terapia (Somministrazioni)</h2>
+                        <button type="button" id="add-therapy-log-btn" class="no-print px-4 py-2 bg-green-500 text-white font-semibold rounded-lg hover:bg-green-600 transition">Aggiungi Somministrazione</button>
+                    </div>
+                    <div id="therapy-log-container" class="space-y-4 form-section-content printable-data">
+                        </div>
+                </div>
+            </form>
+
+            <div class="flex items-center justify-end space-x-4 pt-8 mt-8 border-t no-print">
+                <button type="button" id="print-button" class="px-6 py-2 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-100 transition duration-200">Stampa Scheda Completa</button>
+                <button type="button" id="save-button" class="px-6 py-2 bg-blue-600 text-white font-semibold rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition duration-200">Salva Paziente</button>
             </div>
-            <div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div>
+
+            <div id="message-box" class="mt-4 text-center"></div>
+        </div>
+        <div id="patients-list-section" class="bg-white rounded-xl shadow-lg p-6 sm:p-8 no-print mt-8">
+             <h2 class="text-2xl font-bold text-gray-700 mb-4">Pazienti Registrati</h2>
+             <div id="patients-list" class="space-y-4">
+                 <p id="loading-patients" class="text-gray-500">Nessun paziente salvato.</p>
+             </div>
+        </div>
+
+    </div>
+
+    <div id="monitoring-entry-template" class="hidden p-4 border rounded-lg bg-gray-50 relative">
+        <button type="button" class="remove-entry-btn absolute top-2 right-2 text-red-500 hover:text-red-700 no-print">&times;</button>
+        <h3 class="font-bold text-lg mb-4 text-gray-600">Nuova Rilevazione</h3>
+        <div class="space-y-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div><label class="block text-sm font-medium">Giorno</label><input type="date" data-field="day" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">Ora</label><input type="time" data-field="time" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">Temperatura</label><input type="number" step="0.1" data-field="temp" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div><label class="block text-sm font-medium">Glicemia</label><input type="number" data-field="glucose" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">FC (bpm)</label><input type="number" data-field="hr" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">FR (rpm)</label><input type="number" data-field="rr" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">Pressione Sanguigna</label><input type="text" data-field="bp" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            </div>
+            <div><label class="block text-sm font-medium">Note Aggiuntive</label><textarea data-field="notes" rows="2" class="w-full mt-1 p-2 border rounded-md printable-data"></textarea></div>
+            <hr class="my-4">
+            <div><label class="block text-sm font-medium">Monitoraggio Chirurgico</label><textarea data-field="surgicalMonitoring" rows="2" class="w-full mt-1 p-2 border rounded-md printable-data"></textarea></div>
+            <hr class="my-4">
+            <h4 class="font-semibold text-md text-gray-600">Alimentazione</h4>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                <div><label class="block text-sm font-medium">Tipo di Dieta</label><input type="text" data-field="dietType" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">Assunzione Spontanea</label><select data-field="spontaneousEating" class="w-full mt-1 p-2 border rounded-md printable-data"><option>Sì</option><option>No</option></select></div>
+                <div><label class="block text-sm font-medium">Alimentazione Assistita</label><select data-field="assistedEating" class="w-full mt-1 p-2 border rounded-md printable-data"><option>Nessuna</option><option>Mani</option><option>Cucchiaio</option><option>Siringa</option><option>Sonda</option></select></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-start">
+                <div>
+                    <label class="block text-sm font-medium">Vomito</label>
+                    <select data-field="vomit" class="w-full mt-1 p-2 border rounded-md conditional-select printable-data" data-condition-value="Sì" data-other-container="vomit-desc-container">
+                        <option>No</option><option value="Sì">Sì</option>
+                    </select>
+                </div>
+                <div data-id="vomit-desc-container" class="hidden md:col-span-2"><label class="block text-sm font-medium">Descrizione Vomito</label><input type="text" data-field="vomitDesc" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div><label class="block text-sm font-medium">Urine (Sì/No, Condizioni)</label><input type="text" data-field="urine" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+                <div><label class="block text-sm font-medium">Feci (Sì/No, Condizioni)</label><input type="text" data-field="feces" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            </div>
         </div>
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, orderBy, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    <div id="therapy-log-template" class="hidden p-4 border rounded-lg bg-gray-50 relative">
+        <button type="button" class="remove-entry-btn absolute top-2 right-2 text-red-500 hover:text-red-700 no-print">&times;</button>
+        
+        <!-- Sezione Farmaci -->
+        <h4 class="font-semibold text-md text-gray-700 mb-2">Farmaci</h4>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
+            <div><label class="block text-sm font-medium">Data</label><input type="date" data-field="date" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div><label class="block text-sm font-medium">Ora</label><input type="time" data-field="time" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div><label class="block text-sm font-medium">Operatore</label><input type="text" data-field="operator" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+            <div class="md:col-span-1"><label class="block text-sm font-medium">Nome Farmaco e Frequenza</label><input type="text" data-field="drugName" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div class="md:col-span-1"><label class="block text-sm font-medium">Posologia</label><input type="text" data-field="dosage" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div class="md:col-span-2"><label class="block text-sm font-medium">Via di Somministrazione</label><input type="text" data-field="administrationRoute" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+        </div>
+        <div class="mt-4"><label class="block text-sm font-medium">Note Farmaci</label><textarea data-field="drugNotes" rows="2" class="w-full mt-1 p-2 border rounded-md printable-data"></textarea></div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
-            authDomain: "avventure-dnd.firebaseapp.com",
-            projectId: "avventure-dnd",
-            storageBucket: "avventure-dnd.appspot.com",
-            messagingSenderId: "943269894603",
-            appId: "1:943269894603:web:b8851c9862d76486603e4e"
+        <hr class="my-6 border-gray-300">
+
+        <!-- Sezione Fluidoterapia -->
+        <h4 class="font-semibold text-md text-gray-700 mb-2">Fluidoterapia</h4>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium">Tipo di Flebo</label><input type="text" data-field="fluidType" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div><label class="block text-sm font-medium">Volume</label><input type="text" data-field="fluidVolume" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
+            <div><label class="block text-sm font-medium">Via di somministrazione</label><input type="text" data-field="fluidRoute" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+            <div>
+                <label class="block text-sm font-medium">Velocità</label>
+                <select data-field="fluidRate" class="w-full mt-1 p-2 border rounded-md printable-data">
+                    <option>Bolo lento</option>
+                    <option>Bolo veloce</option>
+                    <option>Goccia lenta</option>
+                    <option>Goccia veloce</option>
+                    <option>Pompa ad infusione</option>
+                </select>
+            </div>
+            <div><label class="block text-sm font-medium">Pompa infusionale ml/h</label><input type="text" data-field="fluidPumpRate" class="w-full mt-1 p-2 border rounded-md printable-data"></div>
+        </div>
+        <div class="mt-4"><label class="block text-sm font-medium">Note Fluidoterapia</label><textarea data-field="fluidNotes" rows="2" class="w-full mt-1 p-2 border rounded-md printable-data"></textarea></div>
+    </div>
+
+    <div id="custom-exam-template" class="hidden flex items-center space-x-2 mt-3 custom-exam-item printable-data">
+        <input type="checkbox" class="h-4 w-4 rounded exam-checkbox printable-data" data-custom="true">
+        <input type="text" placeholder="Nome esame..." class="custom-exam-name w-full px-2 py-1 bg-gray-50 border rounded-md printable-data">
+        <button type="button" class="remove-custom-exam-btn text-red-500 hover:text-red-700 text-xl font-bold no-print">&times;</button>
+    </div>
+
+    <div id="infusion-row-template" class="infusion-row p-4 border rounded-lg bg-gray-50 relative hidden printable-data">
+        <button type="button" class="remove-infusion-btn absolute top-2 right-2 text-red-500 hover:text-red-700 no-print">&times;</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Tipo di Flebo</label><input type="text" data-field="ivFluids" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Volume</label><input type="text" data-field="ivVolume" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Via di Somministrazione</label><input type="text" data-field="ivRoute" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+            <div><label class="block text-sm font-medium text-gray-700 mb-1">Velocità</label><select data-field="ivRate" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"><option>Bolo veloce</option><option>Bolo lento</option><option>Goccia veloce</option><option>Goccia lenta</option><option>Pompa ad infusione</option></select></div>
+        </div>
+        <div class="mt-4"><label class="block text-sm font-medium text-gray-700 mb-1">Pompa infusione ml/kg/h</label><input type="text" data-field="ivRateOther" class="w-full px-4 py-2 bg-white border rounded-lg printable-data"></div>
+    </div>
+
+    <div id="important-message-template" class="hidden p-4 border rounded-lg bg-yellow-100 relative mb-4 printable-data">
+        <h3 class="font-bold text-lg text-yellow-800 mb-2">Avviso Importante</h3>
+        <button type="button" class="remove-important-message-btn absolute top-2 right-2 text-yellow-800 hover:text-yellow-900 no-print">&times;</button>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div><label class="block text-sm font-medium text-yellow-800 mb-1">Inizio</label><input type="date" data-field="startDate" class="w-full px-4 py-2 bg-yellow-50 border border-yellow-300 rounded-lg printable-data"></div>
+            <div><label class="block text-sm font-medium text-yellow-800 mb-1">Scadenza</label><input type="date" data-field="endDate" class="w-full px-4 py-2 bg-yellow-50 border border-yellow-300 rounded-lg printable-data"></div>
+        </div>
+        <div class="mt-4">
+            <label class="block text-sm font-medium text-yellow-800 mb-1">Messaggio</label>
+            <textarea data-field="messageText" rows="3" class="w-full px-4 py-2 bg-yellow-50 border border-yellow-300 rounded-lg printable-data"></textarea>
+        </div>
+    </div>
+
+
+   <script>
+    // --- Riferimenti a Firebase Authentication e Firestore ---
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    const patientsCollection = db.collection('patients');
+
+    // --- ELEMENTI DEL DOM ---
+    const patientForm = document.getElementById('patient-form');
+    const messageBox = document.getElementById('message-box');
+    const patientsListDiv = document.getElementById('patients-list');
+    const saveButton = document.getElementById('save-button');
+    const examsToPerformList = document.getElementById('exams-to-perform-list');
+    const infusionContainer = document.getElementById('dynamic-infusion-inputs');
+    const drugsContainer = document.getElementById('dynamic-drug-inputs');
+    const importantMessageContainer = document.getElementById('important-message-container');
+    const monitoringContainer = document.getElementById('monitoring-entries-container');
+    const therapyContainer = document.getElementById('therapy-log-container');
+    let originalTextareas = [];
+
+
+    // Elementi di autenticazione
+    const loginScreen = document.getElementById('login-screen');
+    const loginForm = document.getElementById('login-form');
+    const loginEmail = document.getElementById('login-email');
+    const loginPassword = document.getElementById('login-password');
+    const loginError = document.getElementById('login-error');
+    const logoutBtn = document.getElementById('logout-btn');
+
+    let currentPatientId = null;
+
+    // --- FUNZIONI DI BASE ---
+    function displayMessage(text, type) {
+        messageBox.textContent = text;
+        messageBox.className = `mt-4 text-center p-3 rounded-lg ${type === 'success' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'}`;
+        setTimeout(() => { messageBox.textContent = ''; messageBox.className = 'mt-4 text-center'; }, 5000);
+    }
+
+    function clearForm() {
+        patientForm.reset();
+        currentPatientId = null;
+        document.querySelectorAll('.hidden').forEach(el => el.classList.add('hidden'));
+        monitoringContainer.innerHTML = '';
+        therapyContainer.innerHTML = '';
+        importantMessageContainer.innerHTML = '';
+
+        infusionContainer.innerHTML = '';
+        const defaultInfusion = document.getElementById('infusion-row-template').cloneNode(true);
+        defaultInfusion.id = '';
+        defaultInfusion.classList.remove('hidden');
+        infusionContainer.appendChild(defaultInfusion);
+
+        drugsContainer.innerHTML = '';
+        const defaultDrug = document.createElement('input');
+        defaultDrug.type = 'text';
+        defaultDrug.placeholder = 'Nome farmaco...';
+        defaultDrug.className = 'w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data';
+        drugsContainer.appendChild(defaultDrug);
+
+        document.querySelectorAll('.custom-exam-item').forEach(el => el.remove());
+
+        saveButton.textContent = 'Salva Paziente';
+        document.getElementById('entryDate').valueAsDate = new Date();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+    document.getElementById('new-card-btn').addEventListener('click', clearForm);
+
+    // --- GESTIONE CAMPI CONDIZIONALI ---
+    function handleConditionalVisibility(element) {
+        const containerId = element.dataset.otherContainer;
+        if (!containerId) return;
+        const container = document.getElementById(containerId);
+        if (!container) return;
+        const conditionValue = element.dataset.conditionValue || 'Altro';
+        const shouldShow = element.value === conditionValue;
+        container.style.display = shouldShow ? '' : 'none';
+        if (!shouldShow) {
+            container.querySelectorAll('input, textarea').forEach(input => input.value = '');
+        }
+    }
+    document.body.addEventListener('change', (e) => {
+        if (e.target.matches('.conditional-select')) {
+            handleConditionalVisibility(e.target);
+        }
+    });
+
+    // --- GESTIONE GRUPPI A SCOMPARSA (ACCORDION) ---
+    document.body.addEventListener('click', (e) => {
+        const header = e.target.closest('.group-header');
+        if (header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+            content.classList.toggle('hidden');
+            if (icon) {
+                icon.textContent = content.classList.contains('hidden') ? '▼' : '▲';
+            }
+        }
+        // Listener per rimuovere le entry singole
+        if (e.target.classList.contains('remove-entry-btn')) {
+            const parentEntry = e.target.closest('.p-4.border.rounded-lg');
+            const parentGroup = parentEntry.closest('[data-date]');
+            parentEntry.remove();
+            // Se il gruppo diventa vuoto, rimuovilo
+            if (parentGroup && parentGroup.querySelectorAll('.p-4.border.rounded-lg').length === 0) {
+                parentGroup.remove();
+            }
+        }
+    });
+
+    // --- LOGICA PER SEZIONI DINAMICHE RAGGRUPPATE ---
+    function findOrCreateDateGroup(container, date, sectionTitle, sectionClassPrefix) {
+        if (!date) date = "Senza Data";
+        let groupWrapper = container.querySelector(`[data-date="${date}"]`);
+        if (!groupWrapper) {
+            groupWrapper = document.createElement('div');
+            groupWrapper.className = `${sectionClassPrefix}-group mb-4`;
+            groupWrapper.dataset.date = date;
+            const displayDate = date === "Senza Data" ? "Senza Data" : new Date(date + 'T00:00:00').toLocaleDateString('it-IT', { year: 'numeric', month: 'long', day: 'numeric' });
+
+            groupWrapper.innerHTML = `
+                <div class="group-header ${sectionClassPrefix}-group-header flex justify-between items-center p-3 bg-gray-100 hover:bg-gray-200 rounded-lg cursor-pointer">
+                    <h4 class="font-bold text-gray-800">${sectionTitle} del ${displayDate}</h4>
+                    <span class="toggle-icon text-gray-600 text-xl">▼</span>
+                </div>
+                <div class="${sectionClassPrefix}-group-content hidden space-y-4 mt-2 p-2 pl-4 border-l-4 border-gray-200"></div>
+            `;
+            container.appendChild(groupWrapper);
+        }
+        return groupWrapper.querySelector(`.${sectionClassPrefix}-group-content`);
+    }
+    
+    function addGroupedEntry(containerId, templateId, sectionTitle, sectionClassPrefix) {
+        const container = document.getElementById(containerId);
+        const template = document.getElementById(templateId);
+        const clone = template.cloneNode(true);
+        clone.id = '';
+        clone.classList.remove('hidden');
+
+        const dateInput = clone.querySelector('input[type="date"]');
+        const today = new Date().toISOString().split('T')[0];
+        if (dateInput) dateInput.value = today;
+
+        const groupContent = findOrCreateDateGroup(container, today, sectionTitle, sectionClassPrefix);
+        groupContent.appendChild(clone);
+        
+        groupContent.classList.remove('hidden');
+        const icon = groupContent.previousElementSibling.querySelector('.toggle-icon');
+        if (icon) icon.textContent = '▲';
+    }
+
+    document.getElementById('add-monitoring-btn').addEventListener('click', () => {
+        addGroupedEntry('monitoring-entries-container', 'monitoring-entry-template', 'Monitoraggio', 'monitoring');
+    });
+    document.getElementById('add-therapy-log-btn').addEventListener('click', () => {
+        addGroupedEntry('therapy-log-container', 'therapy-log-template', 'Somministrazione', 'therapy');
+    });
+
+    function renderGroupedEntries(containerId, entries, templateId, sectionTitle, sectionClassPrefix) {
+        const container = document.getElementById(containerId);
+        container.innerHTML = '';
+        if (!entries || entries.length === 0) return;
+
+        const grouped = entries.reduce((acc, entry) => {
+            const date = entry.day || entry.date || 'Senza Data';
+            if (!acc[date]) acc[date] = [];
+            acc[date].push(entry);
+            return acc;
+        }, {});
+
+        const sortedDates = Object.keys(grouped).sort((a, b) => new Date(b) - new Date(a));
+
+        sortedDates.forEach(date => {
+            const groupContent = findOrCreateDateGroup(container, date, sectionTitle, sectionClassPrefix);
+            grouped[date].forEach(entryData => {
+                const template = document.getElementById(templateId);
+                const clone = template.cloneNode(true);
+                clone.id = '';
+                clone.classList.remove('hidden');
+                clone.querySelectorAll('[data-field]').forEach(input => {
+                    const fieldName = input.dataset.field;
+                    if (entryData.hasOwnProperty(fieldName)) {
+                        input.type === 'checkbox' ? input.checked = entryData[fieldName] : input.value = entryData[fieldName] || '';
+                    }
+                });
+                groupContent.appendChild(clone);
+            });
+        });
+    }
+
+    // --- GESTIONE FLEBO, FARMACI, ESAMI (NON RAGGRUPPATI) ---
+    infusionContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-infusion-btn')) {
+            if (infusionContainer.querySelectorAll('.infusion-row').length > 1) {
+                e.target.closest('.infusion-row').remove();
+            } else {
+                displayMessage("Devi lasciare almeno una riga per la terapia con flebo.", "error");
+            }
+        }
+    });
+    document.getElementById('add-infusion-btn').addEventListener('click', () => {
+        const clone = document.getElementById('infusion-row-template').cloneNode(true);
+        clone.id = '';
+        clone.classList.remove('hidden');
+        infusionContainer.appendChild(clone);
+    });
+    document.getElementById('add-drug-btn').addEventListener('click', () => {
+        const newInput = document.createElement('input');
+        newInput.type = 'text';
+        newInput.placeholder = 'Nome farmaco...';
+        newInput.className = 'w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data';
+        drugsContainer.appendChild(newInput);
+        newInput.focus();
+    });
+    document.getElementById('add-custom-exam-btn').addEventListener('click', () => {
+        const clone = document.getElementById('custom-exam-template').cloneNode(true);
+        clone.classList.add('custom-exam-item');
+        clone.classList.remove('hidden');
+        examsToPerformList.appendChild(clone);
+    });
+    examsToPerformList.addEventListener('click', (e) => {
+        if(e.target.classList.contains('remove-custom-exam-btn')) {
+            e.target.closest('.custom-exam-item').remove();
+        }
+    });
+
+    // --- GESTIONE MESSAGGIO IMPORTANTE ---
+    function addImportantMessage(messageData = {}) {
+        const template = document.getElementById('important-message-template');
+        const clone = template.cloneNode(true);
+        clone.id = '';
+        clone.classList.remove('hidden');
+
+        const today = new Date().toISOString().split('T')[0];
+        const endDate = new Date(messageData.endDate);
+        const isExpired = endDate < new Date();
+
+        if (!isExpired) {
+             importantMessageContainer.appendChild(clone);
+             if (Object.keys(messageData).length > 0) {
+                 clone.querySelector('[data-field="startDate"]').value = messageData.startDate;
+                 clone.querySelector('[data-field="endDate"]').value = messageData.endDate;
+                 clone.querySelector('[data-field="messageText"]').value = messageData.messageText;
+             } else {
+                clone.querySelector('[data-field="startDate"]').value = today;
+             }
+        }
+    }
+    document.getElementById('add-important-message-btn').addEventListener('click', () => {
+        if (importantMessageContainer.children.length === 0) {
+            addImportantMessage({});
+        } else {
+            displayMessage("È già presente un messaggio importante. Rimuovilo per aggiungerne un altro.", "error");
+        }
+    });
+    importantMessageContainer.addEventListener('click', (e) => {
+        if (e.target.classList.contains('remove-important-message-btn')) {
+            e.target.closest('.p-4.border.rounded-lg').remove();
+        }
+    });
+
+    // --- GESTIONE STAMPA OTTIMIZZATA ---
+    window.onbeforeprint = () => {
+        // 1. Reset classes and define helper function
+        document.querySelectorAll('.print-hide, .print-hidden-original').forEach(el => {
+            el.classList.remove('print-hide', 'print-hidden-original');
+        });
+        const hasValue = (el) => {
+            if (!el) return false;
+            if (el.type === 'checkbox' || el.type === 'radio') return el.checked;
+            if (el.tagName === 'SELECT') return el.selectedIndex > 0 && el.value !== '';
+            return el.value && el.value.trim() !== '';
         };
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
-
-        let currentUserId = null;
-        let currentAdventureDocPath = null;
-        let currentAdventureData = {};
-        let currentAdventureUnsubscribe = null;
-
-        onAuthStateChanged(auth, user => { if (user) { document.getElementById('auth-container').style.display = 'none'; document.getElementById('app-container').classList.add('active'); document.getElementById('user-email').textContent = user.email; currentUserId = user.uid; loadAdventures(user.uid); } else { document.getElementById('app-container').classList.remove('active'); document.getElementById('auth-container').style.display = 'flex'; currentUserId = null; } });
-        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
-
-        const tabButtons = document.querySelectorAll('.tab-btn');
-        const tabContents = document.querySelectorAll('.tab-content');
-        tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
-
-        const diceButtons = document.querySelectorAll('.dice-btn');
-        const resultsContainer = document.getElementById('dice-results-container');
-        const diceCountInput = document.getElementById('dice-count');
-        const diceModifierInput = document.getElementById('dice-modifier');
-        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
-        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
-
-        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
-        const generateBtn = document.getElementById('generate-btn');
-        const generatorType = document.getElementById('generator-type');
-        const generatorPrompt = document.getElementById('generator-prompt');
-        const resultContainer = document.getElementById('generator-result-container');
-        const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
-        generateBtn.addEventListener('click', async () => { const type = generatorType.value; const prompt = generatorPrompt.value.trim(); if (!prompt) { resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>'; return; } resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>'; saveToAdventureBtn.style.display = 'none'; let fullPrompt = ''; if (type === 'PNG') { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del PNG. Inizia la risposta direttamente con il nome del PNG in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto fisico (viso, occhi, capelli, altezza, corporatura), la personalità e un segreto. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else if (type === 'Mostro') { fullPrompt = `Sei un game designer di D&D 5e. Rispondi SOLO con la descrizione e la scheda del mostro. Inizia la risposta direttamente con il nome o la razza del mostro in grassetto. Basati su questa idea: "${prompt}". La risposta deve includere due sezioni: 1. Descrizione fisica concisa. 2. Scheda statistiche completa in formato D&D 5e (CA, PF, Velocità, Caratteristiche, Abilità, Sensi, Linguaggi, GS, Azioni con attacchi). Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } else { fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome del ${type} in grassetto. Basati su questa idea: "${prompt}". Descrivi in modo conciso l'aspetto, le proprietà e uno spunto di trama. Non aggiungere introduzioni o testo extra. Formatta in markdown.`; } try { let chatHistory = [{ role: "user", parts: [{ text: fullPrompt }] }]; const payload = { contents: chatHistory }; const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`; const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) }); if (!response.ok) throw new Error(`Errore API: ${response.statusText}`); const result = await response.json(); if (result.candidates && result.candidates.length > 0) { const text = result.candidates[0].content.parts[0].text; let htmlContent = text.replace(/### (.*)/g, '<h3 class="text-xl font-bold text-red-400 mt-4 mb-2">$1</h3>').replace(/## (.*)/g, '<h2 class="text-2xl font-bold text-red-400 mt-4 mb-2">$1</h2>').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>').replace(/\*(.*?)\*/g, '<em>$1</em>').replace(/\n/g, '<br>'); resultContainer.innerHTML = `<div class="text-gray-300">${htmlContent}</div>`; if (type === 'Ambientazione' || type === 'PNG') { saveToAdventureBtn.dataset.generatedContent = text; saveToAdventureBtn.dataset.type = type; saveToAdventureBtn.style.display = 'block'; } } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); } } catch (error) { console.error("Errore generazione:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; } });
-        saveToAdventureBtn.addEventListener('click', async () => { if (!currentAdventureDocPath) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; } const contentToSave = saveToAdventureBtn.dataset.generatedContent; const type = saveToAdventureBtn.dataset.type; const lines = contentToSave.split('\n'); const title = lines[0].replace(/\*|#/g, '').trim() || "Nuovo Contenuto"; const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo"); if (group === null) return; const newNode = { title, content: contentToSave, group }; const adventureRef = doc(db, currentAdventureDocPath); try { const field = type === 'Ambientazione' ? 'environments' : 'pngs'; await updateDoc(adventureRef, { [field]: arrayUnion(newNode) }); saveToAdventureBtn.textContent = 'Salvato!'; setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000); } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); } });
-
-        const addAdventureForm = document.getElementById('add-adventure-form');
-        const adventureTitleInput = document.getElementById('adventure-title-input');
-        const adventuresList = document.getElementById('adventures-list');
-        const adventureListView = document.getElementById('adventure-list-view');
-        const adventureDetailView = document.getElementById('adventure-detail-view');
-        const backToListBtn = document.getElementById('back-to-list-btn');
-        const adventureDetailTitle = document.getElementById('adventure-detail-title');
-        const backgroundTextarea = document.getElementById('adventure-background-textarea');
-        const backgroundPreview = document.getElementById('background-preview');
-        const saveStatus = document.getElementById('save-status');
-        let backgroundSaveTimeout;
-        addAdventureForm.addEventListener('submit', e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) saveNewAdventure(currentUserId, title); adventureTitleInput.value = ''; });
-        async function saveNewAdventure(userId, title) { const collectionPath = `users/${userId}/adventures`; try { await addDoc(collection(db, collectionPath), { title, background: "", environments: [], pngs: [], createdAt: serverTimestamp() }); } catch (e) { console.error("Errore salvataggio: ", e); } }
-        function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath), orderBy("createdAt", "desc")); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
-        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { const docPath = `users/${currentUserId}/adventures/${docId}`; if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, docPath)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
-        
-        function openAdventureDetail(userId, docId) {
-            adventureListView.style.display = 'none';
-            adventureDetailView.style.display = 'block';
-            currentAdventureDocPath = `users/${userId}/adventures/${docId}`;
-            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
-            currentAdventureUnsubscribe = onSnapshot(doc(db, currentAdventureDocPath), (doc) => {
-                if (doc.exists()) {
-                    currentAdventureData = doc.data();
-                    adventureDetailTitle.textContent = currentAdventureData.title;
-                    if (document.activeElement !== backgroundTextarea) {
-                        backgroundTextarea.value = currentAdventureData.background || "";
+        // 2. Conditional print logic
+        if (document.body.classList.contains('print-evaluation-only')) {
+            // --- PRINT EVALUATION ONLY ---
+            // The hiding is now done via CSS, this part just cleans up empty fields inside the section
+            const evalSection = document.getElementById('medical-evaluation-section');
+            if (evalSection) {
+                evalSection.querySelectorAll('textarea').forEach(textarea => {
+                    if (!hasValue(textarea)) {
+                        if(textarea.parentElement) textarea.parentElement.classList.add('print-hide');
                     }
-                    renderBackgroundLinks();
-                    renderGroupedNodes('environments', currentAdventureData.environments || []);
-                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                } else {
-                    console.error("Avventura non trovata!");
-                    backToListBtn.click();
+                });
+            }
+        } else {
+            // --- PRINT FULL DOCUMENT (Optimized) ---
+            document.querySelectorAll('.form-section').forEach(section => {
+                let sectionHasContent = false;
+                section.querySelectorAll('input, textarea, select').forEach(input => {
+                    if (hasValue(input)) sectionHasContent = true;
+                });
+                if (!sectionHasContent) {
+                    section.classList.add('print-hide');
                 }
             });
         }
 
-        function renderGroupedNodes(type, nodes) {
-            const listEl = document.getElementById(`${type}-list`);
-            listEl.innerHTML = '';
-            if (!nodes || nodes.length === 0) {
-                listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${type === 'pngs' ? 'PNG' : 'ambiente'}.</p>`;
+        // 3. Textarea replacement logic (for visible textareas only)
+        originalTextareas = [];
+        document.querySelectorAll('textarea.printable-data').forEach(textarea => {
+            if (textarea.closest('.print-hide') || textarea.classList.contains('print-hidden-original')) return;
+
+            const replacementDiv = document.createElement('div');
+            replacementDiv.classList.add('printable-data', 'print-only-content');
+            replacementDiv.style.whiteSpace = 'pre-wrap';
+            replacementDiv.textContent = textarea.value;
+            textarea.classList.add('print-hidden-original');
+            textarea.parentNode.insertBefore(replacementDiv, textarea.nextSibling);
+            originalTextareas.push({ textarea: textarea, replacement: replacementDiv });
+        });
+
+        // 4. Final preparations
+        document.querySelectorAll('.group-content').forEach(el => el.classList.remove('hidden'));
+        document.getElementById('patient-info-header-print').classList.remove('hidden');
+    };
+
+    window.onafterprint = () => {
+        document.querySelectorAll('.print-hide, .print-hidden-original').forEach(el => {
+            el.classList.remove('print-hide', 'print-hidden-original');
+        });
+        originalTextareas.forEach(item => {
+            if(item.replacement.parentNode) item.replacement.remove();
+        });
+        originalTextareas = [];
+        document.getElementById('patient-info-header-print').classList.add('hidden');
+        document.body.classList.remove('print-evaluation-only');
+    };
+
+    document.getElementById('print-button').addEventListener('click', () => {
+        document.body.classList.remove('print-evaluation-only');
+        document.querySelector('#patient-info-header-print h1').textContent = `Cartella Clinica: ${document.getElementById('patientName').value || 'N/D'} (${document.getElementById('ownerLastname').value || 'N/D'})`;
+        document.querySelector('#patient-info-header-print p').textContent = `Data di Stampa: ${new Date().toLocaleDateString('it-IT')}`;
+        window.print();
+    });
+    document.getElementById('print-evaluation-button').addEventListener('click', () => {
+        document.body.classList.add('print-evaluation-only');
+        document.querySelector('#patient-info-header-print h1').textContent = `Valutazione Medica: ${document.getElementById('patientName').value || 'N/D'} (${document.getElementById('ownerLastname').value || 'N/D'})`;
+        document.querySelector('#patient-info-header-print p').textContent = `Data di Stampa: ${new Date().toLocaleDateString('it-IT')}`;
+        window.print();
+    });
+
+    // --- GESTIONE AUTHENTICATION E FIREBASE ---
+    auth.onAuthStateChanged(user => {
+        if (user) {
+            loginScreen.classList.add('hidden');
+            renderPatientsList();
+        } else {
+            loginScreen.classList.remove('hidden');
+            patientsListDiv.innerHTML = '<p class="text-gray-500">Effettua l\'accesso per vedere i pazienti.</p>';
+            clearForm();
+        }
+    });
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        try {
+            await auth.signInWithEmailAndPassword(loginEmail.value, loginPassword.value);
+            loginError.classList.add('hidden');
+        } catch (error) {
+            loginError.textContent = "Credenziali non valide. Riprova.";
+            loginError.classList.remove('hidden');
+        }
+    });
+    logoutBtn.addEventListener('click', () => auth.signOut());
+
+    // --- CARICAMENTO, POPOLAMENTO E SALVATAGGIO DATI (FIREBASE) ---
+    async function renderPatientsList() {
+        patientsListDiv.innerHTML = '<p id="loading-patients" class="text-gray-500">Caricamento pazienti...</p>';
+        try {
+            const snapshot = await patientsCollection.orderBy('updatedAt', 'desc').get();
+            const patientsArray = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+            patientsListDiv.innerHTML = '';
+            if (patientsArray.length === 0) {
+                patientsListDiv.innerHTML = '<p class="text-gray-500">Nessun paziente salvato.</p>';
                 return;
             }
-            const groups = nodes.reduce((acc, node) => {
-                const group = node.group || 'Senza Gruppo';
-                if (!acc[group]) acc[group] = [];
-                acc[group].push(node);
-                return acc;
-            }, {});
-            for (const groupName in groups) {
-                const groupDetails = document.createElement('details');
-                groupDetails.className = 'bg-gray-700 rounded-lg';
-                let nodesHtml = groups[groupName].map(node => `
-                    <div class="p-2 border-t border-gray-600 node-container" data-node-title="${node.title}" data-node-type="${type}">
-                        <div class="node-view-mode">
-                             <details>
-                                <summary class="cursor-pointer text-base flex justify-between items-center">
-                                    <span>${node.title}</span>
-                                    <div class="flex-shrink-0">
-                                        <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button>
-                                        <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button>
-                                    </div>
-                                </summary>
-                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${node.content.replace(/\n/g, '<br>')}</div>
-                            </details>
-                        </div>
-                        <div class="node-edit-mode hidden p-2">
-                            <textarea class="node-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.content}</textarea>
-                            <div class="flex gap-2 mt-2">
-                                <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
-                                <button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
-                            </div>
-                        </div>
+            patientsArray.forEach(patient => {
+                const patientCard = document.createElement('div');
+                patientCard.className = 'p-4 border rounded-lg bg-gray-50 flex flex-col sm:flex-row justify-between sm:items-center';
+                patientCard.innerHTML = `
+                    <div>
+                        <p class="font-bold text-lg text-blue-700">${patient.patientName || 'N/D'} <span class="text-sm font-normal text-gray-500">(${patient.species || 'N/D'})</span></p>
+                        <p class="text-gray-600">Proprietario: ${patient.ownerLastname || 'N/D'}</p>
+                        <p class="text-xs text-gray-400 mt-1">Ultima modifica: ${new Date(patient.updatedAt.toDate()).toLocaleString('it-IT')}</p>
                     </div>
-                `).join('');
-                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
-                listEl.appendChild(groupDetails);
+                    <div class="flex space-x-2 mt-3 sm:mt-0">
+                        <button data-id="${patient.id}" class="open-patient-btn px-4 py-2 bg-white border border-gray-300 text-gray-700 font-semibold rounded-lg hover:bg-gray-100 transition">Apri</button>
+                        <button data-id="${patient.id}" class="delete-patient-btn px-4 py-2 bg-red-500 text-white font-semibold rounded-lg hover:bg-red-600 transition">Elimina</button>
+                    </div>
+                `;
+                patientsListDiv.appendChild(patientCard);
+            });
+        } catch (error) {
+            console.error("Errore nel caricamento dei pazienti:", error);
+            patientsListDiv.innerHTML = '<p class="text-red-500">Errore nel caricamento dei dati.</p>';
+        }
+    }
+
+    patientsListDiv.addEventListener('click', (e) => {
+        if (e.target.classList.contains('open-patient-btn')) loadPatientData(e.target.dataset.id);
+        if (e.target.classList.contains('delete-patient-btn')) deletePatientData(e.target.dataset.id);
+    });
+
+    async function loadPatientData(id) {
+        try {
+            const doc = await patientsCollection.doc(id).get();
+            if (doc.exists) {
+                clearForm();
+                populateForm(doc.data());
+                currentPatientId = doc.id;
+                saveButton.textContent = 'Aggiorna Scheda';
+                displayMessage(`Scheda di ${doc.data().patientName} caricata.`, 'success');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        } catch (error) {
+            displayMessage("Errore nel caricamento dei dati.", "error");
+        }
+    }
+
+    function populateForm(data) {
+        // Helper per popolare i campi
+        const setData = (key) => {
+            const element = document.getElementById(key);
+            if (element && data.hasOwnProperty(key)) {
+                if (element.type === 'checkbox') {
+                    element.checked = data[key];
+                } else {
+                    element.value = data[key] || '';
+                }
+            }
+        };
+
+        // Popola tutti i campi statici
+        const allStaticIds = ['entryDate', 'ownerLastname', 'phone', 'altContact', 'patientName', 'species', 'sex', 'age', 'weight', 'microchip', 'reasonForHospitalization', 'vaccinations', 'vaccinationsOther', 'parasiteTreatments', 'parasiteTreatmentsOther', 'previousPathologies', 'mentalState', 'mentalStateOther', 'gait', 'gaitOther', 'temperature', 'capillaryRefillTime', 'mucousMembranes', 'hydration', 'lymphNodes', 'lymphNodesOther', 'abdominalPalpation', 'cardiacAuscultation', 'pulmonaryAuscultation', 'cns', 'otherFindings', 'homeTreatments', 'admissionTherapy', 'surgeryDescription', 'surgeryCondition', 'medicalCourse', 'dischargeConditions', 'homeTherapy', 'followUp', 'dischargeDate', 'dischargeNotes', 'deceasedDateTime', 'deceasedNotes'];
+        allStaticIds.forEach(id => setData(id));
+        
+        document.querySelectorAll('.conditional-select').forEach(el => el.dispatchEvent(new Event('change')));
+
+        // Gestisce la visibilità delle sezioni dimissioni/decesso
+        if (data.dischargeDate || data.dischargeNotes) {
+            document.getElementById('discharge-section').classList.remove('hidden');
+        }
+        if (data.deceasedDateTime || data.deceasedNotes) {
+            document.getElementById('deceased-section').classList.remove('hidden');
+        }
+
+
+        // Popola esami (standard, custom, eseguiti)
+        if (data.examsToPerform) {
+            Object.keys(data.examsToPerform).forEach(key => {
+                const el = document.getElementById(`exam-${key.replace('_other', '-other')}`);
+                if (el) el.type === 'checkbox' ? el.checked = data.examsToPerform[key] : el.value = data.examsToPerform[key];
+            });
+        }
+        if (data.customExams) {
+            document.querySelectorAll('.custom-exam-item').forEach(el => el.remove());
+            data.customExams.forEach(exam => {
+                const clone = document.getElementById('custom-exam-template').cloneNode(true);
+                clone.classList.remove('hidden');
+                clone.querySelector('.exam-checkbox').checked = exam.checked;
+                clone.querySelector('.custom-exam-name').value = exam.name || '';
+                examsToPerformList.appendChild(clone);
+            });
+        }
+        if (data.examsExecuted) {
+            Object.keys(data.examsExecuted).forEach(key => {
+                const el = document.getElementById(`executed-exam-${key.replace('_other', '-other').replace('_text', '-text')}`);
+                if (el) el.type === 'checkbox' ? el.checked = data.examsExecuted[key] : el.value = data.examsExecuted[key];
+            });
+        }
+
+        // Popola Flebo
+        const populateSimpleDynamic = (container, templateId, entries) => {
+            container.innerHTML = '';
+            (entries || []).forEach(entryData => {
+                const clone = document.getElementById(templateId).cloneNode(true);
+                clone.id = '';
+                clone.classList.remove('hidden');
+                clone.querySelectorAll('[data-field]').forEach(input => {
+                    if (entryData[input.dataset.field]) input.value = entryData[input.dataset.field];
+                });
+                container.appendChild(clone);
+            });
+            if (container.children.length === 0) {
+                 const clone = document.getElementById(templateId).cloneNode(true);
+                 clone.id = '';
+                 clone.classList.remove('hidden');
+                 container.appendChild(clone);
+            }
+        };
+        populateSimpleDynamic(infusionContainer, 'infusion-row-template', data.infusionTherapy);
+        
+        // Popola Farmaci
+        drugsContainer.innerHTML = '';
+        (data.drugsToAdminister || ['']).forEach(drug => {
+            const drugInput = document.createElement('input');
+            drugInput.type = 'text';
+            drugInput.placeholder = 'Nome farmaco...';
+            drugInput.className = 'w-full px-4 py-2 bg-gray-50 border rounded-lg printable-data';
+            drugInput.value = drug;
+            drugsContainer.appendChild(drugInput);
+        });
+
+        // Popola Messaggio Importante e sezioni raggruppate
+        importantMessageContainer.innerHTML = '';
+        if (data.importantMessage) addImportantMessage(data.importantMessage);
+        renderGroupedEntries('monitoring-entries-container', data.monitoringEntries, 'monitoring-entry-template', 'Monitoraggio', 'monitoring');
+        renderGroupedEntries('therapy-log-container', data.therapyLog, 'therapy-log-template', 'Somministrazione', 'therapy');
+    }
+
+    async function saveData() {
+        // Raccoglie i dati dai campi dinamici
+        const getDynamicEntries = (containerId) => {
+            return Array.from(document.querySelectorAll(`#${containerId} .p-4.border.rounded-lg.relative`)).map(entryDiv => {
+                const entryData = {};
+                entryDiv.querySelectorAll('[data-field]').forEach(input => {
+                    entryData[input.dataset.field] = input.type === 'checkbox' ? input.checked : input.value;
+                });
+                return entryData;
+            });
+        };
+        
+        const importantMessageElement = importantMessageContainer.querySelector('div:not(.hidden)');
+        
+        // Raccoglie i dati da tutti i campi statici in modo esplicito
+        const patientData = {
+            entryDate: document.getElementById('entryDate').value,
+            ownerLastname: document.getElementById('ownerLastname').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
+            altContact: document.getElementById('altContact').value.trim(),
+            patientName: document.getElementById('patientName').value.trim(),
+            species: document.getElementById('species').value.trim(),
+            sex: document.getElementById('sex').value,
+            age: document.getElementById('age').value.trim(),
+            weight: document.getElementById('weight').value,
+            microchip: document.getElementById('microchip').value.trim(),
+            dischargeDate: document.getElementById('dischargeDate').value,
+            dischargeNotes: document.getElementById('dischargeNotes').value.trim(),
+            deceasedDateTime: document.getElementById('deceasedDateTime').value,
+            deceasedNotes: document.getElementById('deceasedNotes').value.trim(),
+            reasonForHospitalization: document.getElementById('reasonForHospitalization').value.trim(),
+            vaccinations: document.getElementById('vaccinations').value,
+            vaccinationsOther: document.getElementById('vaccinations-other').value.trim(),
+            parasiteTreatments: document.getElementById('parasiteTreatments').value,
+            parasiteTreatmentsOther: document.getElementById('parasite-treatments-other').value.trim(),
+            previousPathologies: document.getElementById('previousPathologies').value.trim(),
+            mentalState: document.getElementById('mentalState').value,
+            mentalStateOther: document.getElementById('mentalStateOther').value.trim(),
+            gait: document.getElementById('gait').value,
+            gaitOther: document.getElementById('gaitOther').value.trim(),
+            temperature: document.getElementById('temperature').value,
+            capillaryRefillTime: document.getElementById('capillaryRefillTime').value,
+            mucousMembranes: document.getElementById('mucousMembranes').value.trim(),
+            hydration: document.getElementById('hydration').value,
+            lymphNodes: document.getElementById('lymphNodes').value,
+            lymphNodesOther: document.getElementById('lymphNodesOther').value.trim(),
+            abdominalPalpation: document.getElementById('abdominalPalpation').value,
+            cardiacAuscultation: document.getElementById('cardiacAuscultation').value,
+            pulmonaryAuscultation: document.getElementById('pulmonaryAuscultation').value,
+            cns: document.getElementById('cns').value.trim(),
+            otherFindings: document.getElementById('otherFindings').value.trim(),
+            homeTreatments: document.getElementById('homeTreatments').value.trim(),
+            admissionTherapy: document.getElementById('admissionTherapy').value.trim(),
+            surgeryDescription: document.getElementById('surgeryDescription').value.trim(),
+            surgeryCondition: document.getElementById('surgeryCondition').value.trim(),
+            examsToPerform: {
+                cbc: document.getElementById('exam-cbc').checked,
+                biochem: document.getElementById('exam-biochem').checked, biochem_other: document.getElementById('exam-biochem-other').value.trim(),
+                snap: document.getElementById('exam-snap').checked, snap_other: document.getElementById('exam-snap-other').value.trim(),
+                urinalysis: document.getElementById('exam-urinalysis').checked, pucu: document.getElementById('exam-pucu').checked,
+                rx: document.getElementById('exam-rx').checked, rx_other: document.getElementById('exam-rx-other').value,
+                ultrasound: document.getElementById('exam-ultrasound').checked, ecofast: document.getElementById('exam-ecofast').checked,
+                emogas: document.getElementById('exam-emogas').checked,
+                surgery: document.getElementById('exam-surgery').checked, surgery_other: document.getElementById('exam-surgery-other').value.trim(),
+                lab: document.getElementById('exam-lab').checked, lab_other: document.getElementById('exam-lab-other').value.trim(),
+                other: document.getElementById('exam-other').checked, other_other: document.getElementById('exam-other-other').value.trim(),
+            },
+            examsExecuted: {
+                cbc: document.getElementById('executed-exam-cbc').checked,
+                biochem: document.getElementById('executed-exam-biochem').checked,
+                biochem_other: document.getElementById('executed-exam-biochem-other').value.trim(),
+                snap: document.getElementById('executed-exam-snap').checked,
+                urinalysis: document.getElementById('executed-exam-urinalysis').checked,
+                pucu: document.getElementById('executed-exam-pucu').checked,
+                rx: document.getElementById('executed-exam-rx').checked,
+                ultrasound: document.getElementById('executed-exam-ultrasound').checked,
+                ecofast: document.getElementById('executed-exam-ecofast').checked,
+                emogas: document.getElementById('executed-exam-emogas').checked,
+                surgery: document.getElementById('executed-exam-surgery').checked,
+                lab: document.getElementById('executed-exam-lab').checked,
+                other_text: document.getElementById('executed-exam-other-text').value.trim(),
+            },
+            medicalCourse: document.getElementById('medicalCourse').value.trim(),
+            dischargeConditions: document.getElementById('dischargeConditions').value.trim(),
+            homeTherapy: document.getElementById('homeTherapy').value.trim(),
+            followUp: document.getElementById('followUp').value.trim(),
+            customExams: Array.from(document.querySelectorAll('.custom-exam-item')).map(item => ({ name: item.querySelector('.custom-exam-name').value.trim(), checked: item.querySelector('.exam-checkbox').checked })).filter(exam => exam.name),
+            importantMessage: importantMessageElement ? { startDate: importantMessageElement.querySelector('[data-field="startDate"]').value, endDate: importantMessageElement.querySelector('[data-field="endDate"]').value, messageText: importantMessageElement.querySelector('[data-field="messageText"]').value } : null,
+            infusionTherapy: Array.from(document.querySelectorAll('#dynamic-infusion-inputs .infusion-row')).map(row => ({ ivFluids: row.querySelector('[data-field="ivFluids"]').value, ivVolume: row.querySelector('[data-field="ivVolume"]').value, ivRoute: row.querySelector('[data-field="ivRoute"]').value, ivRate: row.querySelector('[data-field="ivRate"]').value, ivRateOther: row.querySelector('[data-field="ivRateOther"]').value })),
+            drugsToAdminister: Array.from(document.querySelectorAll('#dynamic-drug-inputs input')).map(input => input.value.trim()).filter(Boolean),
+            monitoringEntries: getDynamicEntries('monitoring-entries-container'),
+            therapyLog: getDynamicEntries('therapy-log-container'),
+            updatedAt: new Date(),
+        };
+
+        if (!patientData.ownerLastname || !patientData.patientName || !patientData.weight) {
+            displayMessage("Compila tutti i campi anagrafici obbligatori (*).", "error");
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+            return;
+        }
+
+        try {
+            if (currentPatientId) {
+                await patientsCollection.doc(currentPatientId).set(patientData, { merge: true });
+                displayMessage("Scheda aggiornata con successo!", "success");
+            } else {
+                patientData.createdAt = new Date();
+                await patientsCollection.add(patientData);
+                displayMessage("Scheda salvata con successo!", "success");
+                clearForm();
+            }
+            renderPatientsList();
+        } catch (error) {
+            console.error("Errore nel salvataggio:", error);
+            displayMessage("Errore nel salvataggio dei dati.", "error");
+        }
+    }
+    saveButton.addEventListener('click', saveData);
+
+    async function deletePatientData(id) {
+        if (confirm("Sei sicuro di voler eliminare questa scheda paziente? L'azione è irreversibile.")) {
+            try {
+                await patientsCollection.doc(id).delete();
+                displayMessage("Scheda eliminata.", "success");
+                if (id === currentPatientId) clearForm();
+                renderPatientsList();
+            } catch (error) {
+                displayMessage("Errore nell'eliminazione della scheda.", "error");
             }
         }
-        
-        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; renderBackgroundLinks(); backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureDocPath) { await updateDoc(doc(db, currentAdventureDocPath), { background: backgroundTextarea.value }); saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
-        
-        function renderBackgroundLinks() {
-            const text = backgroundTextarea.value;
-            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
-            const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
-                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
-                if (nodeExists) {
-                    return `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>`;
-                }
-                return `[[${nodeName}]]`;
-            });
-            backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
-        }
+    }
 
-        const modal = document.getElementById('node-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
+    // --- NEW EVENT LISTENERS FOR DISCHARGE/DECEASED ---
+    const dischargeBtn = document.getElementById('discharge-btn');
+    const deceasedBtn = document.getElementById('deceased-btn');
+    const dischargeSection = document.getElementById('discharge-section');
+    const deceasedSection = document.getElementById('deceased-section');
 
-        backgroundPreview.addEventListener('click', e => {
-            if (e.target.classList.contains('node-link')) {
-                e.preventDefault();
-                const nodeName = e.target.dataset.nodeName;
-                
-                if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) {
-                    modal.classList.add('hidden');
-                    return;
-                }
+    dischargeBtn.addEventListener('click', () => {
+        dischargeSection.classList.toggle('hidden');
+        deceasedSection.classList.add('hidden'); // Hide the other section
+    });
 
-                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || [])];
-                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
-                
-                if (nodeData) {
-                    modalTitle.textContent = nodeData.title;
-                    modalContent.innerHTML = nodeData.content.replace(/\n/g, '<br>');
-                    modal.classList.remove('hidden');
-                }
-            }
-        });
-        modalCloseBtn.addEventListener('click', () => modal.classList.add('hidden'));
-        modal.addEventListener('click', (e) => { if (e.target === modal) modal.classList.add('hidden'); });
+    deceasedBtn.addEventListener('click', () => {
+        deceasedSection.classList.toggle('hidden');
+        dischargeSection.classList.add('hidden'); // Hide the other section
+    });
 
-        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureDocPath = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } });
-        
-        document.querySelectorAll('.node-add-btn').forEach(btn => {
-            btn.addEventListener('click', async () => {
-                if (!currentAdventureDocPath) return;
-                const type = btn.dataset.type;
-                const title = prompt(`Titolo del nuovo ${type === 'pngs' ? 'PNG' : 'Ambiente'}:`);
-                if (!title) return;
-                const group = prompt(`Gruppo in cui inserirlo:`, 'Senza Gruppo');
-                if (group === null) return;
-                const content = prompt("Inserisci una breve descrizione:");
-                
-                const newNode = { title, content: content || "", group };
-                const adventureRef = doc(db, currentAdventureDocPath);
-                try {
-                    await updateDoc(adventureRef, { [type]: arrayUnion(newNode) });
-                } catch (error) { console.error("Errore aggiunta nodo:", error); }
-            });
-        });
 
-        document.getElementById('adventures').addEventListener('click', async (e) => {
-            const target = e.target;
-            const container = target.closest('.node-container');
-            if (!container) return;
-
-            const title = container.dataset.nodeTitle;
-            const type = container.dataset.nodeType;
-            
-            if (target.classList.contains('delete-node-btn')) {
-                e.preventDefault();
-                if (currentAdventureDocPath && confirm(`Sei sicuro di voler eliminare "${title}"?`)) {
-                    const adventureRef = doc(db, currentAdventureDocPath);
-                    const adventureSnap = await getDoc(adventureRef);
-                    if (adventureSnap.exists()) {
-                        const nodes = adventureSnap.data()[type] || [];
-                        const nodeToDelete = nodes.find(node => node.title === title);
-                        if (nodeToDelete) {
-                            try { await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) }); } 
-                            catch (error) { console.error("Errore eliminazione:", error); }
-                        }
-                    }
-                }
-            } else if (target.classList.contains('edit-node-btn')) {
-                e.preventDefault();
-                container.querySelector('.node-view-mode').classList.add('hidden');
-                container.querySelector('.node-edit-mode').classList.remove('hidden');
-            } else if (target.classList.contains('cancel-edit-btn')) {
-                container.querySelector('.node-view-mode').classList.remove('hidden');
-                container.querySelector('.node-edit-mode').classList.add('hidden');
-            } else if (target.classList.contains('save-node-btn')) {
-                const newContent = container.querySelector('.node-content-edit').value;
-                const adventureRef = doc(db, currentAdventureDocPath);
-                const adventureSnap = await getDoc(adventureRef);
-                if (adventureSnap.exists()) {
-                    const nodes = adventureSnap.data()[type] || [];
-                    const nodeIndex = nodes.findIndex(node => node.title === title);
-                    if (nodeIndex !== -1) {
-                        const updatedNodes = [...nodes];
-                        updatedNodes[nodeIndex].content = newContent;
-                        try {
-                            await updateDoc(adventureRef, { [type]: updatedNodes });
-                            container.querySelector('.node-view-mode').classList.remove('hidden');
-                            container.querySelector('.node-edit-mode').classList.add('hidden');
-                        } catch (error) { console.error("Errore modifica:", error); }
-                    }
-                }
-            }
-        });
-
-    </script>
+    window.onload = () => {
+        clearForm();
+    };
+</script>
 </body>
 </html>
