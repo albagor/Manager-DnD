@@ -299,13 +299,64 @@
                 containerEl.prepend(rollEl); // Prepend to show newest first
             });
         }
+        
+        // Event listener delegato per i tiri del giocatore. Viene aggiunto una sola volta.
+        document.getElementById('player-view-container').addEventListener('click', async (e) => {
+            if (!e.target.classList.contains('player-dice-btn')) return;
+
+            if (!playerViewId || !playerToken || !currentAdventureData.players) {
+                console.error("Dati dell'avventura o del giocatore non ancora caricati.");
+                return;
+            }
+
+            const btn = e.target;
+            const currentPlayer = currentAdventureData.players.find(p => p.token === playerToken);
+            if (!currentPlayer) {
+                console.error("Impossibile trovare il giocatore corrente.");
+                return;
+            }
+
+            const sides = parseInt(btn.dataset.sides);
+            const modifier = parseInt(document.getElementById('player-dice-modifier').value) || 0;
+            
+            const rollResult = Math.floor(Math.random() * sides) + 1;
+            const total = rollResult + modifier;
+
+            const rollData = {
+                playerName: currentPlayer.name,
+                rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
+                result: total,
+                details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
+                timestamp: serverTimestamp()
+            };
+
+            try {
+                const rollsRef = collection(db, 'publicAdventures', playerViewId, 'diceRolls');
+                await addDoc(rollsRef, rollData);
+            } catch (error) {
+                console.error("Errore nel salvataggio del tiro:", error);
+                const diceLogContainer = document.getElementById('player-dice-log');
+                diceLogContainer.innerHTML = `<p class="text-red-500">Errore nel tiro del dado.</p>` + diceLogContainer.innerHTML;
+            }
+        });
 
         function loadPlayerView(adventureId, token) {
+            // Imposta l'ascolto per i tiri dei dadi una sola volta
+            const diceLogContainer = document.getElementById('player-dice-log');
+            const rollsQuery = query(collection(db, 'publicAdventures', adventureId, 'diceRolls'));
+            onSnapshot(rollsQuery, (snapshot) => {
+                const rolls = [];
+                snapshot.forEach(doc => rolls.push(doc.data()));
+                rolls.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
+                renderDiceLog(diceLogContainer, rolls);
+            });
+            
+            // Imposta l'ascolto per i dati principali dell'avventura
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
-                    currentAdventureData = data; // Store for character sheet access
+                    currentAdventureData = data; // Aggiorna i dati globali
                     const players = data.players || [];
                     const currentPlayer = players.find(p => p.token === token);
                     if (!currentPlayer) {
@@ -314,10 +365,9 @@
                         return;
                     }
 
-                    const currentPlayerName = currentPlayer.name;
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
                     document.getElementById('player-open-sheet-btn').addEventListener('click', () => {
-                        openCharacterSheetModal(token, true); // true for player mode
+                        openCharacterSheetModal(token, true);
                     });
 
                     const container = document.getElementById('player-shared-items');
@@ -354,39 +404,6 @@
                     if (visibleItems.length === 0) {
                          container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
                     }
-
-                    // Setup dice roller
-                    const diceLogContainer = document.getElementById('player-dice-log');
-                    document.querySelectorAll('.player-dice-btn').forEach(btn => {
-                        btn.addEventListener('click', async () => {
-                            const sides = parseInt(btn.dataset.sides);
-                            const modifier = parseInt(document.getElementById('player-dice-modifier').value) || 0;
-                            
-                            const rollResult = Math.floor(Math.random() * sides) + 1;
-                            const total = rollResult + modifier;
-
-                            const rollData = {
-                                playerName: currentPlayerName,
-                                rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
-                                result: total,
-                                details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
-                                timestamp: serverTimestamp()
-                            };
-
-                            const rollsRef = collection(db, 'publicAdventures', adventureId, 'diceRolls');
-                            await addDoc(rollsRef, rollData);
-                        });
-                    });
-
-                    // Listen for rolls
-                    const rollsQuery = query(collection(db, 'publicAdventures', adventureId, 'diceRolls'));
-                    onSnapshot(rollsQuery, (snapshot) => {
-                        const rolls = [];
-                        snapshot.forEach(doc => rolls.push(doc.data()));
-                        rolls.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                        renderDiceLog(diceLogContainer, rolls);
-                    });
-
                 } else {
                     document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
                     document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
