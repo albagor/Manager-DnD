@@ -342,21 +342,27 @@
         function renderDiceLog(containerEl, rolls = []) {
             if (!containerEl) return;
             containerEl.innerHTML = '';
-            if (!rolls || rolls.length === 0) {
+            
+            // Defensive check: handle undefined, null, or non-array diceRolls
+            if (!rolls || !Array.isArray(rolls) || rolls.length === 0) {
                 containerEl.innerHTML = `<span class="text-gray-500">Nessun tiro ancora effettuato.</span>`;
                 return;
             }
+            
             // Sort descending by timestamp (newest first)
             const sortedRolls = [...rolls].sort((a, b) => b.timestamp - a.timestamp);
             sortedRolls.forEach(roll => {
+                // Additional safety checks for roll data
+                if (!roll || typeof roll !== 'object') return;
+                
                 const rollEl = document.createElement('div');
                 rollEl.className = 'p-2 border-b border-gray-700';
                 rollEl.innerHTML = `
                     <p class="text-lg">
-                        <span class="font-bold text-red-400">${roll.playerName}</span> ha tirato ${roll.rollNotation}: 
-                        <span class="font-bold text-2xl text-white">${roll.result}</span>
+                        <span class="font-bold text-red-400">${roll.playerName || 'Giocatore'}</span> ha tirato ${roll.rollNotation || 'dado'}: 
+                        <span class="font-bold text-2xl text-white">${roll.result || '?'}</span>
                     </p>
-                    <p class="text-sm text-gray-400">${roll.details}</p>
+                    <p class="text-sm text-gray-400">${roll.details || ''}</p>
                 `;
                 containerEl.appendChild(rollEl); 
             });
@@ -394,13 +400,23 @@
 
             try {
                 const adventureRef = doc(db, 'publicAdventures', playerViewId);
+                // Ensure diceRolls field exists and add the new roll
                 await updateDoc(adventureRef, {
                     diceRolls: arrayUnion(rollData)
                 });
             } catch (error) {
                 console.error("Errore nel salvataggio del tiro:", error);
-                const diceLogContainer = document.getElementById('player-dice-log');
-                diceLogContainer.innerHTML = `<p class="text-red-500">Errore nel tiro del dado.</p>` + diceLogContainer.innerHTML;
+                // If updateDoc fails, try to initialize the document with merge
+                try {
+                    const adventureRef = doc(db, 'publicAdventures', playerViewId);
+                    await setDoc(adventureRef, {
+                        diceRolls: [rollData]
+                    }, { merge: true });
+                } catch (retryError) {
+                    console.error("Errore nel retry del salvataggio:", retryError);
+                    const diceLogContainer = document.getElementById('player-dice-log');
+                    diceLogContainer.innerHTML = `<p class="text-red-500">Errore nel tiro del dado.</p>` + diceLogContainer.innerHTML;
+                }
             }
         });
 
@@ -424,7 +440,7 @@
                     });
 
                     const diceLogContainer = document.getElementById('player-dice-log');
-                    renderDiceLog(diceLogContainer, data.diceRolls);
+                    renderDiceLog(diceLogContainer, data.diceRolls || []);
 
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
@@ -600,7 +616,7 @@
                     const masterDiceLogContainer = document.getElementById('master-dice-log-container');
                     masterDiceLogContainer.style.display = 'block';
                     const masterDiceLog = document.getElementById('master-dice-log');
-                    renderDiceLog(masterDiceLog, publicDoc.data().diceRolls);
+                    renderDiceLog(masterDiceLog, publicDoc.data().diceRolls || []);
                 }
             });
         }
@@ -1543,10 +1559,15 @@ csModalContent.addEventListener('input', (e) => {
                 const players = adventureSnap.data().players || [];
                 const playerIndex = players.findIndex(p => p.token === token);
                 if (playerIndex > -1) {
-                    players[playerIndex].characterSheet = sheetData;
+                    const updatedPlayer = { ...players[playerIndex], characterSheet: sheetData };
+                    // Remove old player and add updated one to maintain array integrity
+                    const updatedPlayers = [...players];
+                    updatedPlayers[playerIndex] = updatedPlayer;
+                    
                     try {
-                        await updateDoc(adventureRef, { players: players });
-                        await updateDoc(publicAdventureRef, { players: players });
+                        // Use merge:true to preserve other fields like diceRolls
+                        await updateDoc(adventureRef, { players: updatedPlayers });
+                        await setDoc(publicAdventureRef, { players: updatedPlayers }, { merge: true });
                     } catch (error) {
                         console.error("Errore salvataggio scheda:", error);
                     }
