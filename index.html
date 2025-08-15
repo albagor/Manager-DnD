@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -37,28 +37,6 @@
         }
         .node-link:hover {
             color: #fca5a5; /* text-red-300 */
-        }
-        /* Stili per la scheda personaggio */
-        .cs-input {
-            @apply bg-gray-700 border border-gray-600 rounded-md p-1 w-full text-center text-white font-sans;
-        }
-        .cs-textarea {
-             @apply bg-gray-700 border border-gray-600 rounded-md p-2 w-full text-white font-sans h-24 resize-none;
-        }
-        .cs-label {
-            @apply text-xs text-gray-400 uppercase font-bold tracking-wider font-sans;
-        }
-        .cs-section {
-            @apply bg-gray-800 p-4 rounded-lg shadow-inner;
-        }
-        .cs-stat-box {
-            @apply bg-gray-900 border border-gray-700 rounded-lg p-2 flex flex-col items-center;
-        }
-        .cs-stat-value {
-            @apply text-3xl font-bold text-red-400;
-        }
-        .cs-stat-mod {
-            @apply bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold mt-1;
         }
     </style>
 </head>
@@ -104,45 +82,20 @@
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
             </main>
         </div>
     </div>
     
     <!-- Contenitore Vista Giocatore -->
-    <div id="player-view-container" class="p-4 md:p-8">
-        <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-4"></h1>
-        <div class="border-b border-gray-700 mb-4">
-            <nav class="flex justify-center -mb-px" aria-label="Tabs">
-                <button class="player-tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-xl" data-tab="player-shared-content-tab">Contenuti</button>
-                <button class="player-tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-xl" data-tab="player-character-sheet-tab">La Mia Scheda</button>
-            </nav>
-        </div>
-        <div id="player-shared-content-tab" class="player-tab-content active space-y-8"></div>
-        <div id="player-character-sheet-tab" class="player-tab-content">
-            <!-- La scheda personaggio verrà inserita qui -->
-        </div>
-    </div>
+    <div id="player-view-container" class="p-4 md:p-8"><h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1><div id="player-shared-items" class="space-y-8"></div></div>
 
     <!-- Finestra Modale per i Nodi -->
     <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
 
     <!-- Finestra Modale per la Condivisione -->
     <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
-
-    <!-- Finestra Modale per la Scheda Personaggio (Vista Master) -->
-    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-6xl border border-red-500 max-h-[90vh] flex flex-col">
-             <div class="flex justify-between items-center p-4 border-b border-gray-700">
-                <h2 id="character-sheet-modal-title" class="text-2xl font-bold text-red-400">Scheda Personaggio</h2>
-                <button id="character-sheet-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
-            </div>
-            <div id="character-sheet-modal-body" class="p-6 overflow-y-auto">
-                <!-- Content will be injected here -->
-            </div>
-        </div>
-    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -166,7 +119,6 @@
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
-        let characterSheetUnsubscribe = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
@@ -185,37 +137,51 @@
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
-                    if (!data.players?.some(p => p.token === token)) {
+                    const players = data.players || [];
+                    if (!players.some(p => p.token === token)) {
                         document.getElementById('player-adventure-title').textContent = "Accesso Negato";
-                        document.getElementById('player-shared-content-tab').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
+                        document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
                         return;
                     }
 
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
-                    const container = document.getElementById('player-shared-content-tab');
+                    const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
                     
-                    const visibleItems = (data.sharedItems || []).filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
+                    const allSharedItems = data.sharedItems || [];
+                    const visibleItems = allSharedItems.filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
+                    
                     const sharedChapters = visibleItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
                     const otherItems = visibleItems.filter(item => !item.isChapter);
 
-                    if (sharedChapters.length > 0) { sharedChapters.forEach(c => { const el = document.createElement('div'); el.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; el.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${c.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(c.publicContent || '').replace(/\n/g, '<br>')}</p>`; container.appendChild(el); }); }
-                    if (otherItems.length > 0) { const otherContainer = document.createElement('div'); otherContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8'; otherItems.forEach(item => { const el = document.createElement('div'); el.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; const img = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : ''; el.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${img}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`; otherContainer.appendChild(el); }); container.appendChild(otherContainer); }
-                    if (visibleItems.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>'; }
+                    if (sharedChapters.length > 0) {
+                        sharedChapters.forEach(chapter => {
+                            const chapterEl = document.createElement('div');
+                            chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`;
+                            container.appendChild(chapterEl);
+                        });
+                    }
+                    
+                    if (otherItems.length > 0) {
+                        const otherItemsContainer = document.createElement('div');
+                        otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
+                        otherItems.forEach(item => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
+                            itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
+                            otherItemsContainer.appendChild(itemEl);
+                        });
+                        container.appendChild(otherItemsContainer);
+                    }
+
+                    if (visibleItems.length === 0) {
+                         container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
+                    }
                 } else {
                     document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
-                    document.getElementById('player-shared-content-tab').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
-                }
-            });
-
-            // Carica la scheda personaggio
-            if (characterSheetUnsubscribe) characterSheetUnsubscribe();
-            const sheetRef = doc(db, 'characterSheets', token);
-            characterSheetUnsubscribe = onSnapshot(sheetRef, (sheetDoc) => {
-                if (sheetDoc.exists()) {
-                    const sheetData = sheetDoc.data();
-                    document.getElementById('player-character-sheet-tab').innerHTML = generateCharacterSheetHTML(sheetData, false);
-                    addCharacterSheetEventListeners(token);
+                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
                 }
             });
         }
@@ -250,6 +216,7 @@
         const diceModifierInput = document.getElementById('dice-modifier');
 
         tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
+
         diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
         function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
 
@@ -308,15 +275,7 @@
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             try {
                 const type = saveToAdventureBtn.dataset.type;
-                let field;
-                switch(type) {
-                    case 'Mostro': field = 'monsters'; break;
-                    case 'Tesoro': field = 'treasures'; break;
-                    case 'PNG': field = 'pngs'; break;
-                    case 'Ambientazione': field = 'environments'; break;
-                    case 'Mappa': field = 'maps'; break;
-                    default: field = 'pngs';
-                }
+                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : (type === 'Mappa' ? 'maps' : 'pngs');
                 await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
                 saveToAdventureBtn.textContent = 'Salvato!';
                 setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
@@ -329,7 +288,7 @@
         const adventureListView = document.getElementById('adventure-list-view');
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], monsters: [], treasures: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
         
@@ -347,8 +306,6 @@
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
                     renderGroupedNodes('maps', currentAdventureData.maps || []);
-                    renderGroupedNodes('monsters', currentAdventureData.monsters || []);
-                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
                     renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
                 } else { backToListBtn.click(); }
             });
@@ -357,14 +314,7 @@
         function renderGroupedNodes(type, nodes) {
             const listEl = document.getElementById(`${type}-list`);
             listEl.innerHTML = '';
-            let typeName = '';
-            switch(type) {
-                case 'pngs': typeName = 'PNG'; break;
-                case 'environments': typeName = 'ambiente'; break;
-                case 'maps': typeName = 'mappa'; break;
-                case 'monsters': typeName = 'mostro'; break;
-                case 'treasures': typeName = 'tesoro'; break;
-            }
+            const typeName = type === 'pngs' ? 'PNG' : (type === 'maps' ? 'mappa' : 'ambiente');
             if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`; return; }
             const groups = nodes.reduce((acc, node) => { (acc[node.group || 'Senza Gruppo'] = acc[node.group || 'Senza Gruppo'] || []).push(node); return acc; }, {});
             for (const groupName in groups) {
@@ -396,13 +346,7 @@
         }
         
         function renderTextWithLinks(text) {
-            const allNodes = [
-                ...(currentAdventureData.environments || []), 
-                ...(currentAdventureData.pngs || []), 
-                ...(currentAdventureData.maps || []),
-                ...(currentAdventureData.monsters || []),
-                ...(currentAdventureData.treasures || [])
-            ];
+            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
             return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
                 const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`;
@@ -418,13 +362,7 @@
              if (e.target.classList.contains('node-link')) {
                 e.preventDefault();
                 const nodeName = e.target.dataset.nodeName;
-                const allNodes = [
-                    ...(currentAdventureData.environments || []), 
-                    ...(currentAdventureData.pngs || []), 
-                    ...(currentAdventureData.maps || []),
-                    ...(currentAdventureData.monsters || []),
-                    ...(currentAdventureData.treasures || [])
-                ];
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
                 const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 if (nodeData) {
                     modalTitle.textContent = nodeData.title;
@@ -444,18 +382,27 @@
             btn.addEventListener('click', async (e) => {
                 if (!currentAdventureId) return;
                 const type = btn.dataset.type;
-                let typeName = '';
-                switch(type) {
-                    case 'pngs': typeName = 'PNG'; break;
-                    case 'environments': typeName = 'Ambiente'; break;
-                    case 'maps': typeName = 'Mappa'; break;
-                    case 'monsters': typeName = 'Mostro'; break;
-                    case 'treasures': typeName = 'Tesoro'; break;
+                if (type === 'maps') {
+                    if (document.querySelector('.new-node-form-container')) return;
+                    const listEl = document.getElementById('maps-list');
+                    const formContainer = document.createElement('div');
+                    formContainer.className = 'p-2 mb-2 new-node-form-container';
+                    formContainer.innerHTML = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
+                    listEl.prepend(formContainer);
+                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
+                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+                        const title = formContainer.querySelector('.new-node-title').value.trim();
+                        if (!title) { alert('Il titolo è obbligatorio.'); return; }
+                        const newNode = { title, imageUrl: formContainer.querySelector('.new-node-image-url').value.trim(), publicContent: formContainer.querySelector('.new-node-public-content').value.trim(), masterContent: formContainer.querySelector('.new-node-master-content').value.trim(), group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo" };
+                        try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { 'maps': arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error("Errore aggiunta mappa:", error); }
+                    });
+                } else {
+                    const typeName = (type === 'pngs') ? 'PNG' : 'Ambiente';
+                    const title = prompt(`Titolo del nuovo ${typeName}:`);
+                    if (!title) return;
+                    const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
+                    try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
                 }
-                const title = prompt(`Titolo del nuovo ${typeName}:`);
-                if (!title) return;
-                const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
-                try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error(`Errore aggiunta ${typeName}:`, error); }
             });
         });
 
@@ -582,92 +529,15 @@
         function renderPlayerManagementUI(adventureId, players = []) {
             const shareContainer = document.getElementById('player-share-content');
             const baseUrl = window.location.href.split('?')[0];
-            let playerListHtml = players.map(player => `
-                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
-                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
-                    <div class="flex items-center gap-2">
-                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
-                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
-                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
-                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
-                    </div>
-                </div>`).join('');
+            let playerListHtml = players.map(player => `<div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg"><span class="font-sans font-medium text-gray-200">${player.name}</span><div class="flex items-center gap-2"><input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-48 md:w-64 font-sans" readonly><button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button><button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button></div></div>`).join('');
             shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
-            
-            // FIX: Attach event listeners after innerHTML is set
             document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
-            shareContainer.addEventListener('click', (e) => { 
-                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
-                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
-                if (e.target.classList.contains('view-sheet-btn')) handleViewSheet(e);
-            });
+            shareContainer.addEventListener('click', (e) => { if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e); });
         }
 
-        async function handleAddPlayer(e) { 
-            e.preventDefault(); 
-            if (!currentAdventureId || !currentUserId) return; 
-            const nameInput = document.getElementById('player-name-input'); 
-            const playerName = nameInput.value.trim(); 
-            if (!playerName) return; 
-            const newPlayer = { name: playerName, token: crypto.randomUUID() };
-            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
-            
-            const sheetRef = doc(db, 'characterSheets', newPlayer.token);
-            const defaultSheet = createDefaultCharacterSheet(currentAdventureId, newPlayer.token, currentUserId);
-            
-            try { 
-                await setDoc(sheetRef, defaultSheet);
-                await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); 
-                await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); 
-                nameInput.value = ''; 
-            } catch (error) { console.error("Errore aggiunta giocatore o scheda:", error); } 
-        }
-
+        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
         function handleCopyLink(e) { const button = e.target; const link = button.dataset.link; navigator.clipboard.writeText(link).then(() => { button.textContent = 'Copiato!'; button.classList.replace('bg-blue-600', 'bg-green-600'); setTimeout(() => { button.textContent = 'Copia'; button.classList.replace('bg-green-600', 'bg-blue-600'); }, 2000); }); }
-        
-        async function handleDeletePlayer(e) { 
-            if (!currentAdventureId || !currentUserId) return; 
-            const tokenToDelete = e.target.dataset.token; 
-            if (!confirm("Sei sicuro di voler rimuovere questo giocatore? Verrà eliminata anche la sua scheda personaggio.")) return; 
-            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
-            const sheetRef = doc(db, 'characterSheets', tokenToDelete);
-            
-            const adventureSnap = await getDoc(adventureRef); 
-            if (adventureSnap.exists()) { 
-                const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); 
-                if (playerToDelete) { 
-                    try { 
-                        await deleteDoc(sheetRef);
-                        await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); 
-                        await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); 
-                    } catch (error) { console.error("Errore rimozione giocatore o scheda:", error); } 
-                } 
-            } 
-        }
-
-        const characterSheetModal = document.getElementById('character-sheet-modal');
-        const characterSheetModalBody = document.getElementById('character-sheet-modal-body');
-        const characterSheetModalCloseBtn = document.getElementById('character-sheet-modal-close-btn');
-        const characterSheetModalTitle = document.getElementById('character-sheet-modal-title');
-
-        characterSheetModalCloseBtn.addEventListener('click', () => characterSheetModal.classList.add('hidden'));
-        characterSheetModal.addEventListener('click', (e) => { if (e.target === characterSheetModal) { characterSheetModal.classList.add('hidden'); } });
-
-        async function handleViewSheet(e) {
-            const token = e.target.dataset.token;
-            const sheetRef = doc(db, 'characterSheets', token);
-            const sheetDoc = await getDoc(sheetRef);
-            if (sheetDoc.exists()) {
-                const sheetData = sheetDoc.data();
-                characterSheetModalTitle.textContent = `Scheda di ${sheetData.characterName || 'Personaggio'}`;
-                characterSheetModalBody.innerHTML = generateCharacterSheetHTML(sheetData, true); // true for read-only
-                characterSheetModal.classList.remove('hidden');
-            } else {
-                alert("Scheda non trovata.");
-            }
-        }
+        async function handleDeletePlayer(e) { if (!currentAdventureId || !currentUserId) return; const tokenToDelete = e.target.dataset.token; if (!confirm("Sei sicuro di voler rimuovere questo giocatore?")) return; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); const adventureSnap = await getDoc(adventureRef); if (adventureSnap.exists()) { const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); if (playerToDelete) { try { await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); } catch (error) { console.error("Errore rimozione giocatore:", error); } } } }
 
         const shareModal = document.getElementById('share-modal');
         const shareModalTitle = document.getElementById('share-modal-title');
@@ -717,166 +587,43 @@
             const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
             
             let sharedWith = [];
-            if (document.getElementById('share-all-players').checked) { sharedWith.push('all'); } 
-            else { sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token)); }
+            if (document.getElementById('share-all-players').checked) {
+                sharedWith.push('all');
+            } else {
+                sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token));
+            }
 
             let sharedItems = [...(currentAdventureData.sharedItems || [])];
             let itemIndex = sharedItems.findIndex(item => item.id === currentSharingItem.id);
 
             if (sharedWith.length > 0) {
-                if (itemIndex > -1) { sharedItems[itemIndex].sharedWith = sharedWith; } 
-                else {
+                if (itemIndex > -1) {
+                    sharedItems[itemIndex].sharedWith = sharedWith;
+                } else {
                     let sourceItem;
                     if (currentSharingItem.type === 'chapter') {
                         sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
                         if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith });
                     } else {
-                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps, ...currentAdventureData.monsters, ...currentAdventureData.treasures];
+                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps];
                         sourceItem = allNodes.find(n => n.title === currentSharingItem.id);
                         if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
                     }
                 }
-            } else { if (itemIndex > -1) sharedItems.splice(itemIndex, 1); }
+            } else {
+                if (itemIndex > -1) sharedItems.splice(itemIndex, 1);
+            }
             
             try {
                 await updateDoc(adventureRef, { sharedItems });
                 const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; });
                 await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems });
                 shareModal.classList.add('hidden');
-            } catch (error) { console.error("Errore durante la condivisione:", error); alert("Si è verificato un errore."); }
+            } catch (error) {
+                console.error("Errore durante la condivisione:", error);
+                alert("Si è verificato un errore.");
+            }
         });
-        
-        document.querySelector('#player-view-container .player-tab-btn[data-tab="player-shared-content-tab"]').addEventListener('click', () => switchPlayerTab('player-shared-content-tab'));
-        document.querySelector('#player-view-container .player-tab-btn[data-tab="player-character-sheet-tab"]').addEventListener('click', () => switchPlayerTab('player-character-sheet-tab'));
-
-        function switchPlayerTab(tabId) {
-            document.querySelectorAll('.player-tab-content').forEach(c => c.classList.remove('active'));
-            document.querySelectorAll('.player-tab-btn').forEach(b => { b.classList.remove('active', 'text-red-400', 'border-red-400'); b.classList.add('text-gray-400'); });
-            document.getElementById(tabId).classList.add('active');
-            document.querySelector(`.player-tab-btn[data-tab="${tabId}"]`).classList.add('active', 'text-red-400', 'border-red-400');
-        }
-
-        // --- FUNZIONI SCHEDA PERSONAGGIO ---
-
-        function createDefaultCharacterSheet(adventureId, playerToken, ownerId) {
-            return {
-                adventureId, playerToken, ownerId,
-                characterName: "", classLevel: "", background: "", playerName: "", race: "", alignment: "", experiencePoints: "",
-                strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10,
-                inspiration: "", proficiencyBonus: 2,
-                savingThrows: { str: false, dex: false, con: false, int: false, wis: false, cha: false },
-                skills: { acrobatics: false, animalHandling: false, arcana: false, athletics: false, deception: false, history: false, insight: false, intimidation: false, investigation: false, medicine: false, nature: false, perception: false, performance: false, persuasion: false, religion: false, sleightOfHand: false, stealth: false, survival: false },
-                armorClass: 10, initiative: 0, speed: 30,
-                currentHitPoints: 10, maxHitPoints: 10, temporaryHitPoints: 0,
-                hitDice: "1d8", deathSaves: { successes: 0, failures: 0 },
-                attacksSpellcasting: "", equipment: "",
-                personalityTraits: "", ideals: "", bonds: "", flaws: "",
-                featuresTraits: ""
-            };
-        }
-
-        function generateCharacterSheetHTML(data, isReadOnly) {
-            const disabled = isReadOnly ? 'disabled' : '';
-            const getMod = (score) => Math.floor((score - 10) / 2);
-            const stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
-            const skills = { acrobatics: 'dex', animalHandling: 'wis', arcana: 'int', athletics: 'str', deception: 'cha', history: 'int', insight: 'wis', intimidation: 'cha', investigation: 'int', medicine: 'wis', nature: 'int', perception: 'wis', performance: 'cha', persuasion: 'cha', religion: 'int', sleightOfHand: 'dex', stealth: 'dex', survival: 'wis' };
-            
-            return `
-                <div class="space-y-4">
-                    <!-- Header -->
-                    <div class="cs-section grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <div><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" value="${data.characterName}" data-field="characterName" ${disabled}></div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div><label class="cs-label">Classe & Livello</label><input type="text" class="cs-input" value="${data.classLevel}" data-field="classLevel" ${disabled}></div>
-                            <div><label class="cs-label">Background</label><input type="text" class="cs-input" value="${data.background}" data-field="background" ${disabled}></div>
-                            <div><label class="cs-label">Razza</label><input type="text" class="cs-input" value="${data.race}" data-field="race" ${disabled}></div>
-                            <div><label class="cs-label">Allineamento</label><input type="text" class="cs-input" value="${data.alignment}" data-field="alignment" ${disabled}></div>
-                        </div>
-                        <div><label class="cs-label">Punti Esperienza</label><input type="text" class="cs-input" value="${data.experiencePoints}" data-field="experiencePoints" ${disabled}></div>
-                    </div>
-
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-                        <!-- Colonna Sinistra (Statistiche e Abilità) -->
-                        <div class="space-y-4">
-                            <div class="cs-section grid grid-cols-3 gap-2">
-                                ${stats.map(stat => `
-                                    <div class="cs-stat-box">
-                                        <label class="cs-label">${stat.substring(0,3).toUpperCase()}</label>
-                                        <input type="number" class="cs-input cs-stat-value bg-transparent border-0 text-3xl" value="${data[stat]}" data-field="${stat}" ${disabled}>
-                                        <div class="cs-stat-mod">${getMod(data[stat]) >= 0 ? '+' : ''}${getMod(data[stat])}</div>
-                                    </div>
-                                `).join('')}
-                            </div>
-                            <div class="cs-section">
-                                <!-- Abilità -->
-                                ${Object.keys(skills).map(skill => `
-                                    <div class="flex items-center my-1"><input type="checkbox" data-field="skills.${skill}" ${data.skills[skill] ? 'checked' : ''} ${disabled}><span class="ml-2 font-sans text-sm">${skill} (${skills[skill].toUpperCase()})</span></div>
-                                `).join('')}
-                            </div>
-                        </div>
-
-                        <!-- Colonna Centrale (Combattimento e Note) -->
-                        <div class="space-y-4">
-                            <div class="cs-section grid grid-cols-3 gap-2 text-center">
-                                <div><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-xl" value="${data.armorClass}" data-field="armorClass" ${disabled}></div>
-                                <div><label class="cs-label">Iniziativa</label><input type="number" class="cs-input text-xl" value="${data.initiative}" data-field="initiative" ${disabled}></div>
-                                <div><label class="cs-label">Velocità</label><input type="text" class="cs-input text-xl" value="${data.speed}" data-field="speed" ${disabled}></div>
-                            </div>
-                            <div class="cs-section">
-                                <label class="cs-label">Punti Ferita</label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <input type="number" class="cs-input text-lg" value="${data.currentHitPoints}" data-field="currentHitPoints" ${disabled} placeholder="Attuali">
-                                    <input type="number" class="cs-input text-lg" value="${data.maxHitPoints}" data-field="maxHitPoints" ${disabled} placeholder="Massimi">
-                                </div>
-                                <label class="cs-label mt-2">Punti Ferita Temporanei</label>
-                                <input type="number" class="cs-input" value="${data.temporaryHitPoints}" data-field="temporaryHitPoints" ${disabled}>
-                            </div>
-                             <div class="cs-section">
-                                <label class="cs-label">Attacchi & Incantesimi</label>
-                                <textarea class="cs-textarea" data-field="attacksSpellcasting" ${disabled}>${data.attacksSpellcasting}</textarea>
-                            </div>
-                        </div>
-
-                        <!-- Colonna Destra (Equipaggiamento e Tratti) -->
-                        <div class="space-y-4">
-                            <div class="cs-section">
-                                <label class="cs-label">Equipaggiamento</label>
-                                <textarea class="cs-textarea" data-field="equipment" ${disabled}>${data.equipment}</textarea>
-                            </div>
-                            <div class="cs-section">
-                                <label class="cs-label">Tratti & Privilegi</label>
-                                <textarea class="cs-textarea" data-field="featuresTraits" ${disabled}>${data.featuresTraits}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
-        }
-        
-        let debounceTimer;
-        function addCharacterSheetEventListeners(token) {
-            const sheetRef = doc(db, 'characterSheets', token);
-            const sheetContainer = document.getElementById('player-character-sheet-tab');
-            
-            sheetContainer.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
-                input.addEventListener('keyup', (e) => {
-                    clearTimeout(debounceTimer);
-                    debounceTimer = setTimeout(() => {
-                        const field = e.target.dataset.field;
-                        const value = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
-                        updateDoc(sheetRef, { [field]: value });
-                    }, 500);
-                });
-            });
-
-            sheetContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
-                checkbox.addEventListener('change', (e) => {
-                    const field = e.target.dataset.field;
-                    const value = e.target.checked;
-                    updateDoc(sheetRef, { [field]: value });
-                });
-            });
-        }
 
     </script>
 </body>
