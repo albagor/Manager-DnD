@@ -9,12 +9,8 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        h1, h2, h3, h4, .tab-btn, .dice-btn, button {
-             font-family: 'MedievalSharp', cursive;
-        }
+        body { font-family: 'Inter', sans-serif; }
+        h1, h2, h3, h4, .tab-btn, .dice-btn, button { font-family: 'MedievalSharp', cursive; }
         #app-container, #adventure-detail-view, #player-view-container, #auth-container, .tab-content { display: none; }
         #app-container.active, #adventure-detail-view.active, #player-view-container.active, .tab-content.active { display: block; }
         #auth-container.active { display: flex; }
@@ -30,18 +26,9 @@
             0% { transform: rotate(0deg); }
             100% { transform: rotate(360deg); }
         }
-        .node-link {
-            color: #f87171;
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .node-link:hover {
-            color: #fca5a5;
-        }
-        #character-sheet-modal .cs-main-container {
-            background-color: #f5f5dc;
-            color: #000000;
-        }
+        .node-link { color: #f87171; cursor: pointer; text-decoration: underline; }
+        .node-link:hover { color: #fca5a5; }
+        #character-sheet-modal .cs-main-container { background-color: #f5f5dc; color: #000000; }
         .cs-box {
             background-color: rgba(0,0,0,0.05);
             border: 1px solid #9ca3af;
@@ -105,28 +92,131 @@
             resize: none;
             border: 1px solid #d1d5db;
         }
-        details > summary {
-            cursor: pointer;
-        }
-        #character-sheet-modal details > summary {
-            color: #991b1b;
-        }
+        details > summary { cursor: pointer; }
+        #character-sheet-modal details > summary { color: #991b1b; }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
 
-    <!-- QUI vanno tutti i tuoi contenitori HTML principali (auth-container, app-container, player-view-container, modali, ecc.) -->
-    <!-- Copia qui tutti i tuoi contenuti, mantenendo la stessa struttura che avevi nel file originale.
-    Se vuoi, ti posso fornire anche la struttura completa, dimmelo! -->
+    <!-- LOADER INIZIALE -->
+    <div id="initial-loader" class="min-h-screen flex items-center justify-center"><div class="loader"></div></div>
 
-    <!--
-    ...
-    TUTTO IL TUO HTML CONTENUTO, come nel file originale, VA QUI.
-    ...
-    -->
+    <!-- Autenticazione -->
+    <div id="auth-container" class="min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="bg-gray-800 shadow-lg rounded-lg p-8">
+                <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
+                <form id="login-form">
+                    <h2 class="text-2xl text-center mb-4">Accedi</h2>
+                    <div class="mb-4"><label for="login-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="login-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full p-2 text-white" required></div>
+                    <div class="mb-6"><label for="login-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="login-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full p-2 text-white" required></div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Accedi</button>
+                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Non hai un account? <a href="#" id="show-register" class="text-red-400 hover:text-red-300">Registrati</a></p>
+                </form>
+                <form id="register-form" style="display: none;">
+                    <h2 class="text-2xl text-center mb-4">Crea un Account</h2>
+                    <div class="mb-4"><label for="register-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="register-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full p-2 text-white" required></div>
+                    <div class="mb-6"><label for="register-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="register-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full p-2 text-white" required></div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Registrati</button>
+                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Hai già un account? <a href="#" id="show-login" class="text-red-400 hover:text-red-300">Accedi</a></p>
+                </form>
+                <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
+            </div>
+        </div>
+    </div>
 
-<!-- SCRIPT PRINCIPALE -->
-  <script type="module">
+    <!-- Contenitore App Principale -->
+    <div id="app-container">
+        <div class="container mx-auto p-4 md:p-8">
+            <header class="flex justify-between items-center mb-8">
+                <div>
+                    <h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1>
+                    <p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili!</p>
+                </div>
+                <div id="user-info" class="text-right">
+                    <p id="user-email" class="text-gray-300 font-sans"></p>
+                    <button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button>
+                </div>
+            </header>
+            <div class="mb-8">
+                <div class="border-b border-gray-700">
+                    <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+                        <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-6 border-b-2 font-bold">Dadi</button>
+                        <button class="tab-btn text-gray-400 border-transparent whitespace-nowrap py-4 px-6 border-b-2 font-bold">AI</button>
+                        <button class="tab-btn text-gray-400 border-transparent whitespace-nowrap py-4 px-6 border-b-2 font-bold">Avventure</button>
+                        <!-- Aggiungi altre tab se vuoi -->
+                    </nav>
+                </div>
+            </div>
+            <main>
+                <!-- DADI -->
+                <div id="dice-roller" class="tab-content active">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2>
+                        <div class="grid grid-cols-2 sm:grid-cols-6 gap-4 mb-4">
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="4">d4</button>
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="6">d6</button>
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="8">d8</button>
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="10">d10</button>
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="12">d12</button>
+                            <button class="dice-btn bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded" data-sides="20">d20</button>
+                        </div>
+                        <div class="flex gap-4 mb-4">
+                            <input type="number" min="1" max="20" id="dice-count" class="bg-gray-700 rounded p-2 text-white w-20" placeholder="N° Dadi" value="1">
+                            <input type="number" id="dice-modifier" class="bg-gray-700 rounded p-2 text-white w-20" placeholder="Modificatore" value="0">
+                        </div>
+                        <div id="dice-results-container" class="mt-4"></div>
+                    </div>
+                </div>
+                <!-- AI GENERATOR -->
+                <div id="ai-generator" class="tab-content">
+                    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                        <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+                        <div class="mb-4">
+                            <select id="generator-type" class="bg-gray-700 border-gray-600 rounded-lg p-2 text-white">
+                                <option value="Ambientazione">Ambientazione</option>
+                                <option value="Tesoro">Tesoro</option>
+                                <option value="Mappa">Mappa</option>
+                                <option value="PNG">PNG</option>
+                            </select>
+                        </div>
+                        <textarea id="generator-prompt" class="w-full h-24 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white mb-4" placeholder="Descrivi cosa vuoi generare..."></textarea>
+                        <button id="generate-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg mb-4">Genera</button>
+                        <div id="generator-result-container" class="mt-4"></div>
+                        <button id="save-to-adventure-btn" style="display:none" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg mt-4">Salva in Avventura</button>
+                    </div>
+                </div>
+                <!-- AVVENTURE -->
+                <div id="adventures" class="tab-content">
+                    <div id="adventure-list-view" class="active">
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                            <h2 class="text-3xl font-bold mb-4 text-red-400">Le Tue Avventure</h2>
+                            <form id="add-adventure-form" class="mb-4 flex gap-2">
+                                <input id="adventure-title-input" class="bg-gray-700 border-gray-600 rounded-lg p-2 text-white flex-grow" placeholder="Titolo Avventura" required>
+                                <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button>
+                            </form>
+                            <div id="adventures-list" class="space-y-2"></div>
+                        </div>
+                    </div>
+                    <div id="adventure-detail-view" style="display:none">
+                        <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+                            <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white rounded-lg px-4 py-2">Indietro</button>
+                            <h2 id="adventure-detail-title" class="text-2xl font-bold text-red-400 mb-2"></h2>
+                            <div class="mb-4 flex items-center gap-2">
+                                <button id="add-chapter-btn" class="bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Capitolo</button>
+                            </div>
+                            <div id="chapters-container" class="space-y-4"></div>
+                            <div id="environments-list"></div>
+                            <div id="pngs-list"></div>
+                            <div id="maps-list"></div>
+                        </div>
+                    </div>
+                </div>
+            </main>
+        </div>
+    </div>
+
+<script type="module">
 // ========== UTILS SICUREZZA ==========
 function sanitizeHTML(str) {
     if (!str) return '';
@@ -274,12 +364,8 @@ function openAdventureDetail(userId, docId) {
         if (docSnap.exists()) {
             currentAdventureData = docSnap.data();
             document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
-            // --- RENDER UI chiamando funzioni sicure come sotto ---
-            // renderChaptersUI(currentAdventureData.background || []);
-            // renderGroupedNodes('environments', currentAdventureData.environments || []);
-            // renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-            // renderGroupedNodes('maps', currentAdventureData.maps || []);
-            // renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
+            renderChaptersUI(currentAdventureData.background || []);
+            // Puoi aggiungere qui renderGroupedNodes() per environments/pngs/maps se implementi la funzione.
         } else { backToListBtn.click(); }
     });
 }
@@ -290,8 +376,7 @@ backToListBtn?.addEventListener('click', () => {
     if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
 });
 
-// ==== GESTIONE NODI E CAPITOLI (SICURA) ====
-
+// ==== GESTIONE CAPITOLI ====
 // RENDER CAPITOLI
 function renderChaptersUI(chapters = []) {
     const container = document.getElementById('chapters-container');
@@ -334,8 +419,6 @@ function renderChaptersUI(chapters = []) {
         container.appendChild(chapterEl);
     });
 }
-
-// AGGIUNTA CAPITOLO
 document.getElementById('add-chapter-btn')?.addEventListener('click', async () => {
     if (!currentAdventureId) return;
     const title = promptInput("Titolo del nuovo capitolo:", "Nuovo Capitolo");
@@ -351,8 +434,6 @@ document.getElementById('add-chapter-btn')?.addEventListener('click', async () =
         background: arrayUnion(newChapter)
     });
 });
-
-// MODIFICA/ELIMINAZIONE CAPITOLO
 document.getElementById('chapters-container')?.addEventListener('click', async e => {
     const container = e.target.closest('.chapter-container');
     if (!container) return;
@@ -383,53 +464,11 @@ document.getElementById('chapters-container')?.addEventListener('click', async e
     }
 });
 
-// ==== GESTIONE NODI (ESEMPLIFICATIVO per environments, pngs, maps) ====
-// Puoi duplicare la struttura di renderChaptersUI per i nodi, usando uniqueId e sanitizeHTML.
-// Esempio per environments:
-function renderGroupedNodes(type, nodes) {
-    const listEl = document.getElementById(`${type}-list`);
-    listEl.innerHTML = '';
-    if (!nodes || nodes.length === 0) {
-        listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun elemento.</p>`;
-        return;
-    }
-    nodes.forEach(node => {
-        const nodeEl = document.createElement('div');
-        nodeEl.className = 'node-container bg-gray-700 rounded-lg mb-2 p-2';
-        nodeEl.dataset.nodeId = node.id;
-        nodeEl.innerHTML = `
-            <div class="node-view-mode flex items-center justify-between">
-                <span class="text-lg font-bold text-red-400">${sanitizeHTML(node.title)}</span>
-                <div>
-                    <button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
-                    <button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
-                </div>
-            </div>
-            <div class="node-content-view text-gray-300 font-sans text-sm mt-2">${sanitizeHTML(node.publicContent).replace(/\n/g, "<br>")}</div>
-            <div class="node-edit-mode hidden p-2 space-y-2">
-                <input type="text" class="node-title-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${sanitizeHTML(node.title)}" placeholder="Titolo">
-                <textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${sanitizeHTML(node.publicContent)}</textarea>
-                <textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${sanitizeHTML(node.masterContent || "")}</textarea>
-                <div class="flex gap-2 mt-2">
-                    <button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
-                    <button class="cancel-edit-node-btn flex-grow bg-gray-600 hover:bg-gray-700 rounded-lg p-1 text-base">Annulla</button>
-                </div>
-            </div>
-        `;
-        listEl.appendChild(nodeEl);
-    });
-}
-
-// Aggiungi gestione click per edit/delete/salva nodi come sopra, cambiando i selettori e usando uniqueId per i nuovi nodi.
-
-
-
-// ========== DADI: LANCIO E VISUALIZZAZIONE ==========
+// ========== DADI ==========
 const diceButtons = document.querySelectorAll('.dice-btn');
 const resultsContainer = document.getElementById('dice-results-container');
 const diceCountInput = document.getElementById('dice-count');
 const diceModifierInput = document.getElementById('dice-modifier');
-
 function rollDice(sides, count) {
     const modifier = parseInt(diceModifierInput.value) || 0;
     resultsContainer.innerHTML = '';
@@ -452,14 +491,13 @@ diceButtons.forEach(button => button.addEventListener('click', () => {
     rollDice(sides, count);
 }));
 
-// ========== AI GENERATOR (GEMINI) ==========
+// ========== AI GENERATOR ==========
 const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
 const generateBtn = document.getElementById('generate-btn');
 const generatorType = document.getElementById('generator-type');
 const generatorPrompt = document.getElementById('generator-prompt');
 const resultContainer = document.getElementById('generator-result-container');
 const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
-
 generateBtn?.addEventListener('click', async () => {
     const type = generatorType.value;
     const prompt = generatorPrompt.value.trim();
@@ -538,33 +576,6 @@ saveToAdventureBtn?.addEventListener('click', async () => {
         alert("Errore durante il salvataggio.");
     }
 });
-
-// ========== SCHEDA PERSONAGGIO (BASIC SAFETY & LOGIC) ==========
-function createEmptyCharacterSheet() {
-    return {
-        characterName: "",
-        classes: [{ id: uniqueId("class"), name: "Guerriero", level: 1 }],
-        background: "",
-        race: "Umano",
-        stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
-        proficiencyBonus: "+2",
-        initiativeBonus: 0,
-        speed: "9m",
-        hp: { max: 10, current: 10 }, hitDice: "",
-        attacksSpellcasting: "", equipment: "",
-        personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
-        proficiencies: { saves: [], skills: [] },
-        defenses: []
-    };
-}
-
-// Solo struttura base, puoi espandere con funzioni avanzate e rendering dei dati come nei blocchi precedenti.
-// Ricorda: inserisci sempre i dati usando sanitizeHTML, controlla sempre gli input, usa uniqueId per ogni nuovo oggetto (classe, difesa, ecc).
-
-// ========== ESEMPI AVANZATI SU RICHIESTA ==========
-// Se vuoi la parte dettagliata di gestione della scheda personaggio (salvataggio, rendering dinamico, ecc.),
-// dimmelo e la genero per intero (specifica se vuoi la versione master o giocatore, o entrambi).
-
 </script>
 </body>
 </html>
