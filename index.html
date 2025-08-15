@@ -205,6 +205,57 @@
     </div>
 </div>
                             </div>
+                            <!-- === INIZIO MODALE ARMA === -->
+<div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+  <div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full">
+    <h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3>
+    <form id="weapon-form" class="space-y-2">
+      <input type="hidden" id="weapon-index" value="">
+      <div>
+        <label class="block text-xs font-bold mb-1">Nome Arma</label>
+        <input type="text" id="weapon-name" class="cs-input" required>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Tipo</label>
+        <select id="weapon-type" class="cs-select">
+          <option value="mischia">Mischia</option>
+          <option value="distanza">Distanza</option>
+          <option value="magica">Magica</option>
+          <option value="altro">Altro</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label>
+        <input type="text" id="weapon-damage" class="cs-input" required>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Tipo Danno</label>
+        <input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente...">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Proprietà</label>
+        <input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse...">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Competenza?</label>
+        <input type="checkbox" id="weapon-proficient">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label>
+        <input type="number" id="weapon-attack-bonus" class="cs-input" value="0">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label>
+        <input type="number" id="weapon-damage-bonus" class="cs-input" value="0">
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button>
+        <button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- === FINE MODALE ARMA === -->
 
     <!-- PATCH VELOCITÀ: nuovo blocco -->
     <div class="cs-box">
@@ -232,6 +283,16 @@
                     </div>
                 </details>
 
+                <!-- === INIZIO BLOCCO ARMI & ATTACCHI === -->
+<details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+  <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
+  <div class="mt-2 pt-2 border-t border-gray-400">
+    <div id="weapons-list-container" class="space-y-2"></div>
+    <button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button>
+  </div>
+</details>
+<!-- === FINE BLOCCO ARMI & ATTACCHI === -->
+                
                 <!-- Resto della Scheda -->
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                      <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
@@ -891,7 +952,8 @@ function updateSpeedField(sheetData) {
                 attacksSpellcasting: "", equipment: "",
                 personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
                 proficiencies: { saves: [], skills: [] },
-                defenses: []
+                defenses: [],
+                weapons: [] 
             };
             return sheet;
         }
@@ -1019,7 +1081,149 @@ function updateSpeedField(sheetData) {
             updateInitiative(sheetData);
             // PATCH VELOCITÀ: aggiorna visualizzazione velocità
     updateSpeedField(sheetData);
+            // ARMI
+            renderWeaponsList(sheetData);
+window.currentSheetData = sheetData;
         }
+        // === INIZIO LOGICA ARMI & ATTACCHI ===
+function getStatMod(stat, stats) {
+  return Math.floor((stats[stat] - 10) / 2);
+}
+function getAttackStat(weapon, stats) {
+  if ((weapon.properties || '').toLowerCase().includes('finesse')) {
+    return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength';
+  }
+  if (weapon.type === 'distanza') return 'dexterity';
+  if (weapon.type === 'magica') return weapon.spellStat || 'intelligence';
+  return 'strength';
+}
+function calcAttackBonus(weapon, stats, proficiencyBonus) {
+  const stat = getAttackStat(weapon, stats);
+  const mod = getStatMod(stat, stats);
+  let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0);
+  return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+}
+function calcDamageString(weapon, stats) {
+  const stat = getAttackStat(weapon, stats);
+  const mod = getStatMod(stat, stats);
+  let str = weapon.damage;
+  let total = mod + (parseInt(weapon.damageBonus) || 0);
+  if (!isNaN(total) && total !== 0) {
+    str += total > 0 ? `+${total}` : `${total}`;
+  }
+  return str;
+}
+function renderWeaponsList(sheetData) {
+  const container = document.getElementById('weapons-list-container');
+  container.innerHTML = '';
+  if (!sheetData.weapons || sheetData.weapons.length === 0) {
+    container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
+    return;
+  }
+  const types = ['mischia', 'distanza', 'magica', 'altro'];
+  types.forEach(type => {
+    const weapons = sheetData.weapons.filter(w => w.type === type);
+    if (weapons.length === 0) return;
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'mb-2';
+    groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
+      <table class="w-full text-xs md:text-sm mb-2">
+        <thead>
+          <tr class="bg-gray-300 text-black">
+            <th>Nome</th>
+            <th>Proprietà</th>
+            <th>Tiro x Colpire</th>
+            <th>Danni</th>
+            <th>Tipo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${weapons.map((w, i) => `
+            <tr>
+              <td>${w.name}</td>
+              <td>${w.properties}</td>
+              <td>${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</td>
+              <td>${calcDamageString(w, sheetData.stats)}</td>
+              <td>${w.damageType}</td>
+              <td>
+                <button class="edit-weapon-btn text-blue-600" data-idx="${i}">✎</button>
+                <button class="delete-weapon-btn text-red-600" data-idx="${i}">&times;</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+    container.appendChild(groupDiv);
+  });
+}
+document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
+function openWeaponModal(weapon = null, idx = null) {
+  document.getElementById('weapon-modal').classList.remove('hidden');
+  document.getElementById('weapon-form').reset();
+  document.getElementById('weapon-index').value = idx !== null ? idx : '';
+  if (weapon) {
+    document.getElementById('weapon-name').value = weapon.name;
+    document.getElementById('weapon-type').value = weapon.type;
+    document.getElementById('weapon-damage').value = weapon.damage;
+    document.getElementById('weapon-damage-type').value = weapon.damageType;
+    document.getElementById('weapon-properties').value = weapon.properties;
+    document.getElementById('weapon-proficient').checked = weapon.proficient;
+    document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
+    document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
+  }
+}
+document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
+  document.getElementById('weapon-modal').classList.add('hidden');
+});
+document.getElementById('weapon-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const idx = document.getElementById('weapon-index').value;
+  const newWeapon = {
+    name: document.getElementById('weapon-name').value,
+    type: document.getElementById('weapon-type').value,
+    damage: document.getElementById('weapon-damage').value,
+    damageType: document.getElementById('weapon-damage-type').value,
+    properties: document.getElementById('weapon-properties').value,
+    proficient: document.getElementById('weapon-proficient').checked,
+    attackBonus: document.getElementById('weapon-attack-bonus').value,
+    damageBonus: document.getElementById('weapon-damage-bonus').value
+  };
+  let sheetData = getCurrentSheetData();
+  if (!sheetData.weapons) sheetData.weapons = [];
+  if (idx !== '') {
+    sheetData.weapons[idx] = newWeapon;
+  } else {
+    sheetData.weapons.push(newWeapon);
+  }
+  saveSheetData(sheetData);
+  document.getElementById('weapon-modal').classList.add('hidden');
+  renderWeaponsList(sheetData);
+});
+document.getElementById('weapons-list-container').addEventListener('click', e => {
+  if (e.target.classList.contains('edit-weapon-btn')) {
+    const idx = e.target.dataset.idx;
+    let sheetData = getCurrentSheetData();
+    openWeaponModal(sheetData.weapons[idx], idx);
+  }
+  if (e.target.classList.contains('delete-weapon-btn')) {
+    const idx = e.target.dataset.idx;
+    let sheetData = getCurrentSheetData();
+    sheetData.weapons.splice(idx, 1);
+    saveSheetData(sheetData);
+    renderWeaponsList(sheetData);
+  }
+});
+// Supporto: da adattare alla tua logica dati
+function getCurrentSheetData() {
+  return window.currentSheetData || {};
+}
+function saveSheetData(sheetData) {
+  window.currentSheetData = sheetData;
+  // Aggiorna anche il DB se necessario!
+}
+// === FINE LOGICA ARMI & ATTACCHI ===
+        
 
         function getModifier(score) {
             const mod = Math.floor((parseInt(score || 10) - 10) / 2);
