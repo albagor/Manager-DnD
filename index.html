@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -37,6 +37,28 @@
         }
         .node-link:hover {
             color: #fca5a5; /* text-red-300 */
+        }
+        /* Stili per la scheda personaggio */
+        .cs-input {
+            @apply bg-gray-700 border border-gray-600 rounded-md p-1 w-full text-center text-white font-sans;
+        }
+        .cs-textarea {
+             @apply bg-gray-700 border border-gray-600 rounded-md p-2 w-full text-white font-sans h-24 resize-none;
+        }
+        .cs-label {
+            @apply text-xs text-gray-400 uppercase font-bold tracking-wider font-sans;
+        }
+        .cs-section {
+            @apply bg-gray-800 p-4 rounded-lg shadow-inner;
+        }
+        .cs-stat-box {
+            @apply bg-gray-900 border border-gray-700 rounded-lg p-2 flex flex-col items-center;
+        }
+        .cs-stat-value {
+            @apply text-3xl font-bold text-red-400;
+        }
+        .cs-stat-mod {
+            @apply bg-gray-700 rounded-full w-8 h-8 flex items-center justify-center text-lg font-bold mt-1;
         }
     </style>
 </head>
@@ -89,13 +111,28 @@
     </div>
     
     <!-- Contenitore Vista Giocatore -->
-    <div id="player-view-container" class="p-4 md:p-8"><h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1><div id="player-shared-items" class="space-y-8"></div></div>
+    <div id="player-view-container" class="p-4 md:p-8">
+        <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-4"></h1>
+        <div class="border-b border-gray-700 mb-4">
+            <nav class="flex justify-center -mb-px" aria-label="Tabs">
+                <button class="player-tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-xl" data-tab="player-shared-content-tab">Contenuti</button>
+                <button class="player-tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-6 border-b-2 font-medium text-xl" data-tab="player-character-sheet-tab">La Mia Scheda</button>
+            </nav>
+        </div>
+        <div id="player-shared-content-tab" class="player-tab-content active space-y-8"></div>
+        <div id="player-character-sheet-tab" class="player-tab-content">
+            <!-- La scheda personaggio verrà inserita qui -->
+        </div>
+    </div>
 
     <!-- Finestra Modale per i Nodi -->
     <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
 
     <!-- Finestra Modale per la Condivisione -->
     <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
+
+    <!-- Finestra Modale per la Scheda Personaggio (Vista Master) -->
+    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div id="character-sheet-modal-content" class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-6xl border border-red-500 max-h-[90vh] overflow-y-auto"></div></div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -119,6 +156,7 @@
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
+        let characterSheetUnsubscribe = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
@@ -137,51 +175,37 @@
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
-                    const players = data.players || [];
-                    if (!players.some(p => p.token === token)) {
+                    if (!data.players?.some(p => p.token === token)) {
                         document.getElementById('player-adventure-title').textContent = "Accesso Negato";
-                        document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
+                        document.getElementById('player-shared-content-tab').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
                         return;
                     }
 
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
-                    const container = document.getElementById('player-shared-items');
+                    const container = document.getElementById('player-shared-content-tab');
                     container.innerHTML = '';
                     
-                    const allSharedItems = data.sharedItems || [];
-                    const visibleItems = allSharedItems.filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
-                    
+                    const visibleItems = (data.sharedItems || []).filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
                     const sharedChapters = visibleItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
                     const otherItems = visibleItems.filter(item => !item.isChapter);
 
-                    if (sharedChapters.length > 0) {
-                        sharedChapters.forEach(chapter => {
-                            const chapterEl = document.createElement('div');
-                            chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                            chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                            container.appendChild(chapterEl);
-                        });
-                    }
-                    
-                    if (otherItems.length > 0) {
-                        const otherItemsContainer = document.createElement('div');
-                        otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
-                        otherItems.forEach(item => {
-                            const itemEl = document.createElement('div');
-                            itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                            const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
-                            itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                            otherItemsContainer.appendChild(itemEl);
-                        });
-                        container.appendChild(otherItemsContainer);
-                    }
-
-                    if (visibleItems.length === 0) {
-                         container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
-                    }
+                    if (sharedChapters.length > 0) { sharedChapters.forEach(c => { const el = document.createElement('div'); el.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; el.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${c.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(c.publicContent || '').replace(/\n/g, '<br>')}</p>`; container.appendChild(el); }); }
+                    if (otherItems.length > 0) { const otherContainer = document.createElement('div'); otherContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8'; otherItems.forEach(item => { const el = document.createElement('div'); el.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; const img = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : ''; el.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${img}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`; otherContainer.appendChild(el); }); container.appendChild(otherContainer); }
+                    if (visibleItems.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>'; }
                 } else {
                     document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
-                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
+                    document.getElementById('player-shared-content-tab').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
+                }
+            });
+
+            // Carica la scheda personaggio
+            if (characterSheetUnsubscribe) characterSheetUnsubscribe();
+            const sheetRef = doc(db, 'characterSheets', token);
+            characterSheetUnsubscribe = onSnapshot(sheetRef, (sheetDoc) => {
+                if (sheetDoc.exists()) {
+                    const sheetData = sheetDoc.data();
+                    document.getElementById('player-character-sheet-tab').innerHTML = generateCharacterSheetHTML(sheetData, false);
+                    addCharacterSheetEventListeners(token);
                 }
             });
         }
@@ -216,7 +240,6 @@
         const diceModifierInput = document.getElementById('dice-modifier');
 
         tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
-
         diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
         function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
 
@@ -529,15 +552,88 @@
         function renderPlayerManagementUI(adventureId, players = []) {
             const shareContainer = document.getElementById('player-share-content');
             const baseUrl = window.location.href.split('?')[0];
-            let playerListHtml = players.map(player => `<div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg"><span class="font-sans font-medium text-gray-200">${player.name}</span><div class="flex items-center gap-2"><input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-48 md:w-64 font-sans" readonly><button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button><button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button></div></div>`).join('');
+            let playerListHtml = players.map(player => `
+                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
+                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
+                    <div class="flex items-center gap-2">
+                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
+                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
+                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
+                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
+                    </div>
+                </div>`).join('');
             shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
+            shareContainer.addEventListener('click', (e) => { 
+                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
+                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
+                if (e.target.classList.contains('view-sheet-btn')) handleViewSheet(e);
+            });
             document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
-            shareContainer.addEventListener('click', (e) => { if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e); });
         }
 
-        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
+        async function handleAddPlayer(e) { 
+            e.preventDefault(); 
+            if (!currentAdventureId || !currentUserId) return; 
+            const nameInput = document.getElementById('player-name-input'); 
+            const playerName = nameInput.value.trim(); 
+            if (!playerName) return; 
+            const newPlayer = { name: playerName, token: crypto.randomUUID() };
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+            
+            // Crea la scheda personaggio
+            const sheetRef = doc(db, 'characterSheets', newPlayer.token);
+            const defaultSheet = createDefaultCharacterSheet(currentAdventureId, newPlayer.token, currentUserId);
+            
+            try { 
+                await setDoc(sheetRef, defaultSheet);
+                await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); 
+                await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); 
+                nameInput.value = ''; 
+            } catch (error) { console.error("Errore aggiunta giocatore o scheda:", error); } 
+        }
+
         function handleCopyLink(e) { const button = e.target; const link = button.dataset.link; navigator.clipboard.writeText(link).then(() => { button.textContent = 'Copiato!'; button.classList.replace('bg-blue-600', 'bg-green-600'); setTimeout(() => { button.textContent = 'Copia'; button.classList.replace('bg-green-600', 'bg-blue-600'); }, 2000); }); }
-        async function handleDeletePlayer(e) { if (!currentAdventureId || !currentUserId) return; const tokenToDelete = e.target.dataset.token; if (!confirm("Sei sicuro di voler rimuovere questo giocatore?")) return; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); const adventureSnap = await getDoc(adventureRef); if (adventureSnap.exists()) { const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); if (playerToDelete) { try { await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); } catch (error) { console.error("Errore rimozione giocatore:", error); } } } }
+        
+        async function handleDeletePlayer(e) { 
+            if (!currentAdventureId || !currentUserId) return; 
+            const tokenToDelete = e.target.dataset.token; 
+            if (!confirm("Sei sicuro di voler rimuovere questo giocatore? Verrà eliminata anche la sua scheda personaggio.")) return; 
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+            const sheetRef = doc(db, 'characterSheets', tokenToDelete);
+            
+            const adventureSnap = await getDoc(adventureRef); 
+            if (adventureSnap.exists()) { 
+                const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); 
+                if (playerToDelete) { 
+                    try { 
+                        await deleteDoc(sheetRef);
+                        await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); 
+                        await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); 
+                    } catch (error) { console.error("Errore rimozione giocatore o scheda:", error); } 
+                } 
+            } 
+        }
+
+        async function handleViewSheet(e) {
+            const token = e.target.dataset.token;
+            const sheetRef = doc(db, 'characterSheets', token);
+            const sheetDoc = await getDoc(sheetRef);
+            if (sheetDoc.exists()) {
+                const sheetData = sheetDoc.data();
+                const modalContent = document.getElementById('character-sheet-modal-content');
+                modalContent.innerHTML = generateCharacterSheetHTML(sheetData, true); // true for read-only
+                const closeBtn = document.createElement('button');
+                closeBtn.innerHTML = '&times;';
+                closeBtn.className = 'absolute top-2 right-4 text-3xl text-gray-400 hover:text-white';
+                closeBtn.onclick = () => document.getElementById('character-sheet-modal').classList.add('hidden');
+                modalContent.prepend(closeBtn);
+                document.getElementById('character-sheet-modal').classList.remove('hidden');
+            } else {
+                alert("Scheda non trovata.");
+            }
+        }
 
         const shareModal = document.getElementById('share-modal');
         const shareModalTitle = document.getElementById('share-modal-title');
@@ -587,19 +683,15 @@
             const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
             
             let sharedWith = [];
-            if (document.getElementById('share-all-players').checked) {
-                sharedWith.push('all');
-            } else {
-                sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token));
-            }
+            if (document.getElementById('share-all-players').checked) { sharedWith.push('all'); } 
+            else { sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token)); }
 
             let sharedItems = [...(currentAdventureData.sharedItems || [])];
             let itemIndex = sharedItems.findIndex(item => item.id === currentSharingItem.id);
 
             if (sharedWith.length > 0) {
-                if (itemIndex > -1) {
-                    sharedItems[itemIndex].sharedWith = sharedWith;
-                } else {
+                if (itemIndex > -1) { sharedItems[itemIndex].sharedWith = sharedWith; } 
+                else {
                     let sourceItem;
                     if (currentSharingItem.type === 'chapter') {
                         sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
@@ -610,20 +702,147 @@
                         if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
                     }
                 }
-            } else {
-                if (itemIndex > -1) sharedItems.splice(itemIndex, 1);
-            }
+            } else { if (itemIndex > -1) sharedItems.splice(itemIndex, 1); }
             
             try {
                 await updateDoc(adventureRef, { sharedItems });
                 const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; });
                 await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems });
                 shareModal.classList.add('hidden');
-            } catch (error) {
-                console.error("Errore durante la condivisione:", error);
-                alert("Si è verificato un errore.");
-            }
+            } catch (error) { console.error("Errore durante la condivisione:", error); alert("Si è verificato un errore."); }
         });
+        
+        document.querySelector('#player-view-container .player-tab-btn[data-tab="player-shared-content-tab"]').addEventListener('click', () => switchPlayerTab('player-shared-content-tab'));
+        document.querySelector('#player-view-container .player-tab-btn[data-tab="player-character-sheet-tab"]').addEventListener('click', () => switchPlayerTab('player-character-sheet-tab'));
+
+        function switchPlayerTab(tabId) {
+            document.querySelectorAll('.player-tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.player-tab-btn').forEach(b => { b.classList.remove('active', 'text-red-400', 'border-red-400'); b.classList.add('text-gray-400'); });
+            document.getElementById(tabId).classList.add('active');
+            document.querySelector(`.player-tab-btn[data-tab="${tabId}"]`).classList.add('active', 'text-red-400', 'border-red-400');
+        }
+
+        // --- FUNZIONI SCHEDA PERSONAGGIO ---
+
+        function createDefaultCharacterSheet(adventureId, playerToken, ownerId) {
+            return {
+                adventureId, playerToken, ownerId,
+                characterName: "", classLevel: "", background: "", playerName: "", race: "", alignment: "", experiencePoints: "",
+                strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10,
+                inspiration: "", proficiencyBonus: 2,
+                savingThrows: { str: false, dex: false, con: false, int: false, wis: false, cha: false },
+                skills: { acrobatics: false, animalHandling: false, arcana: false, athletics: false, deception: false, history: false, insight: false, intimidation: false, investigation: false, medicine: false, nature: false, perception: false, performance: false, persuasion: false, religion: false, sleightOfHand: false, stealth: false, survival: false },
+                armorClass: 10, initiative: 0, speed: 30,
+                currentHitPoints: 10, maxHitPoints: 10, temporaryHitPoints: 0,
+                hitDice: "1d8", deathSaves: { successes: 0, failures: 0 },
+                attacksSpellcasting: "", equipment: "",
+                personalityTraits: "", ideals: "", bonds: "", flaws: "",
+                featuresTraits: ""
+            };
+        }
+
+        function generateCharacterSheetHTML(data, isReadOnly) {
+            const disabled = isReadOnly ? 'disabled' : '';
+            const getMod = (score) => Math.floor((score - 10) / 2);
+            const stats = ['strength', 'dexterity', 'constitution', 'intelligence', 'wisdom', 'charisma'];
+            const skills = { acrobatics: 'dex', animalHandling: 'wis', arcana: 'int', athletics: 'str', deception: 'cha', history: 'int', insight: 'wis', intimidation: 'cha', investigation: 'int', medicine: 'wis', nature: 'int', perception: 'wis', performance: 'cha', persuasion: 'cha', religion: 'int', sleightOfHand: 'dex', stealth: 'dex', survival: 'wis' };
+            
+            return `
+                <div class="space-y-4">
+                    <!-- Header -->
+                    <div class="cs-section grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <div><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" value="${data.characterName}" data-field="characterName" ${disabled}></div>
+                        <div class="grid grid-cols-2 gap-2">
+                            <div><label class="cs-label">Classe & Livello</label><input type="text" class="cs-input" value="${data.classLevel}" data-field="classLevel" ${disabled}></div>
+                            <div><label class="cs-label">Background</label><input type="text" class="cs-input" value="${data.background}" data-field="background" ${disabled}></div>
+                            <div><label class="cs-label">Razza</label><input type="text" class="cs-input" value="${data.race}" data-field="race" ${disabled}></div>
+                            <div><label class="cs-label">Allineamento</label><input type="text" class="cs-input" value="${data.alignment}" data-field="alignment" ${disabled}></div>
+                        </div>
+                        <div><label class="cs-label">Punti Esperienza</label><input type="text" class="cs-input" value="${data.experiencePoints}" data-field="experiencePoints" ${disabled}></div>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                        <!-- Colonna Sinistra (Statistiche e Abilità) -->
+                        <div class="space-y-4">
+                            <div class="cs-section grid grid-cols-3 gap-2">
+                                ${stats.map(stat => `
+                                    <div class="cs-stat-box">
+                                        <label class="cs-label">${stat.substring(0,3).toUpperCase()}</label>
+                                        <input type="number" class="cs-input cs-stat-value bg-transparent border-0 text-3xl" value="${data[stat]}" data-field="${stat}" ${disabled}>
+                                        <div class="cs-stat-mod">${getMod(data[stat]) >= 0 ? '+' : ''}${getMod(data[stat])}</div>
+                                    </div>
+                                `).join('')}
+                            </div>
+                            <div class="cs-section">
+                                <!-- Abilità -->
+                                ${Object.keys(skills).map(skill => `
+                                    <div class="flex items-center my-1"><input type="checkbox" data-field="skills.${skill}" ${data.skills[skill] ? 'checked' : ''} ${disabled}><span class="ml-2 font-sans text-sm">${skill} (${skills[skill].toUpperCase()})</span></div>
+                                `).join('')}
+                            </div>
+                        </div>
+
+                        <!-- Colonna Centrale (Combattimento e Note) -->
+                        <div class="space-y-4">
+                            <div class="cs-section grid grid-cols-3 gap-2 text-center">
+                                <div><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-xl" value="${data.armorClass}" data-field="armorClass" ${disabled}></div>
+                                <div><label class="cs-label">Iniziativa</label><input type="number" class="cs-input text-xl" value="${data.initiative}" data-field="initiative" ${disabled}></div>
+                                <div><label class="cs-label">Velocità</label><input type="text" class="cs-input text-xl" value="${data.speed}" data-field="speed" ${disabled}></div>
+                            </div>
+                            <div class="cs-section">
+                                <label class="cs-label">Punti Ferita</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <input type="number" class="cs-input text-lg" value="${data.currentHitPoints}" data-field="currentHitPoints" ${disabled} placeholder="Attuali">
+                                    <input type="number" class="cs-input text-lg" value="${data.maxHitPoints}" data-field="maxHitPoints" ${disabled} placeholder="Massimi">
+                                </div>
+                                <label class="cs-label mt-2">Punti Ferita Temporanei</label>
+                                <input type="number" class="cs-input" value="${data.temporaryHitPoints}" data-field="temporaryHitPoints" ${disabled}>
+                            </div>
+                             <div class="cs-section">
+                                <label class="cs-label">Attacchi & Incantesimi</label>
+                                <textarea class="cs-textarea" data-field="attacksSpellcasting" ${disabled}>${data.attacksSpellcasting}</textarea>
+                            </div>
+                        </div>
+
+                        <!-- Colonna Destra (Equipaggiamento e Tratti) -->
+                        <div class="space-y-4">
+                            <div class="cs-section">
+                                <label class="cs-label">Equipaggiamento</label>
+                                <textarea class="cs-textarea" data-field="equipment" ${disabled}>${data.equipment}</textarea>
+                            </div>
+                            <div class="cs-section">
+                                <label class="cs-label">Tratti & Privilegi</label>
+                                <textarea class="cs-textarea" data-field="featuresTraits" ${disabled}>${data.featuresTraits}</textarea>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        let debounceTimer;
+        function addCharacterSheetEventListeners(token) {
+            const sheetRef = doc(db, 'characterSheets', token);
+            const sheetContainer = document.getElementById('player-character-sheet-tab');
+            
+            sheetContainer.querySelectorAll('input[type="text"], input[type="number"], textarea').forEach(input => {
+                input.addEventListener('keyup', (e) => {
+                    clearTimeout(debounceTimer);
+                    debounceTimer = setTimeout(() => {
+                        const field = e.target.dataset.field;
+                        const value = e.target.type === 'number' ? Number(e.target.value) : e.target.value;
+                        updateDoc(sheetRef, { [field]: value });
+                    }, 500);
+                });
+            });
+
+            sheetContainer.querySelectorAll('input[type="checkbox"]').forEach(checkbox => {
+                checkbox.addEventListener('change', (e) => {
+                    const field = e.target.dataset.field;
+                    const value = e.target.checked;
+                    updateDoc(sheetRef, { [field]: value });
+                });
+            });
+        }
 
     </script>
 </body>
