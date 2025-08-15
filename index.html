@@ -167,7 +167,7 @@
                     <!-- Colonna Centrale: Combattimento, Equipaggiamento -->
                     <div class="space-y-2">
                         <div class="grid grid-cols-3 gap-2">
-                            <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass"></div>
+                            <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass" readonly></div>
                             <div class="cs-box text-center"><label class="cs-label">Iniziativa</label><input type="text" class="cs-input text-3xl text-center" data-field="initiative"></div>
                             <div class="cs-box text-center"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-3xl text-center" data-field="speed"></div>
                         </div>
@@ -179,6 +179,11 @@
                             </div>
                         </div>
                         <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
+                        <div class="cs-box">
+                            <label class="cs-label mb-2">Difese</label>
+                            <div id="cs-defenses-list" class="space-y-1"></div>
+                            <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1">Aggiungi Difesa</button>
+                        </div>
                         <div class="cs-box h-48"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
                         <div class="cs-box h-48"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
                     </div>
@@ -664,7 +669,8 @@
                 hp: { max: 10, current: 10 }, hitDice: "",
                 attacksSpellcasting: "", equipment: "",
                 personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
-                proficiencies: { saves: [], skills: [] }
+                proficiencies: { saves: [], skills: [] },
+                defenses: []
             };
             return sheet;
         }
@@ -777,17 +783,20 @@
 
         function populateCharacterSheet(sheetData) {
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                if (el.dataset.field === 'armorClass') return; // Skip AC field
                 const fieldPath = el.dataset.field;
-                const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : '', sheetData);
+                const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 el.value = value;
             });
             updateAllModifiers(sheetData);
             renderSkillsAndSaves(sheetData);
+            renderDefenses(sheetData.defenses || []);
+            updateAC(sheetData);
         }
 
         function getModifier(score) {
             const mod = Math.floor((parseInt(score || 10) - 10) / 2);
-            return mod >= 0 ? `+${mod}` : mod;
+            return mod >= 0 ? `+${mod}` : mod.toString();
         }
 
         function updateAllModifiers(sheetData) {
@@ -835,24 +844,74 @@
             });
         }
 
+        function renderDefenses(defenses = []) {
+            const container = document.getElementById('cs-defenses-list');
+            container.innerHTML = defenses.map(item => `
+                <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
+                    <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
+                    <input type="text" class="cs-defense-name bg-gray-600 rounded px-2 py-1 text-sm w-full" value="${item.name}" placeholder="Nome (es. Scudo)">
+                    <input type="number" class="cs-defense-bonus bg-gray-600 rounded px-2 py-1 text-sm w-20" value="${item.bonus}" placeholder="Bonus">
+                    <button class="cs-delete-defense-btn text-red-400 hover:text-red-300 font-bold">X</button>
+                </div>
+            `).join('');
+        }
+
+        function updateAC(sheetData) {
+            const dexMod = parseInt(getModifier(sheetData.stats.dexterity));
+            let totalAC = 10 + dexMod;
+            
+            (sheetData.defenses || []).forEach(item => {
+                if (item.worn) {
+                    totalAC += parseInt(item.bonus || 0);
+                }
+            });
+            
+            const acInput = csModalContent.querySelector('[data-field="armorClass"]');
+            acInput.value = totalAC;
+        }
+
         csModalContent.addEventListener('input', (e) => {
             const token = csModal.dataset.currentToken;
             if (!token) return;
             
+            // Trigger UI updates immediately
+            const sheetDataForUI = readSheetFromDOM();
+            if (e.target.dataset.field && e.target.dataset.field.startsWith('stats.')) {
+                 updateAllModifiers(sheetDataForUI);
+                 updateSkillAndSaveBonuses(sheetDataForUI);
+                 updateAC(sheetDataForUI);
+            }
+            if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
+                 updateSkillAndSaveBonuses(sheetDataForUI);
+            }
+            if (e.target.classList.contains('cs-defense-worn') || e.target.classList.contains('cs-defense-bonus')) {
+                updateAC(sheetDataForUI);
+            }
+
+            // Debounce the save to Firestore
             clearTimeout(characterSheetUpdateTimeout);
             characterSheetUpdateTimeout = setTimeout(() => {
-                const sheetData = readSheetFromDOM();
-                saveCharacterSheet(token, sheetData);
-            }, 500); // Debounce di 500ms
+                const sheetDataToSave = readSheetFromDOM();
+                saveCharacterSheet(token, sheetDataToSave);
+            }, 500);
+        });
 
-            // Aggiornamenti immediati UI
-            const fieldPath = e.target.dataset.field;
-            if (fieldPath && fieldPath.startsWith('stats.')) {
-                 updateAllModifiers(readSheetFromDOM());
-                 updateSkillAndSaveBonuses(readSheetFromDOM());
+        csModalContent.addEventListener('click', e => {
+            if (e.target.id === 'cs-add-defense-btn') {
+                const newDefense = { id: crypto.randomUUID(), name: '', bonus: 0, worn: false };
+                const sheetData = readSheetFromDOM();
+                sheetData.defenses.push(newDefense);
+                renderDefenses(sheetData.defenses);
+                saveCharacterSheet(csModal.dataset.currentToken, sheetData);
             }
-             if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
-                 updateSkillAndSaveBonuses(readSheetFromDOM());
+            if (e.target.classList.contains('cs-delete-defense-btn')) {
+                const itemEl = e.target.closest('.defense-item');
+                const itemId = itemEl.dataset.id;
+                let sheetData = readSheetFromDOM();
+                sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId);
+                renderDefenses(sheetData.defenses);
+                updateAC(sheetData);
+                saveCharacterSheet(csModal.dataset.currentToken, sheetData);
             }
         });
 
@@ -874,6 +933,14 @@
 
             sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
             sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
+            
+            sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
+                id: itemEl.dataset.id,
+                name: itemEl.querySelector('.cs-defense-name').value,
+                bonus: itemEl.querySelector('.cs-defense-bonus').value,
+                worn: itemEl.querySelector('.cs-defense-worn').checked
+            }));
+
             return sheetData;
         }
 
