@@ -264,7 +264,6 @@
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
-        let currentRollsUnsubscribe = null;
         let characterSheetUpdateTimeout = null;
 
         const urlParams = new URLSearchParams(window.location.search);
@@ -279,14 +278,15 @@
             loadPlayerView(playerViewId, playerToken);
         }
 
-        function renderDiceLog(containerEl, rolls) {
+        function renderDiceLog(containerEl, rolls = []) {
             if (!containerEl) return;
             containerEl.innerHTML = '';
-            if (rolls.length === 0) {
+            if (!rolls || rolls.length === 0) {
                 containerEl.innerHTML = `<span class="text-gray-500">Nessun tiro ancora effettuato.</span>`;
                 return;
             }
-            rolls.forEach(roll => {
+            const sortedRolls = [...rolls].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            sortedRolls.forEach(roll => {
                 const rollEl = document.createElement('div');
                 rollEl.className = 'p-2 border-b border-gray-700';
                 rollEl.innerHTML = `
@@ -296,11 +296,10 @@
                     </p>
                     <p class="text-sm text-gray-400">${roll.details}</p>
                 `;
-                containerEl.prepend(rollEl); // Prepend to show newest first
+                containerEl.appendChild(rollEl); 
             });
         }
         
-        // Event listener delegato per i tiri del giocatore. Viene aggiunto una sola volta.
         document.getElementById('player-view-container').addEventListener('click', async (e) => {
             if (!e.target.classList.contains('player-dice-btn')) return;
 
@@ -327,12 +326,14 @@
                 rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
                 result: total,
                 details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
-                timestamp: serverTimestamp()
+                timestamp: new Date().toISOString()
             };
 
             try {
-                const rollsRef = collection(db, 'publicAdventures', playerViewId, 'diceRolls');
-                await addDoc(rollsRef, rollData);
+                const adventureRef = doc(db, 'publicAdventures', playerViewId);
+                await updateDoc(adventureRef, {
+                    diceRolls: arrayUnion(rollData)
+                });
             } catch (error) {
                 console.error("Errore nel salvataggio del tiro:", error);
                 const diceLogContainer = document.getElementById('player-dice-log');
@@ -341,22 +342,11 @@
         });
 
         function loadPlayerView(adventureId, token) {
-            // Imposta l'ascolto per i tiri dei dadi una sola volta
-            const diceLogContainer = document.getElementById('player-dice-log');
-            const rollsQuery = query(collection(db, 'publicAdventures', adventureId, 'diceRolls'));
-            onSnapshot(rollsQuery, (snapshot) => {
-                const rolls = [];
-                snapshot.forEach(doc => rolls.push(doc.data()));
-                rolls.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                renderDiceLog(diceLogContainer, rolls);
-            });
-            
-            // Imposta l'ascolto per i dati principali dell'avventura
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
-                    currentAdventureData = data; // Aggiorna i dati globali
+                    currentAdventureData = data; 
                     const players = data.players || [];
                     const currentPlayer = players.find(p => p.token === token);
                     if (!currentPlayer) {
@@ -369,6 +359,9 @@
                     document.getElementById('player-open-sheet-btn').addEventListener('click', () => {
                         openCharacterSheetModal(token, true);
                     });
+
+                    const diceLogContainer = document.getElementById('player-dice-log');
+                    renderDiceLog(diceLogContainer, data.diceRolls);
 
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
@@ -513,7 +506,7 @@
         const adventureListView = document.getElementById('adventure-list-view');
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
         
@@ -522,30 +515,30 @@
             adventureDetailView.style.display = 'block';
             currentAdventureId = docId;
             if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
+            
             const adventureRef = doc(db, `users/${userId}/adventures`, docId);
+            const publicAdventureRef = doc(db, 'publicAdventures', docId);
+
             currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
                 if (doc.exists()) {
-                    currentAdventureData = doc.data();
+                    currentAdventureData = { ...currentAdventureData, ...doc.data() };
                     document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
                     renderChaptersUI(currentAdventureData.background || []);
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
                     renderGroupedNodes('maps', currentAdventureData.maps || []);
                     renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
+                } else { backToListBtn.click(); }
+            });
 
-                    // Setup real-time dice log for master
+            onSnapshot(publicAdventureRef, (publicDoc) => {
+                if(publicDoc.exists()){
+                    currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
                     const masterDiceLogContainer = document.getElementById('master-dice-log-container');
                     masterDiceLogContainer.style.display = 'block';
                     const masterDiceLog = document.getElementById('master-dice-log');
-                    const rollsQuery = query(collection(db, 'publicAdventures', docId, 'diceRolls'));
-                    if (currentRollsUnsubscribe) currentRollsUnsubscribe();
-                    currentRollsUnsubscribe = onSnapshot(rollsQuery, (snapshot) => {
-                        const rolls = [];
-                        snapshot.forEach(doc => rolls.push(doc.data()));
-                        rolls.sort((a, b) => (a.timestamp?.seconds || 0) - (b.timestamp?.seconds || 0));
-                        renderDiceLog(masterDiceLog, rolls);
-                    });
-                } else { backToListBtn.click(); }
+                    renderDiceLog(masterDiceLog, publicDoc.data().diceRolls);
+                }
             });
         }
 
@@ -619,7 +612,6 @@
             adventureListView.style.display = 'block'; 
             currentAdventureId = null; 
             if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } 
-            if (currentRollsUnsubscribe) { currentRollsUnsubscribe(); currentRollsUnsubscribe = null; }
             document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';
             document.getElementById('master-dice-log-container').style.display = 'none';
         });
@@ -1360,4 +1352,4 @@ csModalContent.addEventListener('input', (e) => {
 
     </script>
 </body>
-</html>
+</ht
