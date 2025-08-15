@@ -285,7 +285,8 @@
                 containerEl.innerHTML = `<span class="text-gray-500">Nessun tiro ancora effettuato.</span>`;
                 return;
             }
-            const sortedRolls = [...rolls].sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+            // Sort ascending by timestamp (oldest first)
+            const sortedRolls = [...rolls].sort((a, b) => a.timestamp - b.timestamp);
             sortedRolls.forEach(roll => {
                 const rollEl = document.createElement('div');
                 rollEl.className = 'p-2 border-b border-gray-700';
@@ -296,7 +297,8 @@
                     </p>
                     <p class="text-sm text-gray-400">${roll.details}</p>
                 `;
-                containerEl.appendChild(rollEl); 
+                // Prepend to show the newest roll at the top
+                containerEl.prepend(rollEl); 
             });
         }
         
@@ -322,11 +324,12 @@
             const total = rollResult + modifier;
 
             const rollData = {
+                id: crypto.randomUUID(),
                 playerName: currentPlayer.name,
                 rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
                 result: total,
                 details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
-                timestamp: new Date().toISOString()
+                timestamp: Date.now()
             };
 
             try {
@@ -1352,4 +1355,4 @@ csModalContent.addEventListener('input', (e) => {
 
     </script>
 </body>
-</ht
+</htm
