@@ -75,14 +75,335 @@
     </style>
 </head>
 <body class="bg-gray-900 text-white">
+
+    <!-- Initial Loading Indicator -->
+    <div id="initial-loader" class="min-h-screen flex items-center justify-center">
+        <div class="loader"></div>
+    </div>
+
+    <!-- Contenitore Autenticazione -->
+    <div id="auth-container" class="min-h-screen items-center justify-center p-4">
+        <div class="w-full max-w-md">
+            <div class="bg-gray-800 shadow-lg rounded-lg p-8">
+                <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
+                <form id="login-form">
+                    <h2 class="text-2xl text-center mb-4">Accedi</h2>
+                    <div class="mb-4"><label for="login-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="login-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+                    <div class="mb-6"><label for="login-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="login-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Accedi</button>
+                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Non hai un account? <a href="#" id="show-register" class="text-red-400 hover:text-red-300">Registrati</a></p>
+                </form>
+                <form id="register-form" style="display: none;">
+                    <h2 class="text-2xl text-center mb-4">Crea un Account</h2>
+                    <div class="mb-4"><label for="register-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="register-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+                    <div class="mb-6"><label for="register-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="register-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Registrati</button>
+                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Hai già un account? <a href="#" id="show-login" class="text-red-400 hover:text-red-300">Accedi</a></p>
+                </form>
+                <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Contenitore App Principale (per il Master) -->
+    <div id="app-container">
+        <div class="container mx-auto p-4 md:p-8">
+            <header class="flex justify-between items-center mb-8">
+                <div><h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1><p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili.</p></div>
+                <div id="user-info" class="text-right"><p id="user-email" class="text-gray-300 font-sans"></p><button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
+            </header>
+            <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button></nav></div></div>
+            <main>
+                <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
+                <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
+                <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div><div id="master-dice-log-container" class="mt-8 hidden"><h3 class="text-2xl font-bold mb-4 text-gray-300">Registro Tiri in Tempo Reale</h3><div id="master-dice-log" class="p-4 bg-gray-900 rounded-lg min-h-[200px] max-h-[400px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei giocatori appariranno qui...</span></div></div></div></div>
+            </main>
+        </div>
+    </div>
     
-    <!-- Tutto il markup della tua app come da ultimo commit funzionante -->
+    <!-- Contenitore Vista Giocatore -->
+    <div id="player-view-container" class="p-4 md:p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
+            <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+        </div>
+        <div class="bg-gray-800 p-4 rounded-lg shadow-lg mb-8"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-3 sm:grid-cols-6 gap-4 mb-4"><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="4">d4</button><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="6">d6</button><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="8">d8</button><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="10">d10</button><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="12">d12</button><button class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="20">d20</button></div><div class="flex items-center gap-2 mb-4 font-sans"><label for="player-dice-modifier">Modificatore:</label><input type="number" id="player-dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24 text-white"></div><div id="player-dice-log" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[150px] max-h-[300px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei dadi appariranno qui...</span></div></div>
+        <div id="player-shared-items" class="space-y-8"></div>
+    </div>
+
+    <!-- Finestra Modale per i Nodi -->
+    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
+
+    <!-- Finestra Modale per la Condivisione -->
+    <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
+
+    <!-- Finestra Modale Scheda Personaggio -->
+    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
+        <div class="cs-main-container rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-800 flex flex-col">
+            <div class="flex justify-between items-center p-3 border-b border-gray-400 flex-shrink-0">
+                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-800">Scheda Personaggio</h2>
+                <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
+            </div>
+            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
+                
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+                    <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400">
+                        <!-- Blocco Anagrafico -->
+                        <div class="grid grid-cols-1 md:grid-cols-10 gap-2 mb-2">
+                            <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
+                            <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
+                            <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
+<div class="cs-box md:col-span-2 text-center">
+    <label class="cs-label">Livello Totale</label>
+    <input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
+</div>                        </div>
+                        <div class="cs-box mb-2">
+                            <label class="cs-label">Classi & Livelli</label>
+                            <div id="cs-classes-list" class="space-y-1 mt-1"></div>
+                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button>
+                        </div>
+                         <!-- Colonna Background -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                            <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
+                        </div>
+                    </div>
+                </details>
+
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+                    <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Colonna Sinistra: Statistiche e Abilità -->
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
+                            </div>
+                            <div class="cs-box">
+                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
+                                <div class="cs-box mt-2" id="saving-throws-list"></div>
+                                <div class="cs-box mt-2" id="skills-list"></div>
+                            </div>
+                        </div>
+                        <!-- Colonna Destra: Combattimento -->
+                        <div class="space-y-2">
+                             <div class="grid grid-cols-2 gap-2">
+                                <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center max-w-[90px]" data-field="armorClass" readonly></div>
+                               <div class="cs-box text-center">
+    <label class="cs-label">Iniziativa</label>
+    <div class="flex items-center justify-center">
+        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
+        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus">
+    </div>
+</div>
+                            </div>
+                            <!-- === INIZIO MODALE ARMA === -->
+<div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+  <div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full">
+    <h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3>
+    <form id="weapon-form" class="space-y-2">
+      <input type="hidden" id="weapon-index" value="">
+      <div>
+        <label class="block text-xs font-bold mb-1">Nome Arma</label>
+        <input type="text" id="weapon-name" class="cs-input" required>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Tipo</label>
+        <select id="weapon-type" class="cs-select">
+          <option value="mischia">Mischia</option>
+          <option value="distanza">Distanza</option>
+          <option value="magica">Magica</option>
+          <option value="altro">Altro</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label>
+        <input type="text" id="weapon-damage" class="cs-input" required>
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Tipo Danno</label>
+        <input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente...">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Proprietà</label>
+        <input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse...">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Competenza?</label>
+        <input type="checkbox" id="weapon-proficient">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label>
+        <input type="number" id="weapon-attack-bonus" class="cs-input" value="0">
+      </div>
+      <div>
+        <label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label>
+        <input type="number" id="weapon-damage-bonus" class="cs-input" value="0">
+      </div>
+      <div class="flex gap-2 mt-2">
+        <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button>
+        <button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button>
+      </div>
+    </form>
+  </div>
+</div>
+<!-- === FINE MODALE ARMA === -->
+
+    <!-- PATCH VELOCITÀ: nuovo blocco -->
+    <div class="cs-box">
+        <label class="cs-label">Velocità</label>
+        <div class="flex gap-2 items-center">
+            <input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly>
+            <input type="text" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus manuale">
+        </div>
+        <small class="text-xs text-gray-500 font-sans">La velocità è calcolata automaticamente (razza, classi, livelli). Modifica il campo a destra per bonus/malus temporanei.</small>
+    </div>
+    <!-- FINE PATCH VELOCITÀ -->                            <div class="cs-box">
+                                <label class="cs-label">Punti Ferita</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
+                                    <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
+                                </div>
+                            </div>
+                            <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
+                            <div class="cs-box">
+                                <label class="cs-label mb-2">Difese</label>
+                                <div id="cs-defenses-list" class="space-y-1"></div>
+                                <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
+                            </div>
+                        </div>
+                    </div>
+                </details>
+
+                <!-- === INIZIO BLOCCO ARMI & ATTACCHI === -->
+<details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+  <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
+  <div class="mt-2 pt-2 border-t border-gray-400">
+    <div id="weapons-list-container" class="space-y-2"></div>
+    <button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button>
+  </div>
+</details>
+<!-- === FINE BLOCCO ARMI & ATTACCHI === -->
+                
+                <!-- Resto della Scheda -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                     <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
+                     <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
+                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
-        // ... Tutto il codice JS rimane invariato rispetto all'ultima versione funzionante ...
-        // PATCH: gestione fallback diceRolls vuoto in player e master view
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        // Nella funzione loadPlayerView
+        const firebaseConfig = {
+            apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
+            authDomain: "avventure-dnd.firebaseapp.com",
+            projectId: "avventure-dnd",
+            storageBucket: "avventure-dnd.appspot.com",
+            messagingSenderId: "943269894603",
+            appId: "1:943269894603:web:b8851c9862d76486603e4e"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const auth = getAuth(app);
+
+        let currentUserId = null;
+        let currentAdventureId = null;
+        let currentAdventureData = {};
+        let currentAdventureUnsubscribe = null;
+        let characterSheetUpdateTimeout = null;
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const playerViewId = urlParams.get('player_view');
+        const playerToken = urlParams.get('token');
+
+        if (playerViewId && playerToken) {
+            document.getElementById('initial-loader').style.display = 'none';
+            document.getElementById('auth-container').style.display = 'none';
+            document.getElementById('app-container').style.display = 'none';
+            document.getElementById('player-view-container').classList.add('active');
+            loadPlayerView(playerViewId, playerToken);
+        }
+
+        function renderDiceLog(containerEl, rolls = []) {
+            if (!containerEl) return;
+            containerEl.innerHTML = '';
+            if (!rolls || rolls.length === 0) {
+                containerEl.innerHTML = `<span class="text-gray-500">Nessun tiro ancora effettuato.</span>`;
+                return;
+            }
+            // Sort descending by timestamp (newest first)
+            const sortedRolls = [...rolls].sort((a, b) => b.timestamp - a.timestamp);
+            sortedRolls.forEach(roll => {
+                const rollEl = document.createElement('div');
+                rollEl.className = 'p-2 border-b border-gray-700';
+                rollEl.innerHTML = `
+                    <p class="text-lg">
+                        <span class="font-bold text-red-400">${roll.playerName}</span> ha tirato ${roll.rollNotation}: 
+                        <span class="font-bold text-2xl text-white">${roll.result}</span>
+                    </p>
+                    <p class="text-sm text-gray-400">${roll.details}</p>
+                `;
+                containerEl.appendChild(rollEl); 
+            });
+        }
+        
+        document.getElementById('player-view-container').addEventListener('click', async (e) => {
+            if (!e.target.classList.contains('player-dice-btn')) return;
+
+            if (!playerViewId || !playerToken || !currentAdventureData.players) {
+                console.error("Dati dell'avventura o del giocatore non ancora caricati.");
+                return;
+            }
+
+            const btn = e.target;
+            const currentPlayer = currentAdventureData.players.find(p => p.token === playerToken);
+            if (!currentPlayer) {
+                console.error("Impossibile trovare il giocatore corrente.");
+                return;
+            }
+
+            const sides = parseInt(btn.dataset.sides);
+            const modifier = parseInt(document.getElementById('player-dice-modifier').value) || 0;
+            
+            const rollResult = Math.floor(Math.random() * sides) + 1;
+            const total = rollResult + modifier;
+
+            const rollData = {
+                id: crypto.randomUUID(),
+                playerName: currentPlayer.name,
+                rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
+                result: total,
+                details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
+                timestamp: Date.now()
+            };
+
+            try {
+                const adventureRef = doc(db, 'publicAdventures', playerViewId);
+                await updateDoc(adventureRef, {
+                    diceRolls: arrayUnion(rollData)
+                });
+            } catch (error) {
+                console.error("Errore nel salvataggio del tiro:", error);
+                const diceLogContainer = document.getElementById('player-dice-log');
+                diceLogContainer.innerHTML = `<p class="text-red-500">Errore nel tiro del dado.</p>` + diceLogContainer.innerHTML;
+            }
+        });
+
         function loadPlayerView(adventureId, token) {
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
             onSnapshot(publicAdventureRef, (doc) => {
@@ -103,25 +424,1138 @@
                     });
 
                     const diceLogContainer = document.getElementById('player-dice-log');
-                    renderDiceLog(diceLogContainer, data.diceRolls || []); // PATCH
+renderDiceLog(diceLogContainer, data.diceRolls || []);
 
-                    // ...resto della funzione...
+                    const container = document.getElementById('player-shared-items');
+                    container.innerHTML = '';
+                    
+                    const allSharedItems = data.sharedItems || [];
+                    const visibleItems = allSharedItems.filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
+                    
+                    const sharedChapters = visibleItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
+                    const otherItems = visibleItems.filter(item => !item.isChapter);
+
+                    if (sharedChapters.length > 0) {
+                        sharedChapters.forEach(chapter => {
+                            const chapterEl = document.createElement('div');
+                            chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`;
+                            container.appendChild(chapterEl);
+                        });
+                    }
+                    
+                    if (otherItems.length > 0) {
+                        const otherItemsContainer = document.createElement('div');
+                        otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
+                        otherItems.forEach(item => {
+                            const itemEl = document.createElement('div');
+                            itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
+                            itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
+                            otherItemsContainer.appendChild(itemEl);
+                        });
+                        container.appendChild(otherItemsContainer);
+                    }
+
+                    if (visibleItems.length === 0) {
+                         container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
+                    }
+                } else {
+                    document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
+                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
                 }
-                // ...resto della funzione...
+            });
+        }
+        
+        onAuthStateChanged(auth, user => { 
+            if (playerViewId && playerToken) return;
+            document.getElementById('initial-loader').style.display = 'none';
+            if (user) { 
+                document.getElementById('auth-container').classList.remove('active');
+                document.getElementById('app-container').classList.add('active'); 
+                document.getElementById('user-email').textContent = user.email; 
+                currentUserId = user.uid; 
+                loadAdventures(user.uid); 
+            } else {
+                document.getElementById('app-container').classList.remove('active'); 
+                document.getElementById('auth-container').classList.add('active');
+                currentUserId = null; 
+            } 
+        });
+
+        document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
+        document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
+        document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
+
+        const tabButtons = document.querySelectorAll('.tab-btn');
+        const tabContents = document.querySelectorAll('.tab-content');
+        const diceButtons = document.querySelectorAll('.dice-btn');
+        const resultsContainer = document.getElementById('dice-results-container');
+        const diceCountInput = document.getElementById('dice-count');
+        const diceModifierInput = document.getElementById('dice-modifier');
+
+        tabButtons.forEach(button => { button.addEventListener('click', () => { tabButtons.forEach(btn => { btn.classList.remove('active', 'text-red-400', 'border-red-400'); btn.classList.add('text-gray-400', 'hover:text-white', 'hover:border-gray-300'); }); tabContents.forEach(content => content.classList.remove('active')); button.classList.add('active', 'text-red-400', 'border-red-400'); button.classList.remove('text-gray-400'); document.getElementById(button.dataset.tab).classList.add('active'); }); });
+
+        diceButtons.forEach(button => button.addEventListener('click', () => { const sides = parseInt(button.dataset.sides); const count = parseInt(diceCountInput.value) || 1; rollDice(sides, count); }));
+        function rollDice(sides, count) { const modifier = parseInt(diceModifierInput.value) || 0; resultsContainer.innerHTML = ''; let total = 0; let rolls = []; for (let i = 0; i < count; i++) { const result = Math.floor(Math.random() * sides) + 1; rolls.push(result); total += result; } const finalTotal = total + modifier; const resultWrapper = document.createElement('div'); resultWrapper.className = 'text-center'; if (count > 1) { resultWrapper.innerHTML += `<p class="text-lg text-gray-300">Tiri: [${rolls.join(', ')}]</p>`; } const totalText = document.createElement('p'); totalText.className = 'text-4xl font-bold mt-2'; if (modifier !== 0) { const sign = modifier > 0 ? '+' : '-'; totalText.innerHTML = `${total} <span class="text-2xl text-red-400">${sign} ${Math.abs(modifier)}</span> = ${finalTotal}`; } else { totalText.textContent = finalTotal; } resultWrapper.appendChild(totalText); resultsContainer.appendChild(resultWrapper); }
+
+        const GEMINI_API_KEY = "AIzaSyCT74c7GLPJA2E8MsB26s68XgdSosC3bcw";
+        const generateBtn = document.getElementById('generate-btn');
+        const generatorType = document.getElementById('generator-type');
+        const generatorPrompt = document.getElementById('generator-prompt');
+        const resultContainer = document.getElementById('generator-result-container');
+        const saveToAdventureBtn = document.getElementById('save-to-adventure-btn');
+        
+        generateBtn.addEventListener('click', async () => {
+            const type = generatorType.value;
+            const prompt = generatorPrompt.value.trim();
+            if (!prompt) { resultContainer.innerHTML = '<p class="text-yellow-400 text-center">Inserisci una descrizione.</p>'; return; }
+            resultContainer.innerHTML = '<div class="flex justify-center items-center h-full"><div class="loader"></div></div>';
+            saveToAdventureBtn.style.display = 'none';
+            await generateText(type, prompt);
+        });
+
+        async function generateText(type, prompt) {
+            let fullPrompt = '';
+            if (type === 'Mappa') {
+                fullPrompt = `Sei un DM di D&D 5e. Genera la descrizione testuale per un dungeon o una mappa basandoti su questa idea: "${prompt}". Rispondi SOLO con la descrizione. Inizia la risposta direttamente con il nome del luogo in grassetto. Descrivi l'aspetto generale e poi elenca le stanze o le aree principali con un titolo (es. **1. Ingresso**, **2. Sala del Trono**, ecc.) e una breve descrizione per ciascuna. Questa è la parte pubblica. Poi, aggiungi una sezione separata per le note del master che inizia ESATTAMENTE con "---NOTE MASTER---" e che include segreti, trappole, tesori o mostri. Non aggiungere introduzioni o testo extra. Formatta tutto in markdown.`;
+            } else {
+                fullPrompt = `Sei un DM di D&D 5e. Rispondi SOLO con la descrizione del ${type}. Inizia la risposta direttamente con il nome in grassetto. Basati su questa idea: "${prompt}". Crea prima una descrizione pubblica (aspetto, personalità, ecc.). Poi, aggiungi una sezione separata per le note del master che inizia ESATTAMENTE con "---NOTE MASTER---" e che include segreti, statistiche o spunti di trama. Non aggiungere introduzioni o testo extra. Formatta tutto in markdown.`;
+            }
+            try {
+                const payload = { contents: [{ role: "user", parts: [{ text: fullPrompt }] }] };
+                const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${GEMINI_API_KEY}`;
+                const response = await fetch(apiUrl, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload) });
+                if (!response.ok) throw new Error(`Errore API Testo: ${response.statusText}`);
+                const result = await response.json();
+                if (result.candidates && result.candidates.length > 0) {
+                    const text = result.candidates[0].content.parts[0].text;
+                    resultContainer.innerHTML = `<textarea class="w-full h-full bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">${text}</textarea>`;
+                    saveToAdventureBtn.dataset.type = type;
+                    saveToAdventureBtn.style.display = 'block';
+                } else { throw new Error("Nessun contenuto valido ricevuto dall'API."); }
+            } catch (error) { console.error("Errore generazione testo:", error); resultContainer.innerHTML = `<p class="text-red-500 text-center">Si è verificato un errore. Riprova.</p>`; }
+        }
+
+        saveToAdventureBtn.addEventListener('click', async () => {
+            if (!currentAdventureId) { alert("Devi prima aprire un'avventura per poter salvare un contenuto."); return; }
+            const editTextArea = resultContainer.querySelector('textarea');
+            if (!editTextArea) { alert("Nessun contenuto da salvare."); return; }
+            const fullContent = editTextArea.value;
+            const separator = '---NOTE MASTER---';
+            let publicContent = fullContent;
+            let masterContent = '';
+            if (fullContent.includes(separator)) { const parts = fullContent.split(separator); publicContent = parts[0].trim(); masterContent = parts[1].trim(); }
+            const title = (publicContent.split('\n')[0] || "Nuovo Contenuto").replace(/\*|#/g, '').trim();
+            const group = prompt(`In quale gruppo vuoi salvare "${title}"?`, "Senza Gruppo");
+            if (group === null) return;
+            const imageUrl = prompt("URL dell'immagine (opzionale):");
+            const newNode = { title, publicContent, masterContent, group, imageUrl: imageUrl || "" };
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            try {
+                const type = saveToAdventureBtn.dataset.type;
+                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : (type === 'Mappa' ? 'maps' : 'pngs');
+                await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
+                saveToAdventureBtn.textContent = 'Salvato!';
+                setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
+            } catch (error) { console.error("Errore salvataggio:", error); alert("Errore durante il salvataggio."); }
+        });
+
+        const addAdventureForm = document.getElementById('add-adventure-form');
+        const adventureTitleInput = document.getElementById('adventure-title-input');
+        const adventuresList = document.getElementById('adventures-list');
+        const adventureListView = document.getElementById('adventure-list-view');
+        const adventureDetailView = document.getElementById('adventure-detail-view');
+        const backToListBtn = document.getElementById('back-to-list-btn');
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
+        function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+        adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
+        
+        function openAdventureDetail(userId, docId) {
+            adventureListView.style.display = 'none';
+            adventureDetailView.style.display = 'block';
+            currentAdventureId = docId;
+            if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
+            
+            const adventureRef = doc(db, `users/${userId}/adventures`, docId);
+            const publicAdventureRef = doc(db, 'publicAdventures', docId);
+
+            currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
+                if (doc.exists()) {
+                    currentAdventureData = { ...currentAdventureData, ...doc.data() };
+                    document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
+                    renderChaptersUI(currentAdventureData.background || []);
+                    renderGroupedNodes('environments', currentAdventureData.environments || []);
+                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                    renderGroupedNodes('maps', currentAdventureData.maps || []);
+                    renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
+                } else { backToListBtn.click(); }
+            });
+
+            onSnapshot(publicAdventureRef, (publicDoc) => {
+                if(publicDoc.exists()){
+                    currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
+                    const masterDiceLogContainer = document.getElementById('master-dice-log-container');
+                    masterDiceLogContainer.style.display = 'block';
+                    const masterDiceLog = document.getElementById('master-dice-log');
+renderDiceLog(masterDiceLog, publicDoc.data().diceRolls || []);
+                }
             });
         }
 
-        // Nella master view (snapshot su publicAdventureRef):
-        onSnapshot(publicAdventureRef, (publicDoc) => {
-            if(publicDoc.exists()){
-                currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
-                const masterDiceLogContainer = document.getElementById('master-dice-log-container');
-                masterDiceLogContainer.style.display = 'block';
-                const masterDiceLog = document.getElementById('master-dice-log');
-                renderDiceLog(masterDiceLog, publicDoc.data().diceRolls || []); // PATCH
+        function renderGroupedNodes(type, nodes) {
+            const listEl = document.getElementById(`${type}-list`);
+            listEl.innerHTML = '';
+            const typeName = type === 'pngs' ? 'PNG' : (type === 'maps' ? 'mappa' : 'ambiente');
+            if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`; return; }
+            const groups = nodes.reduce((acc, node) => { (acc[node.group || 'Senza Gruppo'] = acc[node.group || 'Senza Gruppo'] || []).push(node); return acc; }, {});
+            for (const groupName in groups) {
+                const groupDetails = document.createElement('details');
+                groupDetails.className = 'bg-gray-700 rounded-lg';
+                let nodesHtml = groups[groupName].map(node => {
+                    const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === node.title)?.sharedWith || [];
+                    const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
+                    const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+                    const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    return `
+                    <div class="p-2 border-t border-gray-600 node-container" data-node-id="${node.title}" data-node-type="${type}">
+                        <div class="node-view-mode">
+                             <details><summary class="cursor-pointer text-base flex justify-between items-center"><span>${node.title}</span><div class="flex-shrink-0"><button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button><button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button></div></summary>
+                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${imageHtml}<div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>${masterNotesHtml}<button class="open-share-modal-btn w-full mt-2 p-1 rounded-lg text-sm bg-blue-600 hover:bg-blue-700">${shareStatus}</button></div>
+                            </details>
+                        </div>
+                        <div class="node-edit-mode hidden p-2 space-y-2">
+                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
+                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
+                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
+                            <div class="flex gap-2 mt-2"><button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div>
+                        </div>
+                    </div>`;
+                }).join('');
+                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
+                listEl.appendChild(groupDetails);
+            }
+        }
+        
+        function renderTextWithLinks(text) {
+            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+            return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
+                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`;
+            }).replace(/\n/g, '<br>');
+        }
+
+        const nodeModal = document.getElementById('node-modal');
+        const modalTitle = document.getElementById('modal-title');
+        const modalContent = document.getElementById('modal-content');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+
+        document.getElementById('adventure-detail-view').addEventListener('click', e => {
+             if (e.target.classList.contains('node-link')) {
+                e.preventDefault();
+                const nodeName = e.target.dataset.nodeName;
+                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
+                if (nodeData) {
+                    modalTitle.textContent = nodeData.title;
+                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : ''
+                    const masterNotesHtml = nodeData.masterContent ? `<div class="mt-4 pt-4 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-lg">Note Master</h4><div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+                    modalContent.innerHTML = `${imageHtml}${(nodeData.publicContent || '').replace(/\n/g, '<br>')}${masterNotesHtml}`;
+                    nodeModal.classList.remove('hidden');
+                }
             }
         });
-        // ... Tutto il resto del codice invariato ...
+        modalCloseBtn.addEventListener('click', () => nodeModal.classList.add('hidden'));
+        nodeModal.addEventListener('click', (e) => { if (e.target === nodeModal) nodeModal.classList.add('hidden'); });
+
+        backToListBtn.addEventListener('click', () => { 
+            adventureDetailView.style.display = 'none'; 
+            adventureListView.style.display = 'block'; 
+            currentAdventureId = null; 
+            if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } 
+            document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';
+            document.getElementById('master-dice-log-container').style.display = 'none';
+        });
+        
+        document.querySelectorAll('.node-add-btn').forEach(btn => {
+            btn.addEventListener('click', async (e) => {
+                if (!currentAdventureId) return;
+                const type = btn.dataset.type;
+                if (type === 'maps') {
+                    if (document.querySelector('.new-node-form-container')) return;
+                    const listEl = document.getElementById('maps-list');
+                    const formContainer = document.createElement('div');
+                    formContainer.className = 'p-2 mb-2 new-node-form-container';
+                    formContainer.innerHTML = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
+                    listEl.prepend(formContainer);
+                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
+                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+                        const title = formContainer.querySelector('.new-node-title').value.trim();
+                        if (!title) { alert('Il titolo è obbligatorio.'); return; }
+                        const newNode = { title, imageUrl: formContainer.querySelector('.new-node-image-url').value.trim(), publicContent: formContainer.querySelector('.new-node-public-content').value.trim(), masterContent: formContainer.querySelector('.new-node-master-content').value.trim(), group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo" };
+                        try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { 'maps': arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error("Errore aggiunta mappa:", error); }
+                    });
+                } else {
+                    const typeName = (type === 'pngs') ? 'PNG' : 'Ambiente';
+                    const title = prompt(`Titolo del nuovo ${typeName}:`);
+                    if (!title) return;
+                    const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
+                    try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
+                }
+            });
+        });
+
+        document.getElementById('adventure-detail-view').addEventListener('click', async (e) => {
+            const target = e.target;
+            const container = target.closest('.node-container');
+            if (!container) return;
+            const nodeId = container.dataset.nodeId;
+            const type = container.dataset.nodeType;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+
+            if (target.classList.contains('delete-node-btn')) {
+                e.preventDefault();
+                if (!confirm(`Sei sicuro di voler eliminare "${nodeId}"?`)) return;
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeToDelete = nodes.find(n => n.title === nodeId);
+                    const sharedItems = adventureSnap.data().sharedItems || [];
+                    const sharedItemToDelete = sharedItems.find(item => item.id === nodeId);
+                    const updatePayload = { [type]: arrayRemove(nodeToDelete) };
+                    if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete);
+                    await updateDoc(adventureRef, updatePayload);
+                }
+            } else if (target.classList.contains('edit-node-btn')) {
+                e.preventDefault();
+                container.querySelector('.node-view-mode').classList.add('hidden');
+                container.querySelector('.node-edit-mode').classList.remove('hidden');
+            } else if (target.classList.contains('cancel-edit-btn')) {
+                container.querySelector('.node-view-mode').classList.remove('hidden');
+                container.querySelector('.node-edit-mode').classList.add('hidden');
+            } else if (target.classList.contains('save-node-btn')) {
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    const nodes = adventureSnap.data()[type] || [];
+                    const nodeIndex = nodes.findIndex(n => n.title === nodeId);
+                    if (nodeIndex !== -1) {
+                        const updatedNodes = [...nodes];
+                        const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
+                        updatedNodes[nodeIndex] = newNodeData;
+                        const sharedItems = adventureSnap.data().sharedItems || [];
+                        const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
+                        const updatePayload = { [type]: updatedNodes };
+                        if (sharedItemIndex > -1) {
+                            const updatedSharedItems = [...sharedItems];
+                            updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData };
+                            updatePayload.sharedItems = updatedSharedItems;
+                        }
+                        await updateDoc(adventureRef, updatePayload);
+                    }
+                }
+            }
+        });
+
+        function renderChaptersUI(chapters = []) {
+            const container = document.getElementById('chapters-container');
+            container.innerHTML = '';
+            if (chapters.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno!</p>'; return; }
+            chapters.forEach(chapter => {
+                const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === chapter.id)?.sharedWith || [];
+                const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
+                const chapterEl = document.createElement('div');
+                chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
+                chapterEl.dataset.chapterId = chapter.id;
+                chapterEl.innerHTML = `
+                    <div class="chapter-view-mode p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
+                            <div class="flex items-center gap-2">
+                                <button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button>
+                                <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
+                                <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
+                            </div>
+                        </div>
+                        <div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.publicContent)}</div>
+                        <div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div></div>
+                    </div>
+                    <div class="chapter-edit-mode hidden p-4 space-y-2">
+                        <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
+                        <label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea>
+                        <label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea>
+                        <div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div>
+                    </div>`;
+                container.appendChild(chapterEl);
+            });
+        }
+
+        document.getElementById('add-chapter-btn').addEventListener('click', async () => {
+            if (!currentAdventureId) return;
+            const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo");
+            if (!title) return;
+            const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) };
+            await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) });
+        });
+
+        document.getElementById('chapters-container').addEventListener('click', async e => {
+            const container = e.target.closest('.chapter-container');
+            if (!container) return;
+            const chapterId = container.dataset.chapterId;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            if (e.target.classList.contains('edit-chapter-btn')) {
+                container.querySelector('.chapter-view-mode').classList.add('hidden');
+                container.querySelector('.chapter-edit-mode').classList.remove('hidden');
+            } else if (e.target.classList.contains('cancel-edit-chapter-btn')) {
+                container.querySelector('.chapter-view-mode').classList.remove('hidden');
+                container.querySelector('.chapter-edit-mode').classList.add('hidden');
+            } else if (e.target.classList.contains('delete-chapter-btn')) {
+                if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return;
+                const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId);
+                const sharedItemToDelete = currentAdventureData.sharedItems.find(item => item.id === chapterId);
+                const updatePayload = { background: arrayRemove(chapterToDelete) };
+                if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete);
+                await updateDoc(adventureRef, updatePayload);
+            } else if (e.target.classList.contains('save-chapter-btn')) {
+                const newTitle = container.querySelector('.chapter-title-edit').value;
+                const newPublicContent = container.querySelector('.chapter-public-content-edit').value;
+                const newMasterContent = container.querySelector('.chapter-master-content-edit').value;
+                const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, publicContent: newPublicContent, masterContent: newMasterContent } : c);
+                const updatedSharedItems = currentAdventureData.sharedItems.map(item => item.id === chapterId ? { ...item, title: newTitle, publicContent: newPublicContent } : item);
+                await updateDoc(adventureRef, { background: updatedChapters, sharedItems: updatedSharedItems });
+            }
+        });
+
+        function renderPlayerManagementUI(adventureId, players = []) {
+            const shareContainer = document.getElementById('player-share-content');
+            const baseUrl = window.location.href.split('?')[0];
+            let playerListHtml = players.map(player => `
+                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
+                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
+                    <div class="flex items-center gap-2">
+                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
+                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
+                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
+                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
+                    </div>
+                </div>`).join('');
+            shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
+            document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
+            shareContainer.addEventListener('click', (e) => { 
+                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
+                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
+                if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token);
+            });
+        }
+
+// PATCH VELOCITÀ: costanti e funzioni per velocità D&D
+const DND_RACE_SPEEDS = {
+    "Umano": 9,
+    "Umano (Variant)": 9,
+    "Nano (Delle Colline)": 7.5,
+    "Nano (Delle Montagne)": 7.5,
+    "Nano (Duergar)": 7.5,
+    "Elfo (Alto)": 9,
+    "Elfo (Dei Boschi)": 10.5,
+    "Elfo (Drow)": 9,
+    "Elfo (Shadar-kai)": 9,
+    "Mezzelfo": 9,
+    "Mezzorco": 9,
+    "Halfling (Piedelesto)": 7.5,
+    "Halfling (Tozzo)": 7.5,
+    "Dragonide": 9,
+    "Tiefling": 9,
+    "Gnomo (Delle Foreste)": 7.5,
+    "Gnomo (Delle Rocce)": 7.5,
+    "Goblin": 9,
+    "Hobgoblin": 9,
+    "Bugbear": 9,
+    "Goliath": 9,
+    "Lizardfolk": 9,
+    "Tabaxi": 12,
+    "Tritone": 9,
+    "Leonin": 12,
+    "Minotauro": 9,
+    "Satiro": 10.5,
+    "Warforged": 9,
+    "Firbolg": 9,
+    "Kenku": 9,
+    "Koboldo": 9,
+    "Orco": 9,
+    "Shifter": 9,
+    "Yuan-ti": 9,
+    "Vedalken": 9,
+    "Loxodon": 9,
+    "Simic Hybrid": 9,
+    "Genasi (Acqua)": 9,
+    "Genasi (Aria)": 9,
+    "Genasi (Fuoco)": 9,
+    "Genasi (Terra)": 9,
+    "Cangiante": 9,
+    "Centauro": 12,
+    "Aasimar (Protettore)": 9,
+    "Aasimar (Flagello)": 9,
+    "Aasimar (Caduto)": 9,
+    "Kalashtar": 9,
+    "default": 9
+};
+function getMonkBonusSpeed(level) {
+    if (level >= 18) return 15;
+    if (level >= 14) return 12;
+    if (level >= 10) return 9;
+    if (level >= 6) return 6;
+    if (level >= 2) return 3;
+    return 0;
+}
+function getBarbarianBonusSpeed(level, heavyArmor) {
+    if (level >= 5 && !heavyArmor) return 3;
+    return 0;
+}
+function calcBaseSpeed(race, classes, heavyArmor = false) {
+    let speed = DND_RACE_SPEEDS[race] || DND_RACE_SPEEDS["default"];
+    const monkClass = classes.find(c => c.name === "Monaco");
+    if (monkClass) speed += getMonkBonusSpeed(parseInt(monkClass.level));
+    const barbarianClass = classes.find(c => c.name === "Barbaro");
+    if (barbarianClass) speed += getBarbarianBonusSpeed(parseInt(barbarianClass.level), heavyArmor);
+    return speed;
+}
+function updateSpeedField(sheetData) {
+    const race = sheetData.race || "Umano";
+    const classes = sheetData.classes || [];
+    // PATCH: se vuoi automatizzare la rilevazione dell'armatura pesante, qui puoi mettere true se necessario
+    const heavyArmor = false;
+    const baseSpeed = calcBaseSpeed(race, classes, heavyArmor);
+    const speedMod = sheetData.speedModifier || '';
+    let display = `${baseSpeed} m`;
+    // Se c'è un bonus/malus scritto, mostralo accanto
+    document.getElementById('cs-speed-auto').value = display;
+    document.getElementById('cs-speed-modifier').value = speedMod;
+}
+// FINE PATCH VELOCITÀ
+        
+        const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
+        const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
+        const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
+        const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
+
+        function createEmptyCharacterSheet() {
+            const sheet = {
+                characterName: "",
+                classes: [{ id: crypto.randomUUID(), name: "Guerriero", level: 1 }],
+                background: "", race: "Umano",
+                stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
+                proficiencyBonus: "+2",
+                initiativeBonus: 0, 
+                speed: "9m",
+                hp: { max: 10, current: 10 }, hitDice: "",
+                attacksSpellcasting: "", equipment: "",
+                personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
+                proficiencies: { saves: [], skills: [] },
+                defenses: [],
+                weapons: [] 
+            };
+            return sheet;
+        }
+
+        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID(), characterSheet: createEmptyCharacterSheet() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
+        function handleCopyLink(e) { const button = e.target; const link = button.dataset.link; navigator.clipboard.writeText(link).then(() => { button.textContent = 'Copiato!'; button.classList.replace('bg-blue-600', 'bg-green-600'); setTimeout(() => { button.textContent = 'Copia'; button.classList.replace('bg-green-600', 'bg-blue-600'); }, 2000); }); }
+        async function handleDeletePlayer(e) { if (!currentAdventureId || !currentUserId) return; const tokenToDelete = e.target.dataset.token; if (!confirm("Sei sicuro di voler rimuovere questo giocatore?")) return; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); const adventureSnap = await getDoc(adventureRef); if (adventureSnap.exists()) { const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); if (playerToDelete) { try { await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); } catch (error) { console.error("Errore rimozione giocatore:", error); } } } }
+
+        const shareModal = document.getElementById('share-modal');
+        const shareModalTitle = document.getElementById('share-modal-title');
+        const sharePlayerList = document.getElementById('share-player-list');
+        let currentSharingItem = { id: null, type: null };
+
+        document.getElementById('adventure-detail-view').addEventListener('click', (e) => {
+            if (e.target.classList.contains('open-share-modal-btn')) {
+                const chapterContainer = e.target.closest('.chapter-container');
+                const nodeContainer = e.target.closest('.node-container');
+                if (chapterContainer) {
+                    currentSharingItem.id = chapterContainer.dataset.chapterId;
+                    currentSharingItem.type = 'chapter';
+                } else if (nodeContainer) {
+                    currentSharingItem.id = nodeContainer.dataset.nodeId;
+                    currentSharingItem.type = 'node';
+                }
+                openShareModal();
+            }
+        });
+
+        function openShareModal() {
+            const players = currentAdventureData.players || [];
+            if (players.length === 0) { alert("Aggiungi almeno un giocatore prima di poter condividere."); return; }
+            
+            const sharedItem = currentAdventureData.sharedItems?.find(item => item.id === currentSharingItem.id);
+            const sharedWith = sharedItem?.sharedWith || [];
+
+            shareModalTitle.textContent = `Condividi "${currentSharingItem.id}"`;
+            sharePlayerList.innerHTML = `
+                <div class="flex items-center"><input type="checkbox" id="share-all-players" class="w-4 h-4" ${sharedWith.includes('all') ? 'checked' : ''}><label for="share-all-players" class="ml-2">Tutti i giocatori</label></div>
+                <hr class="border-gray-600 my-2">
+                ${players.map(p => `
+                    <div class="flex items-center"><input type="checkbox" id="share-${p.token}" data-token="${p.token}" class="w-4 h-4 player-checkbox" ${sharedWith.includes(p.token) ? 'checked' : ''}><label for="share-${p.token}" class="ml-2">${p.name}</label></div>
+                `).join('')}`;
+            
+            const allPlayersCheckbox = document.getElementById('share-all-players');
+            const playerCheckboxes = sharePlayerList.querySelectorAll('.player-checkbox');
+            allPlayersCheckbox.addEventListener('change', () => { playerCheckboxes.forEach(cb => { cb.checked = allPlayersCheckbox.checked; cb.disabled = allPlayersCheckbox.checked; }); });
+            if (allPlayersCheckbox.checked) { playerCheckboxes.forEach(cb => { cb.disabled = true; }); }
+            shareModal.classList.remove('hidden');
+        }
+
+        document.getElementById('share-modal-cancel').addEventListener('click', () => shareModal.classList.add('hidden'));
+        document.getElementById('share-modal-save').addEventListener('click', async () => {
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+            
+            let sharedWith = [];
+            if (document.getElementById('share-all-players').checked) {
+                sharedWith.push('all');
+            } else {
+                sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token));
+            }
+
+            let sharedItems = [...(currentAdventureData.sharedItems || [])];
+            let itemIndex = sharedItems.findIndex(item => item.id === currentSharingItem.id);
+
+            if (sharedWith.length > 0) {
+                if (itemIndex > -1) {
+                    sharedItems[itemIndex].sharedWith = sharedWith;
+                } else {
+                    let sourceItem;
+                    if (currentSharingItem.type === 'chapter') {
+                        sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
+                        if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith });
+                    } else {
+                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps];
+                        sourceItem = allNodes.find(n => n.title === currentSharingItem.id);
+                        if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
+                    }
+                }
+            } else {
+                if (itemIndex > -1) sharedItems.splice(itemIndex, 1);
+            }
+            
+            try {
+                await updateDoc(adventureRef, { sharedItems });
+                const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; });
+                await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems });
+                shareModal.classList.add('hidden');
+            } catch (error) {
+                console.error("Errore durante la condivisione:", error);
+                alert("Si è verificato un errore.");
+            }
+        });
+        
+        // --- LOGICA SCHEDA PERSONAGGIO ---
+        const csModal = document.getElementById('character-sheet-modal');
+        const csModalContent = document.getElementById('cs-modal-content');
+
+        function openCharacterSheetModal(playerToken, isPlayerView = false) {
+            const player = currentAdventureData.players.find(p => p.token === playerToken);
+            if (!player) return;
+            
+            document.getElementById('cs-modal-title').textContent = `Scheda di ${player.name}`;
+            csModal.dataset.currentToken = playerToken;
+            csModal.dataset.isPlayerView = isPlayerView;
+
+            populateCharacterSheet(player.characterSheet || createEmptyCharacterSheet());
+            csModal.classList.remove('hidden');
+        }
+
+        function populateCharacterSheet(sheetData) {
+            csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field)) return;
+                const fieldPath = el.dataset.field;
+                const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
+                el.value = value;
+            });
+            updateAllModifiers(sheetData);
+            renderSkillsAndSaves(sheetData);
+            renderDefenses(sheetData.defenses || []);
+            renderClasses(sheetData.classes || [{ id: crypto.randomUUID(), name: '', level: 1 }]);
+            renderRace(sheetData.race || '');
+            updateTotalLevel(sheetData);
+            updateAC(sheetData);
+            updateInitiative(sheetData);
+            // PATCH VELOCITÀ: aggiorna visualizzazione velocità
+    updateSpeedField(sheetData);
+            // ARMI
+            renderWeaponsList(sheetData);
+window.currentSheetData = sheetData;
+        }
+        // === INIZIO LOGICA ARMI & ATTACCHI ===
+function getStatMod(stat, stats) {
+  return Math.floor((stats[stat] - 10) / 2);
+}
+function getAttackStat(weapon, stats) {
+  if ((weapon.properties || '').toLowerCase().includes('finesse')) {
+    return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength';
+  }
+  if (weapon.type === 'distanza') return 'dexterity';
+  if (weapon.type === 'magica') return weapon.spellStat || 'intelligence';
+  return 'strength';
+}
+function calcAttackBonus(weapon, stats, proficiencyBonus) {
+  const stat = getAttackStat(weapon, stats);
+  const mod = getStatMod(stat, stats);
+  let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0);
+  return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+}
+function calcDamageString(weapon, stats) {
+  const stat = getAttackStat(weapon, stats);
+  const mod = getStatMod(stat, stats);
+  let str = weapon.damage;
+  let total = mod + (parseInt(weapon.damageBonus) || 0);
+  if (!isNaN(total) && total !== 0) {
+    str += total > 0 ? `+${total}` : `${total}`;
+  }
+  return str;
+}
+function renderWeaponsList(sheetData) {
+  const container = document.getElementById('weapons-list-container');
+  container.innerHTML = '';
+  if (!sheetData.weapons || sheetData.weapons.length === 0) {
+    container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
+    return;
+  }
+  const types = ['mischia', 'distanza', 'magica', 'altro'];
+  types.forEach(type => {
+    const weapons = sheetData.weapons.filter(w => w.type === type);
+    if (weapons.length === 0) return;
+    const groupDiv = document.createElement('div');
+    groupDiv.className = 'mb-2';
+    groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
+      <table class="w-full text-xs md:text-sm mb-2">
+        <thead>
+          <tr class="bg-gray-300 text-black">
+            <th>Nome</th>
+            <th>Proprietà</th>
+            <th>Tiro x Colpire</th>
+            <th>Danni</th>
+            <th>Tipo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          ${weapons.map((w, i) => `
+            <tr>
+              <td>${w.name}</td>
+              <td>${w.properties}</td>
+              <td>${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</td>
+              <td>${calcDamageString(w, sheetData.stats)}</td>
+              <td>${w.damageType}</td>
+              <td>
+                <button class="edit-weapon-btn text-blue-600" data-idx="${i}">✎</button>
+                <button class="delete-weapon-btn text-red-600" data-idx="${i}">&times;</button>
+              </td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>`;
+    container.appendChild(groupDiv);
+  });
+}
+document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
+function openWeaponModal(weapon = null, idx = null) {
+  document.getElementById('weapon-modal').classList.remove('hidden');
+  document.getElementById('weapon-form').reset();
+  document.getElementById('weapon-index').value = idx !== null ? idx : '';
+  if (weapon) {
+    document.getElementById('weapon-name').value = weapon.name;
+    document.getElementById('weapon-type').value = weapon.type;
+    document.getElementById('weapon-damage').value = weapon.damage;
+    document.getElementById('weapon-damage-type').value = weapon.damageType;
+    document.getElementById('weapon-properties').value = weapon.properties;
+    document.getElementById('weapon-proficient').checked = weapon.proficient;
+    document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
+    document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
+  }
+}
+document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
+  document.getElementById('weapon-modal').classList.add('hidden');
+});
+document.getElementById('weapon-form').addEventListener('submit', e => {
+  e.preventDefault();
+  const idx = document.getElementById('weapon-index').value;
+  const newWeapon = {
+    name: document.getElementById('weapon-name').value,
+    type: document.getElementById('weapon-type').value,
+    damage: document.getElementById('weapon-damage').value,
+    damageType: document.getElementById('weapon-damage-type').value,
+    properties: document.getElementById('weapon-properties').value,
+    proficient: document.getElementById('weapon-proficient').checked,
+    attackBonus: document.getElementById('weapon-attack-bonus').value,
+    damageBonus: document.getElementById('weapon-damage-bonus').value
+  };
+  let sheetData = getCurrentSheetData();
+  if (!sheetData.weapons) sheetData.weapons = [];
+  if (idx !== '') {
+    sheetData.weapons[idx] = newWeapon;
+  } else {
+    sheetData.weapons.push(newWeapon);
+  }
+  saveSheetData(sheetData);
+  document.getElementById('weapon-modal').classList.add('hidden');
+  renderWeaponsList(sheetData);
+});
+document.getElementById('weapons-list-container').addEventListener('click', e => {
+  if (e.target.classList.contains('edit-weapon-btn')) {
+    const idx = e.target.dataset.idx;
+    let sheetData = getCurrentSheetData();
+    openWeaponModal(sheetData.weapons[idx], idx);
+  }
+  if (e.target.classList.contains('delete-weapon-btn')) {
+    const idx = e.target.dataset.idx;
+    let sheetData = getCurrentSheetData();
+    sheetData.weapons.splice(idx, 1);
+    saveSheetData(sheetData);
+    renderWeaponsList(sheetData);
+  }
+});
+// Supporto: da adattare alla tua logica dati
+function getCurrentSheetData() {
+  return window.currentSheetData || {};
+}
+function saveSheetData(sheetData) {
+  window.currentSheetData = sheetData;
+  // Aggiorna anche il DB se necessario!
+}
+// === FINE LOGICA ARMI & ATTACCHI ===
+        
+
+        function getModifier(score) {
+            const mod = Math.floor((parseInt(score || 10) - 10) / 2);
+            return mod; // Ritorna il numero
+        }
+
+        function formatModifier(mod) {
+             return mod >= 0 ? `+${mod}` : mod.toString();
+        }
+
+        function updateAllModifiers(sheetData) {
+            const stats = sheetData.stats || {};
+            for (const statName in stats) {
+                const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`);
+                if (modEl) modEl.textContent = formatModifier(getModifier(stats[statName]));
+            }
+        }
+        
+        function renderSkillsAndSaves(sheetData) {
+            const savesContainer = document.getElementById('saving-throws-list');
+            const skillsContainer = document.getElementById('skills-list');
+            const profs = sheetData.proficiencies || { saves: [], skills: [] };
+            
+            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
+                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>
+            `).join('');
+
+            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
+                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>
+            `).join('');
+            
+            updateSkillAndSaveBonuses(sheetData);
+        }
+        
+        function updateSkillAndSaveBonuses(sheetData) {
+            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
+            const stats = sheetData.stats || {};
+            
+            csModalContent.querySelectorAll('[data-save-prof]').forEach(el => {
+                const saveName = el.dataset.saveProf;
+                const statName = DND_SAVES[saveName];
+                const statMod = getModifier(stats[statName]);
+                const bonus = statMod + (el.checked ? profBonus : 0);
+                el.nextElementSibling.textContent = formatModifier(bonus);
+            });
+
+            csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => {
+                const skillName = el.dataset.skillProf;
+                const statName = DND_SKILLS[skillName];
+                const statMod = getModifier(stats[statName]);
+                const bonus = statMod + (el.checked ? profBonus : 0);
+                el.nextElementSibling.textContent = formatModifier(bonus);
+            });
+        }
+        
+        function renderRace(raceName) {
+            const container = document.getElementById('cs-race-container');
+            const isCustom = !DND_RACES.includes(raceName) && raceName;
+            
+            let optionsHtml = DND_RACES.map(r => `<option value="${r}" ${r === raceName ? 'selected' : ''}>${r}</option>`).join('');
+            
+            container.innerHTML = `
+                <label class="cs-label">Razza</label>
+                <select class="cs-select" id="cs-race-select">
+                    ${optionsHtml}
+                    <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
+                </select>
+                <input type="text" id="cs-race-custom" class="cs-input mt-1 ${isCustom ? '' : 'hidden'}" value="${isCustom ? raceName : ''}" placeholder="Razza personalizzata">
+            `;
+        }
+
+        function renderDefenses(defenses = []) {
+            const container = document.getElementById('cs-defenses-list');
+            container.innerHTML = defenses.map(item => `
+                <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
+                    <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
+                    <input type="text" class="cs-defense-name cs-input text-sm flex-grow" value="${item.name}" placeholder="Nome (es. Scudo)">
+                    <input type="number" class="cs-defense-value cs-input text-sm w-20" value="${item.value}" placeholder="Valore">
+                    <select class="cs-defense-type cs-select text-sm w-32">
+                        <option value="other" ${item.type === 'other' ? 'selected' : ''}>Altro</option>
+                        <option value="light" ${item.type === 'light' ? 'selected' : ''}>Leggera</option>
+                        <option value="medium" ${item.type === 'medium' ? 'selected' : ''}>Media</option>
+                        <option value="heavy" ${item.type === 'heavy' ? 'selected' : ''}>Pesante</option>
+                        <option value="shield" ${item.type === 'shield' ? 'selected' : ''}>Scudo</option>
+                    </select>
+                    <button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button>
+                </div>
+            `).join('');
+        }
+        
+        function renderClasses(classes = []) {
+            const container = document.getElementById('cs-classes-list');
+            
+            container.innerHTML = classes.map(c => {
+                const isCustom = !DND_CLASSES.includes(c.name) && c.name;
+                return `
+                <div class="flex items-center gap-2 class-item" data-id="${c.id}">
+                    <select class="cs-class-name cs-select">
+                        ${DND_CLASSES.map(cn => `<option value="${cn}" ${cn === c.name ? 'selected' : ''}>${cn}</option>`).join('')}
+                        <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
+                    </select>
+                    <input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata">
+                    <input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl">
+                    <button class="cs-delete-class-btn text-red-600 hover:text-red-800 font-bold">X</button>
+                </div>
+            `}).join('');
+        }
+
+        function updateTotalLevel(sheetData) {
+            const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0);
+            const totalLevelInput = document.getElementById('cs-total-level');
+            if (totalLevelInput) {
+                totalLevelInput.value = totalLevel;
+            }
+        }
+
+        function updateAC(sheetData) {
+            const dexMod = getModifier(sheetData.stats.dexterity);
+            let totalAC = 10;
+            let armorBonus = 0;
+            let dexBonus = dexMod;
+            let otherBonuses = 0;
+
+            const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type));
+            
+            if (wornArmor) {
+                armorBonus = parseInt(wornArmor.value || 0);
+                if (wornArmor.type === 'medium') {
+                    dexBonus = Math.min(dexMod, 2);
+                } else if (wornArmor.type === 'heavy') {
+                    dexBonus = 0;
+                }
+            }
+            
+            (sheetData.defenses || []).forEach(item => {
+                if (item.worn && (item.type === 'shield' || item.type === 'other')) {
+                    otherBonuses += parseInt(item.value || 0);
+                }
+            });
+
+            if (wornArmor) {
+                totalAC = armorBonus + dexBonus + otherBonuses;
+            } else {
+                totalAC = 10 + dexBonus + otherBonuses;
+            }
+            
+            const acInput = csModalContent.querySelector('[data-field="armorClass"]');
+            acInput.value = totalAC;
+        }
+        
+        function updateInitiative(sheetData) {
+            const dexMod = getModifier(sheetData.stats.dexterity);
+            const bonus = parseInt(sheetData.initiativeBonus || 0);
+            const total = dexMod + bonus;
+            document.getElementById('cs-initiative-total').value = formatModifier(total);
+        }
+
+        // PATCH VELOCITÀ: aggiorna la velocità quando cambia qualsiasi campo che la influenza
+csModalContent.addEventListener('input', (e) => {
+    const token = csModal.dataset.currentToken;
+    if (!token) return;
+    const sheetDataForUI = readSheetFromDOM();
+    if (
+        e.target.dataset.field && (
+            e.target.dataset.field.startsWith('stats.') ||
+            e.target.dataset.field === 'initiativeBonus' ||
+            e.target.dataset.field === 'speed'
+        )
+    ) {
+        updateAllModifiers(sheetDataForUI);
+        updateSkillAndSaveBonuses(sheetDataForUI);
+        updateAC(sheetDataForUI);
+        updateInitiative(sheetDataForUI);
+        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+    }
+    if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
+        updateSkillAndSaveBonuses(sheetDataForUI);
+    }
+    if (e.target.closest('.defense-item')) {
+        updateAC(sheetDataForUI);
+    }
+    if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
+        updateTotalLevel(sheetDataForUI);
+        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+    }
+    // PATCH VELOCITÀ: aggiorna velocità anche se cambia la razza
+    if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
+        updateSpeedField(sheetDataForUI);
+    }
+    // Debounce the save to Firestore
+    clearTimeout(characterSheetUpdateTimeout);
+    characterSheetUpdateTimeout = setTimeout(() => {
+        const sheetDataToSave = readSheetFromDOM();
+        saveCharacterSheet(token, sheetDataToSave);
+    }, 500);
+});
+        
+        csModalContent.addEventListener('change', e => {
+            if (e.target.classList.contains('cs-class-name')) {
+                const customInput = e.target.nextElementSibling;
+                if (e.target.value === 'Altro...') {
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+            }
+            if (e.target.id === 'cs-race-select') {
+                const customInput = document.getElementById('cs-race-custom');
+                 if (e.target.value === 'Altro...') {
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+            }
+        });
+
+        csModalContent.addEventListener('click', e => {
+            const token = csModal.dataset.currentToken;
+            if (!token) return;
+
+            if (e.target.id === 'cs-add-defense-btn') {
+                const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false };
+                const sheetData = readSheetFromDOM();
+                sheetData.defenses.push(newDefense);
+                renderDefenses(sheetData.defenses);
+                saveCharacterSheet(token, sheetData);
+            }
+            if (e.target.classList.contains('cs-delete-defense-btn')) {
+                const itemEl = e.target.closest('.defense-item');
+                const itemId = itemEl.dataset.id;
+                let sheetData = readSheetFromDOM();
+                sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId);
+                renderDefenses(sheetData.defenses);
+                updateAC(sheetData);
+                saveCharacterSheet(token, sheetData);
+            }
+            if (e.target.id === 'cs-add-class-btn') {
+                const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 };
+                const sheetData = readSheetFromDOM();
+                sheetData.classes.push(newClass);
+                renderClasses(sheetData.classes);
+                updateTotalLevel(sheetData);
+                saveCharacterSheet(token, sheetData);
+            }
+            if (e.target.classList.contains('cs-delete-class-btn')) {
+                const itemEl = e.target.closest('.class-item');
+                const itemId = itemEl.dataset.id;
+                let sheetData = readSheetFromDOM();
+                if (sheetData.classes.length > 1) {
+                    sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
+                    renderClasses(sheetData.classes);
+                    updateTotalLevel(sheetData);
+                    saveCharacterSheet(token, sheetData);
+                }
+            }
+        });
+
+       function readSheetFromDOM() {
+    const sheetData = createEmptyCharacterSheet();
+    csModalContent.querySelectorAll('[data-field]').forEach(el => {
+        const fieldPath = el.dataset.field;
+        if (fieldPath === "speed") return; // PATCH VELOCITÀ: ignora campo speed manuale
+        const keys = fieldPath.split('.');
+        let current = sheetData;
+        keys.forEach((key, index) => {
+            if (index === keys.length - 1) {
+                current[key] = el.value;
+            } else {
+                current[key] = current[key] || {};
+                current = current[key];
+            }
+        });
+    });
+    const raceSelect = document.getElementById('cs-race-select');
+    if (raceSelect.value === 'Altro...') {
+        sheetData.race = document.getElementById('cs-race-custom').value;
+    } else {
+        sheetData.race = raceSelect.value;
+    }
+    sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
+    sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
+    sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
+        id: itemEl.dataset.id,
+        name: itemEl.querySelector('.cs-defense-name').value,
+        value: itemEl.querySelector('.cs-defense-value').value,
+        type: itemEl.querySelector('.cs-defense-type').value,
+        worn: itemEl.querySelector('.cs-defense-worn').checked
+    }));
+    sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
+        const classSelect = itemEl.querySelector('.cs-class-name');
+        let className = classSelect.value;
+        if (className === 'Altro...') {
+            className = itemEl.querySelector('.cs-class-name-custom').value;
+        }
+        return {
+            id: itemEl.dataset.id,
+            name: className,
+            level: itemEl.querySelector('.cs-class-level').value
+        }
+    });
+    // PATCH VELOCITÀ: salva il bonus/malus manuale
+    sheetData.speedModifier = document.getElementById('cs-speed-modifier').value;
+    return sheetData;
+}
+
+        async function saveCharacterSheet(token, sheetData) {
+            const isPlayerView = csModal.dataset.isPlayerView === 'true';
+            const adventureId = isPlayerView ? playerViewId : currentAdventureId;
+            const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
+            if (!adventureId || !userId) return;
+
+            const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
+
+            const adventureSnap = await getDoc(adventureRef);
+            if (adventureSnap.exists()) {
+                const players = adventureSnap.data().players || [];
+                const playerIndex = players.findIndex(p => p.token === token);
+                if (playerIndex > -1) {
+                    players[playerIndex].characterSheet = sheetData;
+                    try {
+                        await updateDoc(adventureRef, { players: players });
+                        await updateDoc(publicAdventureRef, { players: players });
+                    } catch (error) {
+                        console.error("Errore salvataggio scheda:", error);
+                    }
+                }
+            }
+        }
+
+        document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
+
     </script>
 </body>
 </html>
