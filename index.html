@@ -7,7 +7,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -37,6 +37,28 @@
         }
         .node-link:hover {
             color: #fca5a5; /* text-red-300 */
+        }
+        /* Stili per la scheda del personaggio */
+        .cs-box {
+            @apply bg-gray-700 border border-gray-600 rounded-lg p-2;
+        }
+        .cs-label {
+            @apply block text-xs text-gray-400 uppercase tracking-wider font-bold;
+        }
+        .cs-input {
+            @apply bg-transparent w-full text-white text-lg focus:outline-none;
+        }
+        .cs-stat-box {
+            @apply cs-box text-center;
+        }
+        .cs-stat-input {
+            @apply bg-transparent w-full text-white text-4xl text-center font-bold focus:outline-none;
+        }
+        .cs-stat-mod {
+            @apply bg-gray-800 rounded-md w-12 h-8 flex items-center justify-center text-lg mx-auto;
+        }
+        .cs-textarea {
+            @apply bg-gray-600 w-full h-full text-white text-sm focus:outline-none p-2 rounded-md resize-none;
         }
     </style>
 </head>
@@ -89,13 +111,89 @@
     </div>
     
     <!-- Contenitore Vista Giocatore -->
-    <div id="player-view-container" class="p-4 md:p-8"><h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1><div id="player-shared-items" class="space-y-8"></div></div>
+    <div id="player-view-container" class="p-4 md:p-8">
+        <div class="flex justify-between items-center mb-8">
+            <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
+            <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+        </div>
+        <div id="player-shared-items" class="space-y-8"></div>
+    </div>
 
     <!-- Finestra Modale per i Nodi -->
     <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
 
     <!-- Finestra Modale per la Condivisione -->
     <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
+
+    <!-- Finestra Modale Scheda Personaggio -->
+    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-500 flex flex-col">
+            <div class="flex justify-between items-center p-3 border-b border-gray-600 flex-shrink-0">
+                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-400">Scheda Personaggio</h2>
+                <button id="cs-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans text-gray-300">
+                <!-- Header Scheda -->
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2 mb-2">
+                    <div class="cs-box md:col-span-2"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="cs-box"><label class="cs-label">Classe & Livello</label><input type="text" class="cs-input" data-field="classLevel"></div>
+                        <div class="cs-box"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
+                        <div class="cs-box"><label class="cs-label">Razza</label><input type="text" class="cs-input" data-field="race"></div>
+                    </div>
+                </div>
+                <!-- Corpo Scheda -->
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
+                    <!-- Colonna Sinistra: Statistiche e Abilità -->
+                    <div class="space-y-2">
+                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-2 gap-2">
+                            <!-- Statistiche -->
+                            <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
+                            <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
+                            <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
+                            <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
+                            <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
+                            <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
+                        </div>
+                        <div class="cs-box">
+                             <!-- Tiri Salvezza e Abilità -->
+                             <div class="grid grid-cols-1 gap-2">
+                                <div class="cs-box bg-gray-800"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
+                                <div class="cs-box bg-gray-800" id="saving-throws-list"></div>
+                                <div class="cs-box bg-gray-800" id="skills-list"></div>
+                             </div>
+                        </div>
+                    </div>
+                    <!-- Colonna Centrale: Combattimento, Equipaggiamento -->
+                    <div class="space-y-2">
+                        <div class="grid grid-cols-3 gap-2">
+                            <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass"></div>
+                            <div class="cs-box text-center"><label class="cs-label">Iniziativa</label><input type="text" class="cs-input text-3xl text-center" data-field="initiative"></div>
+                            <div class="cs-box text-center"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-3xl text-center" data-field="speed"></div>
+                        </div>
+                        <div class="cs-box">
+                            <label class="cs-label">Punti Ferita</label>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
+                                <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
+                            </div>
+                        </div>
+                        <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
+                        <div class="cs-box h-48"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
+                        <div class="cs-box h-48"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
+                    </div>
+                    <!-- Colonna Destra: Background, Privilegi -->
+                    <div class="space-y-2">
+                        <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
+                        <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
+                        <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
+                        <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
+                        <div class="cs-box flex-grow h-48"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -119,6 +217,7 @@
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
+        let characterSheetUpdateTimeout = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
@@ -137,14 +236,20 @@
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
+                    currentAdventureData = data; // Store for character sheet access
                     const players = data.players || [];
-                    if (!players.some(p => p.token === token)) {
+                    const currentPlayer = players.find(p => p.token === token);
+                    if (!currentPlayer) {
                         document.getElementById('player-adventure-title').textContent = "Accesso Negato";
                         document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
                         return;
                     }
 
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
+                    document.getElementById('player-open-sheet-btn').addEventListener('click', () => {
+                        openCharacterSheetModal(token, true); // true for player mode
+                    });
+
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
                     
@@ -529,13 +634,42 @@
         function renderPlayerManagementUI(adventureId, players = []) {
             const shareContainer = document.getElementById('player-share-content');
             const baseUrl = window.location.href.split('?')[0];
-            let playerListHtml = players.map(player => `<div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg"><span class="font-sans font-medium text-gray-200">${player.name}</span><div class="flex items-center gap-2"><input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-48 md:w-64 font-sans" readonly><button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button><button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button></div></div>`).join('');
+            let playerListHtml = players.map(player => `
+                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
+                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
+                    <div class="flex items-center gap-2">
+                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
+                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
+                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
+                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
+                    </div>
+                </div>`).join('');
             shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
             document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
-            shareContainer.addEventListener('click', (e) => { if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e); });
+            shareContainer.addEventListener('click', (e) => { 
+                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
+                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
+                if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token);
+            });
+        }
+        
+        const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
+        const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
+
+        function createEmptyCharacterSheet() {
+            const sheet = {
+                characterName: "", classLevel: "", background: "", race: "",
+                stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
+                proficiencyBonus: "+2", armorClass: 10, initiative: "+0", speed: "9m",
+                hp: { max: 10, current: 10 }, hitDice: "",
+                attacksSpellcasting: "", equipment: "",
+                personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
+                proficiencies: { saves: [], skills: [] }
+            };
+            return sheet;
         }
 
-        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
+        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID(), characterSheet: createEmptyCharacterSheet() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
         function handleCopyLink(e) { const button = e.target; const link = button.dataset.link; navigator.clipboard.writeText(link).then(() => { button.textContent = 'Copiato!'; button.classList.replace('bg-blue-600', 'bg-green-600'); setTimeout(() => { button.textContent = 'Copia'; button.classList.replace('bg-green-600', 'bg-blue-600'); }, 2000); }); }
         async function handleDeletePlayer(e) { if (!currentAdventureId || !currentUserId) return; const tokenToDelete = e.target.dataset.token; if (!confirm("Sei sicuro di voler rimuovere questo giocatore?")) return; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); const adventureSnap = await getDoc(adventureRef); if (adventureSnap.exists()) { const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); if (playerToDelete) { try { await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); } catch (error) { console.error("Errore rimozione giocatore:", error); } } } }
 
@@ -624,6 +758,151 @@
                 alert("Si è verificato un errore.");
             }
         });
+        
+        // --- LOGICA SCHEDA PERSONAGGIO ---
+        const csModal = document.getElementById('character-sheet-modal');
+        const csModalContent = document.getElementById('cs-modal-content');
+
+        function openCharacterSheetModal(playerToken, isPlayerView = false) {
+            const player = currentAdventureData.players.find(p => p.token === playerToken);
+            if (!player) return;
+            
+            document.getElementById('cs-modal-title').textContent = `Scheda di ${player.name}`;
+            csModal.dataset.currentToken = playerToken;
+            csModal.dataset.isPlayerView = isPlayerView;
+
+            populateCharacterSheet(player.characterSheet || createEmptyCharacterSheet());
+            csModal.classList.remove('hidden');
+        }
+
+        function populateCharacterSheet(sheetData) {
+            csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                const fieldPath = el.dataset.field;
+                const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== 'undefined') ? obj[key] : '', sheetData);
+                el.value = value;
+            });
+            updateAllModifiers(sheetData);
+            renderSkillsAndSaves(sheetData);
+        }
+
+        function getModifier(score) {
+            const mod = Math.floor((parseInt(score || 10) - 10) / 2);
+            return mod >= 0 ? `+${mod}` : mod;
+        }
+
+        function updateAllModifiers(sheetData) {
+            const stats = sheetData.stats || {};
+            for (const statName in stats) {
+                const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`);
+                if (modEl) modEl.textContent = getModifier(stats[statName]);
+            }
+        }
+        
+        function renderSkillsAndSaves(sheetData) {
+            const savesContainer = document.getElementById('saving-throws-list');
+            const skillsContainer = document.getElementById('skills-list');
+            const profs = sheetData.proficiencies || { saves: [], skills: [] };
+            
+            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-400 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
+                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>
+            `).join('');
+
+            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-400 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
+                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>
+            `).join('');
+            
+            updateSkillAndSaveBonuses(sheetData);
+        }
+        
+        function updateSkillAndSaveBonuses(sheetData) {
+            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
+            const stats = sheetData.stats || {};
+            
+            csModalContent.querySelectorAll('[data-save-prof]').forEach(el => {
+                const saveName = el.dataset.saveProf;
+                const statName = DND_SAVES[saveName];
+                const statMod = parseInt(getModifier(stats[statName]));
+                const bonus = statMod + (el.checked ? profBonus : 0);
+                el.nextElementSibling.textContent = bonus >= 0 ? `+${bonus}` : bonus;
+            });
+
+            csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => {
+                const skillName = el.dataset.skillProf;
+                const statName = DND_SKILLS[skillName];
+                const statMod = parseInt(getModifier(stats[statName]));
+                const bonus = statMod + (el.checked ? profBonus : 0);
+                el.nextElementSibling.textContent = bonus >= 0 ? `+${bonus}` : bonus;
+            });
+        }
+
+        csModalContent.addEventListener('input', (e) => {
+            const token = csModal.dataset.currentToken;
+            if (!token) return;
+            
+            clearTimeout(characterSheetUpdateTimeout);
+            characterSheetUpdateTimeout = setTimeout(() => {
+                const sheetData = readSheetFromDOM();
+                saveCharacterSheet(token, sheetData);
+            }, 500); // Debounce di 500ms
+
+            // Aggiornamenti immediati UI
+            const fieldPath = e.target.dataset.field;
+            if (fieldPath && fieldPath.startsWith('stats.')) {
+                 updateAllModifiers(readSheetFromDOM());
+                 updateSkillAndSaveBonuses(readSheetFromDOM());
+            }
+             if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
+                 updateSkillAndSaveBonuses(readSheetFromDOM());
+            }
+        });
+
+        function readSheetFromDOM() {
+            const sheetData = createEmptyCharacterSheet();
+            csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                const fieldPath = el.dataset.field;
+                const keys = fieldPath.split('.');
+                let current = sheetData;
+                keys.forEach((key, index) => {
+                    if (index === keys.length - 1) {
+                        current[key] = el.value;
+                    } else {
+                        current[key] = current[key] || {};
+                        current = current[key];
+                    }
+                });
+            });
+
+            sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
+            sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
+            return sheetData;
+        }
+
+        async function saveCharacterSheet(token, sheetData) {
+            const isPlayerView = csModal.dataset.isPlayerView === 'true';
+            const adventureId = isPlayerView ? playerViewId : currentAdventureId;
+            const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
+            if (!adventureId || !userId) return;
+
+            const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
+
+            const adventureSnap = await getDoc(adventureRef);
+            if (adventureSnap.exists()) {
+                const players = adventureSnap.data().players || [];
+                const playerIndex = players.findIndex(p => p.token === token);
+                if (playerIndex > -1) {
+                    players[playerIndex].characterSheet = sheetData;
+                    try {
+                        await updateDoc(adventureRef, { players: players });
+                        await updateDoc(publicAdventureRef, { players: players });
+                    } catch (error) {
+                        console.error("Errore salvataggio scheda:", error);
+                    }
+                }
+            }
+        }
+
+        document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
 
     </script>
 </body>
