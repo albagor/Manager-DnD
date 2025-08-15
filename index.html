@@ -328,16 +328,7 @@
         }
         // END PATCH
 
-    // Integrazione con la Player View
-    if (playerViewId && playerToken) {
-      // ...già chiami loadPlayerView(playerViewId, playerToken)
-      // Chiama anche il setup del dado condiviso dopo loadPlayerView
-      // (Aspetta che l'HTML sia caricato!)
-      window.addEventListener('DOMContentLoaded', () => {
-        setupPlayerDiceRoller(playerViewId, playerToken);
-      });
-    }
-    // END PATCH
+
 
         
         const firebaseConfig = {
