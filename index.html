@@ -248,7 +248,27 @@ let currentAdventureData = {};
 let currentAdventureUnsubscribe = null;
 
 // --- PATCH: DICE ROLLER CONDIVISO FIRESTORE ---
-
+// Tiro dadi locale (tab Master)
+const masterDiceForm = document.getElementById("master-dice-form");
+if (masterDiceForm) {
+  masterDiceForm.onsubmit = function(e) {
+    e.preventDefault();
+    const count = parseInt(document.getElementById("master-dice-count").value) || 1;
+    const sides = parseInt(document.getElementById("master-dice-type").value) || 6;
+    const mod = parseInt(document.getElementById("master-dice-mod").value) || 0;
+    let rolls = [];
+    let total = 0;
+    for (let i = 0; i < count; i++) {
+      const result = Math.floor(Math.random() * sides) + 1;
+      rolls.push(result);
+      total += result;
+    }
+    const finalTotal = total + mod;
+    let res = `<p class="text-lg text-gray-300">Tiri: [${rolls.join(", ")}]</p>`;
+    res += `<p class="text-4xl font-bold mt-2">${total} ${(mod !== 0 ? (mod > 0 ? "+" : "") + mod : "")} = <b>${finalTotal}</b></p>`;
+    document.getElementById("master-dice-results-container").innerHTML = res;
+  };
+}
 // GIOCATORE: salva il tiro
 function setupPlayerDiceRollerFirestore(adventureId, playerToken, playerName) {
   const diceForm = document.getElementById('player-dice-form');
@@ -256,9 +276,9 @@ function setupPlayerDiceRollerFirestore(adventureId, playerToken, playerName) {
   if (!diceForm) return;
   diceForm.onsubmit = async function(e) {
     e.preventDefault();
-    const count = parseInt(document.getElementById('dice-count').value) || 1;
-    const sides = parseInt(document.getElementById('dice-type').value) || 6;
-    const mod = parseInt(document.getElementById('dice-mod').value) || 0;
+    const count = parseInt(document.getElementById('player-dice-count').value) || 1;
+    const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
+    const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
     const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
     const total = rolls.reduce((a, b) => a + b, 0) + mod;
     const formula = `${count}d${sides}` + (mod ? (mod > 0 ? `+${mod}` : mod) : '');
