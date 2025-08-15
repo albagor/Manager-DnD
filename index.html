@@ -405,7 +405,9 @@
         });
 
         function loadPlayerView(adventureId, token) {
+            let lastKnownDiceRolls = '[]'; // Cache for dice rolls to prevent re-renders
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
+            
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
@@ -423,8 +425,13 @@
                         openCharacterSheetModal(token, true);
                     });
 
+                    // FIX: Only render dice log if it has changed
                     const diceLogContainer = document.getElementById('player-dice-log');
-                    renderDiceLog(diceLogContainer, data.diceRolls);
+                    const currentDiceRollsStr = JSON.stringify(data.diceRolls || []);
+                    if (currentDiceRollsStr !== lastKnownDiceRolls) {
+                        renderDiceLog(diceLogContainer, data.diceRolls);
+                        lastKnownDiceRolls = currentDiceRollsStr;
+                    }
 
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
@@ -594,13 +601,20 @@
                 } else { backToListBtn.click(); }
             });
 
+            let lastKnownMasterDiceRolls = '[]'; // Cache for dice rolls
             onSnapshot(publicAdventureRef, (publicDoc) => {
                 if(publicDoc.exists()){
                     currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
                     const masterDiceLogContainer = document.getElementById('master-dice-log-container');
                     masterDiceLogContainer.style.display = 'block';
+                    
+                    // FIX: Only render master dice log if it has changed
                     const masterDiceLog = document.getElementById('master-dice-log');
-                    renderDiceLog(masterDiceLog, publicDoc.data().diceRolls);
+                    const currentMasterDiceRollsStr = JSON.stringify(publicDoc.data().diceRolls || []);
+                    if (currentMasterDiceRollsStr !== lastKnownMasterDiceRolls) {
+                        renderDiceLog(masterDiceLog, publicDoc.data().diceRolls);
+                        lastKnownMasterDiceRolls = currentMasterDiceRollsStr;
+                    }
                 }
             });
         }
