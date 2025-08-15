@@ -204,8 +204,17 @@
     </div>
 </div>
                             </div>
-                            <div class="cs-box"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-center" data-field="speed"></div>
-                            <div class="cs-box">
+
+    <!-- PATCH VELOCITÀ: nuovo blocco -->
+    <div class="cs-box">
+        <label class="cs-label">Velocità</label>
+        <div class="flex gap-2 items-center">
+            <input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly>
+            <input type="text" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus manuale">
+        </div>
+        <small class="text-xs text-gray-500 font-sans">La velocità è calcolata automaticamente (razza, classi, livelli). Modifica il campo a destra per bonus/malus temporanei.</small>
+    </div>
+    <!-- FINE PATCH VELOCITÀ -->                            <div class="cs-box">
                                 <label class="cs-label">Punti Ferita</label>
                                 <div class="grid grid-cols-2 gap-2">
                                     <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
@@ -689,6 +698,91 @@
                 if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token);
             });
         }
+
+// PATCH VELOCITÀ: costanti e funzioni per velocità D&D
+const DND_RACE_SPEEDS = {
+    "Umano": 9,
+    "Umano (Variant)": 9,
+    "Nano (Delle Colline)": 7.5,
+    "Nano (Delle Montagne)": 7.5,
+    "Nano (Duergar)": 7.5,
+    "Elfo (Alto)": 9,
+    "Elfo (Dei Boschi)": 10.5,
+    "Elfo (Drow)": 9,
+    "Elfo (Shadar-kai)": 9,
+    "Mezzelfo": 9,
+    "Mezzorco": 9,
+    "Halfling (Piedelesto)": 7.5,
+    "Halfling (Tozzo)": 7.5,
+    "Dragonide": 9,
+    "Tiefling": 9,
+    "Gnomo (Delle Foreste)": 7.5,
+    "Gnomo (Delle Rocce)": 7.5,
+    "Goblin": 9,
+    "Hobgoblin": 9,
+    "Bugbear": 9,
+    "Goliath": 9,
+    "Lizardfolk": 9,
+    "Tabaxi": 12,
+    "Tritone": 9,
+    "Leonin": 12,
+    "Minotauro": 9,
+    "Satiro": 10.5,
+    "Warforged": 9,
+    "Firbolg": 9,
+    "Kenku": 9,
+    "Koboldo": 9,
+    "Orco": 9,
+    "Shifter": 9,
+    "Yuan-ti": 9,
+    "Vedalken": 9,
+    "Loxodon": 9,
+    "Simic Hybrid": 9,
+    "Genasi (Acqua)": 9,
+    "Genasi (Aria)": 9,
+    "Genasi (Fuoco)": 9,
+    "Genasi (Terra)": 9,
+    "Cangiante": 9,
+    "Centauro": 12,
+    "Aasimar (Protettore)": 9,
+    "Aasimar (Flagello)": 9,
+    "Aasimar (Caduto)": 9,
+    "Kalashtar": 9,
+    "default": 9
+};
+function getMonkBonusSpeed(level) {
+    if (level >= 18) return 15;
+    if (level >= 14) return 12;
+    if (level >= 10) return 9;
+    if (level >= 6) return 6;
+    if (level >= 2) return 3;
+    return 0;
+}
+function getBarbarianBonusSpeed(level, heavyArmor) {
+    if (level >= 5 && !heavyArmor) return 3;
+    return 0;
+}
+function calcBaseSpeed(race, classes, heavyArmor = false) {
+    let speed = DND_RACE_SPEEDS[race] || DND_RACE_SPEEDS["default"];
+    const monkClass = classes.find(c => c.name === "Monaco");
+    if (monkClass) speed += getMonkBonusSpeed(parseInt(monkClass.level));
+    const barbarianClass = classes.find(c => c.name === "Barbaro");
+    if (barbarianClass) speed += getBarbarianBonusSpeed(parseInt(barbarianClass.level), heavyArmor);
+    return speed;
+}
+function updateSpeedField(sheetData) {
+    const race = sheetData.race || "Umano";
+    const classes = sheetData.classes || [];
+    // PATCH: se vuoi automatizzare la rilevazione dell'armatura pesante, qui puoi mettere true se necessario
+    const heavyArmor = false;
+    const baseSpeed = calcBaseSpeed(race, classes, heavyArmor);
+    const speedMod = sheetData.speedModifier || '';
+    let display = `${baseSpeed} m`;
+    // Se c'è un bonus/malus scritto, mostralo accanto
+    document.getElementById('cs-speed-auto').value = display;
+    document.getElementById('cs-speed-modifier').value = speedMod;
+}
+// FINE PATCH VELOCITÀ
         
         const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
         const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
@@ -834,6 +928,8 @@
             updateTotalLevel(sheetData);
             updateAC(sheetData);
             updateInitiative(sheetData);
+            // PATCH VELOCITÀ: aggiorna visualizzazione velocità
+    updateSpeedField(sheetData);
         }
 
         function getModifier(score) {
@@ -992,35 +1088,45 @@
             document.getElementById('cs-initiative-total').value = formatModifier(total);
         }
 
-        csModalContent.addEventListener('input', (e) => {
-            const token = csModal.dataset.currentToken;
-            if (!token) return;
-            
-            // Trigger UI updates immediately
-            const sheetDataForUI = readSheetFromDOM();
-            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus')) {
-                 updateAllModifiers(sheetDataForUI);
-                 updateSkillAndSaveBonuses(sheetDataForUI);
-                 updateAC(sheetDataForUI);
-                 updateInitiative(sheetDataForUI);
-            }
-            if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
-                 updateSkillAndSaveBonuses(sheetDataForUI);
-            }
-            if (e.target.closest('.defense-item')) {
-                updateAC(sheetDataForUI);
-            }
-            if (e.target.classList.contains('cs-class-level')) {
-                updateTotalLevel(sheetDataForUI);
-            }
-
-            // Debounce the save to Firestore
-            clearTimeout(characterSheetUpdateTimeout);
-            characterSheetUpdateTimeout = setTimeout(() => {
-                const sheetDataToSave = readSheetFromDOM();
-                saveCharacterSheet(token, sheetDataToSave);
-            }, 500);
-        });
+        // PATCH VELOCITÀ: aggiorna la velocità quando cambia qualsiasi campo che la influenza
+csModalContent.addEventListener('input', (e) => {
+    const token = csModal.dataset.currentToken;
+    if (!token) return;
+    const sheetDataForUI = readSheetFromDOM();
+    if (
+        e.target.dataset.field && (
+            e.target.dataset.field.startsWith('stats.') ||
+            e.target.dataset.field === 'initiativeBonus' ||
+            e.target.dataset.field === 'speed'
+        )
+    ) {
+        updateAllModifiers(sheetDataForUI);
+        updateSkillAndSaveBonuses(sheetDataForUI);
+        updateAC(sheetDataForUI);
+        updateInitiative(sheetDataForUI);
+        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+    }
+    if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
+        updateSkillAndSaveBonuses(sheetDataForUI);
+    }
+    if (e.target.closest('.defense-item')) {
+        updateAC(sheetDataForUI);
+    }
+    if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
+        updateTotalLevel(sheetDataForUI);
+        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+    }
+    // PATCH VELOCITÀ: aggiorna velocità anche se cambia la razza
+    if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
+        updateSpeedField(sheetDataForUI);
+    }
+    // Debounce the save to Firestore
+    clearTimeout(characterSheetUpdateTimeout);
+    characterSheetUpdateTimeout = setTimeout(() => {
+        const sheetDataToSave = readSheetFromDOM();
+        saveCharacterSheet(token, sheetDataToSave);
+    }, 500);
+});
         
         csModalContent.addEventListener('change', e => {
             if (e.target.classList.contains('cs-class-name')) {
@@ -1082,55 +1188,53 @@
             }
         });
 
-        function readSheetFromDOM() {
-            const sheetData = createEmptyCharacterSheet();
-            csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                const fieldPath = el.dataset.field;
-                const keys = fieldPath.split('.');
-                let current = sheetData;
-                keys.forEach((key, index) => {
-                    if (index === keys.length - 1) {
-                        current[key] = el.value;
-                    } else {
-                        current[key] = current[key] || {};
-                        current = current[key];
-                    }
-                });
-            });
-
-            const raceSelect = document.getElementById('cs-race-select');
-            if (raceSelect.value === 'Altro...') {
-                sheetData.race = document.getElementById('cs-race-custom').value;
+       function readSheetFromDOM() {
+    const sheetData = createEmptyCharacterSheet();
+    csModalContent.querySelectorAll('[data-field]').forEach(el => {
+        const fieldPath = el.dataset.field;
+        if (fieldPath === "speed") return; // PATCH VELOCITÀ: ignora campo speed manuale
+        const keys = fieldPath.split('.');
+        let current = sheetData;
+        keys.forEach((key, index) => {
+            if (index === keys.length - 1) {
+                current[key] = el.value;
             } else {
-                sheetData.race = raceSelect.value;
+                current[key] = current[key] || {};
+                current = current[key];
             }
-
-            sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
-            sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
-            
-            sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
-                id: itemEl.dataset.id,
-                name: itemEl.querySelector('.cs-defense-name').value,
-                value: itemEl.querySelector('.cs-defense-value').value,
-                type: itemEl.querySelector('.cs-defense-type').value,
-                worn: itemEl.querySelector('.cs-defense-worn').checked
-            }));
-
-            sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
-                const classSelect = itemEl.querySelector('.cs-class-name');
-                let className = classSelect.value;
-                if (className === 'Altro...') {
-                    className = itemEl.querySelector('.cs-class-name-custom').value;
-                }
-                return {
-                    id: itemEl.dataset.id,
-                    name: className,
-                    level: itemEl.querySelector('.cs-class-level').value
-                }
-            });
-
-            return sheetData;
+        });
+    });
+    const raceSelect = document.getElementById('cs-race-select');
+    if (raceSelect.value === 'Altro...') {
+        sheetData.race = document.getElementById('cs-race-custom').value;
+    } else {
+        sheetData.race = raceSelect.value;
+    }
+    sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
+    sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
+    sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
+        id: itemEl.dataset.id,
+        name: itemEl.querySelector('.cs-defense-name').value,
+        value: itemEl.querySelector('.cs-defense-value').value,
+        type: itemEl.querySelector('.cs-defense-type').value,
+        worn: itemEl.querySelector('.cs-defense-worn').checked
+    }));
+    sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
+        const classSelect = itemEl.querySelector('.cs-class-name');
+        let className = classSelect.value;
+        if (className === 'Altro...') {
+            className = itemEl.querySelector('.cs-class-name-custom').value;
         }
+        return {
+            id: itemEl.dataset.id,
+            name: className,
+            level: itemEl.querySelector('.cs-class-level').value
+        }
+    });
+    // PATCH VELOCITÀ: salva il bonus/malus manuale
+    sheetData.speedModifier = document.getElementById('cs-speed-modifier').value;
+    return sheetData;
+}
 
         async function saveCharacterSheet(token, sheetData) {
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
