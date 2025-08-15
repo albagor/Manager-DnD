@@ -38,39 +38,9 @@
         .node-link:hover {
             color: #fca5a5; /* text-red-300 */
         }
-        /* Stili per la scheda del personaggio */
         #character-sheet-modal .cs-main-container {
-            background-color: #f5f5dc; /* Beige */
-            color: #000000; /* Nero */
-        }
-        .cs-box {
-            background-color: rgba(0,0,0,0.05);
-            @apply border border-gray-400 rounded-lg p-2;
-        }
-        .cs-label {
-            @apply block text-xs text-gray-600 uppercase tracking-wider font-bold mb-1;
-        }
-        .cs-input, .cs-select {
-            @apply bg-white w-full text-black text-lg focus:outline-none rounded px-2 py-1 border border-gray-300;
-        }
-        .cs-stat-box {
-            @apply text-white;
-            background-color: #d6b885; /* beige naturale per contrasto */
-        }
-        .cs-stat-input {
-            @apply bg-transparent w-full text-white text-4xl text-center font-bold focus:outline-none;
-        }
-        .cs-stat-mod {
-            @apply bg-gray-800 rounded-md w-12 h-8 flex items-center justify-center text-lg mx-auto;
-        }
-        .cs-textarea {
-            @apply bg-white w-full h-full text-black text-sm focus:outline-none p-2 rounded-md resize-none border border-gray-300;
-        }
-        details > summary {
-            cursor: pointer;
-        }
-        #character-sheet-modal details > summary {
-            color: #991b1b; /* text-red-800 */
+            background-color: #f5f5dc;
+            color: #000000;
         }
     </style>
 </head>
@@ -115,8 +85,15 @@
             <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button></nav></div></div>
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
-                <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
+                
+                <!-- DICE ROLLS MASTER VIEW -->
+                <div id="master-dice-rolls" class="bg-gray-800 p-4 rounded-lg shadow mb-8 max-w-md mx-auto" style="display:none;">
+                  <h3 class="text-xl font-bold text-red-400 mb-2">Tiri Dadi dei Giocatori</h3>
+                  <div id="master-dice-rolls-list" class="font-mono text-sm"></div>
+                </div>
+
+                <div id="ai-generator" class="tab-content"><!-- ... --></div>
+                <div id="adventures" class="tab-content"><!-- ... --></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
             </main>
         </div>
@@ -127,6 +104,33 @@
         <div class="flex justify-between items-center mb-8">
             <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
             <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+        </div>
+        <!-- DICE ROLLER CONDIVISO -->
+        <div class="bg-gray-800 p-4 rounded-lg shadow mb-8 max-w-md mx-auto">
+          <h3 class="text-xl font-bold text-red-400 mb-2">Tira Dadi (condiviso)</h3>
+          <form id="player-dice-form" class="flex flex-wrap gap-2 items-end">
+            <div>
+              <label class="block text-xs text-gray-400">N° dadi</label>
+              <input type="number" id="dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400">Tipo</label>
+              <select id="dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
+                <option value="4">d4</option>
+                <option value="6">d6</option>
+                <option value="8">d8</option>
+                <option value="10">d10</option>
+                <option value="12">d12</option>
+                <option value="20">d20</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-xs text-gray-400">Mod</label>
+              <input type="number" id="dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
+            </div>
+            <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
+          </form>
+          <div id="player-dice-feedback" class="mt-3 text-gray-200 font-mono text-sm"></div>
         </div>
         <div id="player-shared-items" class="space-y-8"></div>
     </div>
@@ -145,107 +149,17 @@
                 <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
             </div>
             <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
-                
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-                    <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <!-- Blocco Anagrafico -->
-                        <div class="grid grid-cols-1 md:grid-cols-10 gap-2 mb-2">
-                            <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
-                            <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
-                            <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-<div class="cs-box md:col-span-2 text-center">
-    <label class="cs-label">Livello Totale</label>
-    <input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
-</div>                        </div>
-                        <div class="cs-box mb-2">
-                            <label class="cs-label">Classi & Livelli</label>
-                            <div id="cs-classes-list" class="space-y-1 mt-1"></div>
-                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button>
-                        </div>
-                         <!-- Colonna Background -->
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                            <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-                    <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <!-- Colonna Sinistra: Statistiche e Abilità -->
-                        <div class="space-y-2">
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
-                            </div>
-                            <div class="cs-box">
-                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
-                                <div class="cs-box mt-2" id="saving-throws-list"></div>
-                                <div class="cs-box mt-2" id="skills-list"></div>
-                            </div>
-                        </div>
-                        <!-- Colonna Destra: Combattimento -->
-                        <div class="space-y-2">
-                             <div class="grid grid-cols-2 gap-2">
-                                <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center max-w-[90px]" data-field="armorClass" readonly></div>
-                               <div class="cs-box text-center">
-    <label class="cs-label">Iniziativa</label>
-    <div class="flex items-center justify-center">
-        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
-        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus">
-    </div>
-</div>
-                            </div>
-
-    <!-- PATCH VELOCITÀ: nuovo blocco -->
-    <div class="cs-box">
-        <label class="cs-label">Velocità</label>
-        <div class="flex gap-2 items-center">
-            <input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly>
-            <input type="text" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus manuale">
-        </div>
-        <small class="text-xs text-gray-500 font-sans">La velocità è calcolata automaticamente (razza, classi, livelli). Modifica il campo a destra per bonus/malus temporanei.</small>
-    </div>
-    <!-- FINE PATCH VELOCITÀ -->                            <div class="cs-box">
-                                <label class="cs-label">Punti Ferita</label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
-                                    <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
-                                </div>
-                            </div>
-                            <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
-                            <div class="cs-box">
-                                <label class="cs-label mb-2">Difese</label>
-                                <div id="cs-defenses-list" class="space-y-1"></div>
-                                <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
-                            </div>
-                        </div>
-                    </div>
-                </details>
-
-                <!-- Resto della Scheda -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                     <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
-                     <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
-                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
-                </div>
+                <!-- ... resto della scheda ... -->
             </div>
         </div>
     </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+        import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+        // FIREBASE INIT
         const firebaseConfig = {
             apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
             authDomain: "avventure-dnd.firebaseapp.com",
@@ -254,7 +168,6 @@
             messagingSenderId: "943269894603",
             appId: "1:943269894603:web:b8851c9862d76486603e4e"
         };
-
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
         const auth = getAuth(app);
@@ -263,8 +176,59 @@
         let currentAdventureId = null;
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
-        let characterSheetUpdateTimeout = null;
 
+        // --- PATCH: DICE ROLLER CONDIVISO FIRESTORE ---
+
+        // GIOCATORE: salva il tiro
+        function setupPlayerDiceRollerFirestore(adventureId, playerToken, playerName) {
+          const diceForm = document.getElementById('player-dice-form');
+          const feedbackDiv = document.getElementById('player-dice-feedback');
+          if (!diceForm) return;
+          diceForm.onsubmit = async function(e) {
+            e.preventDefault();
+            const count = parseInt(document.getElementById('dice-count').value) || 1;
+            const sides = parseInt(document.getElementById('dice-type').value) || 6;
+            const mod = parseInt(document.getElementById('dice-mod').value) || 0;
+            const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+            const total = rolls.reduce((a, b) => a + b, 0) + mod;
+            const formula = `${count}d${sides}` + (mod ? (mod > 0 ? `+${mod}` : mod) : '');
+            await addDoc(collection(db, "diceRolls"), {
+              adventureId,
+              playerToken,
+              playerName,
+              formula,
+              rolls,
+              result: total,
+              timestamp: Date.now()
+            });
+            feedbackDiv.textContent = `Hai tirato ${formula}: ${total} [${rolls.join(", ")}]`;
+            setTimeout(() => feedbackDiv.textContent = '', 4000);
+          };
+        }
+
+        // MASTER: visualizza lista tiri
+        function setupMasterDiceListener(adventureId) {
+          const rollsDiv = document.getElementById('master-dice-rolls-list');
+          const masterDiceRollsBlock = document.getElementById('master-dice-rolls');
+          if (!rollsDiv || !adventureId) return;
+          masterDiceRollsBlock.style.display = 'block';
+          const q = query(
+            collection(db, "diceRolls"),
+            where("adventureId", "==", adventureId),
+            orderBy("timestamp", "desc")
+          );
+          onSnapshot(q, (querySnapshot) => {
+            rollsDiv.innerHTML = '';
+            querySnapshot.forEach((doc) => {
+              const roll = doc.data();
+              const el = document.createElement('div');
+              el.innerHTML = `<b>${roll.playerName || "Giocatore"}</b>: ${roll.formula} → <b>${roll.result}</b> [${roll.rolls.join(", ")}] <span style="font-size:12px;color:#aaa;">${new Date(roll.timestamp).toLocaleTimeString()}</span>`;
+              rollsDiv.appendChild(el);
+            });
+          });
+        }
+
+        // --- Patch: attivazione dice roller nella player view ---
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
         const playerToken = urlParams.get('token');
@@ -279,10 +243,10 @@
 
         function loadPlayerView(adventureId, token) {
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-            onSnapshot(publicAdventureRef, (doc) => {
-                if (doc.exists()) {
-                    const data = doc.data();
-                    currentAdventureData = data; // Store for character sheet access
+            onSnapshot(publicAdventureRef, (docSnap) => {
+                if (docSnap.exists()) {
+                    const data = docSnap.data();
+                    currentAdventureData = data;
                     const players = data.players || [];
                     const currentPlayer = players.find(p => p.token === token);
                     if (!currentPlayer) {
@@ -290,11 +254,18 @@
                         document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
                         return;
                     }
-
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
                     document.getElementById('player-open-sheet-btn').addEventListener('click', () => {
                         openCharacterSheetModal(token, true); // true for player mode
                     });
+                    // PATCH: attiva dado roller firestore
+                    setupPlayerDiceRollerFirestore(adventureId, token, currentPlayer.name);
+                } else {
+                    document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
+                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
+                }
+            });
+        }
 
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
@@ -452,6 +423,9 @@
             currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
                 if (doc.exists()) {
                     currentAdventureData = doc.data();
+                    // PATCH: attiva listener tiri dadi
+                    setupMasterDiceListener(docId);
+                    
                     document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
                     renderChaptersUI(currentAdventureData.background || []);
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
