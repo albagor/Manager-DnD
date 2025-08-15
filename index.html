@@ -92,9 +92,79 @@
                   <div id="master-dice-rolls-list" class="font-mono text-sm"></div>
                 </div>
 
-                <div id="ai-generator" class="tab-content"><!-- ... --></div>
-                <div id="adventures" class="tab-content"><!-- ... --></div>
-                <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
+<div id="ai-generator" class="tab-content">
+  <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+    <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <div class="mb-4">
+          <label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label>
+          <select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">
+            <option value="PNG">PNG</option>
+            <option value="Mostro">Mostro</option>
+            <option value="Ambientazione">Ambientazione</option>
+            <option value="Mappa">Mappa</option>
+            <option value="Tesoro">Tesoro</option>
+          </select>
+        </div>
+        <div class="mb-4">
+          <label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label>
+          <textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea>
+        </div>
+        <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
+      </div>
+      <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center">
+        <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center">
+          <p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p>
+        </div>
+        <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+      </div>
+    </div>
+  </div>
+</div>
+                <div id="adventures" class="tab-content">
+  <div id="adventure-list-view" class="active">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+      <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
+      <form id="add-adventure-form" class="flex gap-4 mb-6">
+        <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required>
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
+      </form>
+      <div id="adventures-list" class="space-y-3"></div>
+    </div>
+  </div>
+  <div id="adventure-detail-view" style="display: none;">
+    <!-- Qui va la vista dettaglio avventura, i tuoi componenti, ecc -->
+    <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
+    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+      <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4">
+        <div>
+          <h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3>
+          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button>
+          <div id="environments-list" class="space-y-2"></div>
+        </div>
+        <hr class="border-gray-600">
+        <div>
+          <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
+          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
+          <div id="pngs-list" class="space-y-2"></div>
+        </div>
+        <hr class="border-gray-600">
+        <div>
+          <h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3>
+          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button>
+          <div id="maps-list" class="space-y-2"></div>
+        </div>
+      </aside>
+      <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
+        <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
+        <h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
+        <div id="chapters-container" class="space-y-4"></div>
+        <button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button>
+      </section>
+    </div>
+  </div>
+</div>                <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
             </main>
         </div>
     </div>
