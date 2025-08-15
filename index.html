@@ -104,7 +104,7 @@
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
             </main>
         </div>
@@ -308,7 +308,15 @@
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             try {
                 const type = saveToAdventureBtn.dataset.type;
-                const field = (type === 'Ambientazione' || type === 'Tesoro') ? 'environments' : (type === 'Mappa' ? 'maps' : 'pngs');
+                let field;
+                switch(type) {
+                    case 'Mostro': field = 'monsters'; break;
+                    case 'Tesoro': field = 'treasures'; break;
+                    case 'PNG': field = 'pngs'; break;
+                    case 'Ambientazione': field = 'environments'; break;
+                    case 'Mappa': field = 'maps'; break;
+                    default: field = 'pngs';
+                }
                 await updateDoc(adventureRef, { [field]: arrayUnion(newNode) });
                 saveToAdventureBtn.textContent = 'Salvato!';
                 setTimeout(() => { saveToAdventureBtn.textContent = 'Salva in Avventura'; }, 2000);
@@ -321,7 +329,7 @@
         const adventureListView = document.getElementById('adventure-list-view');
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], monsters: [], treasures: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
         
@@ -339,6 +347,8 @@
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
                     renderGroupedNodes('maps', currentAdventureData.maps || []);
+                    renderGroupedNodes('monsters', currentAdventureData.monsters || []);
+                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
                     renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
                 } else { backToListBtn.click(); }
             });
@@ -347,7 +357,14 @@
         function renderGroupedNodes(type, nodes) {
             const listEl = document.getElementById(`${type}-list`);
             listEl.innerHTML = '';
-            const typeName = type === 'pngs' ? 'PNG' : (type === 'maps' ? 'mappa' : 'ambiente');
+            let typeName = '';
+            switch(type) {
+                case 'pngs': typeName = 'PNG'; break;
+                case 'environments': typeName = 'ambiente'; break;
+                case 'maps': typeName = 'mappa'; break;
+                case 'monsters': typeName = 'mostro'; break;
+                case 'treasures': typeName = 'tesoro'; break;
+            }
             if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`; return; }
             const groups = nodes.reduce((acc, node) => { (acc[node.group || 'Senza Gruppo'] = acc[node.group || 'Senza Gruppo'] || []).push(node); return acc; }, {});
             for (const groupName in groups) {
@@ -379,7 +396,13 @@
         }
         
         function renderTextWithLinks(text) {
-            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+            const allNodes = [
+                ...(currentAdventureData.environments || []), 
+                ...(currentAdventureData.pngs || []), 
+                ...(currentAdventureData.maps || []),
+                ...(currentAdventureData.monsters || []),
+                ...(currentAdventureData.treasures || [])
+            ];
             return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
                 const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`;
@@ -395,7 +418,13 @@
              if (e.target.classList.contains('node-link')) {
                 e.preventDefault();
                 const nodeName = e.target.dataset.nodeName;
-                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
+                const allNodes = [
+                    ...(currentAdventureData.environments || []), 
+                    ...(currentAdventureData.pngs || []), 
+                    ...(currentAdventureData.maps || []),
+                    ...(currentAdventureData.monsters || []),
+                    ...(currentAdventureData.treasures || [])
+                ];
                 const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
                 if (nodeData) {
                     modalTitle.textContent = nodeData.title;
@@ -415,27 +444,18 @@
             btn.addEventListener('click', async (e) => {
                 if (!currentAdventureId) return;
                 const type = btn.dataset.type;
-                if (type === 'maps') {
-                    if (document.querySelector('.new-node-form-container')) return;
-                    const listEl = document.getElementById('maps-list');
-                    const formContainer = document.createElement('div');
-                    formContainer.className = 'p-2 mb-2 new-node-form-container';
-                    formContainer.innerHTML = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
-                    listEl.prepend(formContainer);
-                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
-                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
-                        const title = formContainer.querySelector('.new-node-title').value.trim();
-                        if (!title) { alert('Il titolo è obbligatorio.'); return; }
-                        const newNode = { title, imageUrl: formContainer.querySelector('.new-node-image-url').value.trim(), publicContent: formContainer.querySelector('.new-node-public-content').value.trim(), masterContent: formContainer.querySelector('.new-node-master-content').value.trim(), group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo" };
-                        try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { 'maps': arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error("Errore aggiunta mappa:", error); }
-                    });
-                } else {
-                    const typeName = (type === 'pngs') ? 'PNG' : 'Ambiente';
-                    const title = prompt(`Titolo del nuovo ${typeName}:`);
-                    if (!title) return;
-                    const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
-                    try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
+                let typeName = '';
+                switch(type) {
+                    case 'pngs': typeName = 'PNG'; break;
+                    case 'environments': typeName = 'Ambiente'; break;
+                    case 'maps': typeName = 'Mappa'; break;
+                    case 'monsters': typeName = 'Mostro'; break;
+                    case 'treasures': typeName = 'Tesoro'; break;
                 }
+                const title = prompt(`Titolo del nuovo ${typeName}:`);
+                if (!title) return;
+                const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
+                try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error(`Errore aggiunta ${typeName}:`, error); }
             });
         });
 
@@ -573,12 +593,14 @@
                     </div>
                 </div>`).join('');
             shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
+            
+            // FIX: Attach event listeners after innerHTML is set
+            document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
             shareContainer.addEventListener('click', (e) => { 
                 if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
                 if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
                 if (e.target.classList.contains('view-sheet-btn')) handleViewSheet(e);
             });
-            document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
         }
 
         async function handleAddPlayer(e) { 
@@ -709,7 +731,7 @@
                         sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
                         if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith });
                     } else {
-                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps];
+                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps, ...currentAdventureData.monsters, ...currentAdventureData.treasures];
                         sourceItem = allNodes.find(n => n.title === currentSharingItem.id);
                         if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
                     }
@@ -859,3 +881,5 @@
     </script>
 </body>
 </html>
+" in the Canvas.
+I have a question about the selected code: How to fix the bug that causes the "Vedi scheda" button to not wo
