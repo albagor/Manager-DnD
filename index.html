@@ -132,7 +132,17 @@
     <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
 
     <!-- Finestra Modale per la Scheda Personaggio (Vista Master) -->
-    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div id="character-sheet-modal-content" class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-6xl border border-red-500 max-h-[90vh] overflow-y-auto"></div></div>
+    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
+        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-6xl border border-red-500 max-h-[90vh] flex flex-col">
+             <div class="flex justify-between items-center p-4 border-b border-gray-700">
+                <h2 id="character-sheet-modal-title" class="text-2xl font-bold text-red-400">Scheda Personaggio</h2>
+                <button id="character-sheet-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div id="character-sheet-modal-body" class="p-6 overflow-y-auto">
+                <!-- Content will be injected here -->
+            </div>
+        </div>
+    </div>
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -581,7 +591,6 @@
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
             
-            // Crea la scheda personaggio
             const sheetRef = doc(db, 'characterSheets', newPlayer.token);
             const defaultSheet = createDefaultCharacterSheet(currentAdventureId, newPlayer.token, currentUserId);
             
@@ -616,20 +625,23 @@
             } 
         }
 
+        const characterSheetModal = document.getElementById('character-sheet-modal');
+        const characterSheetModalBody = document.getElementById('character-sheet-modal-body');
+        const characterSheetModalCloseBtn = document.getElementById('character-sheet-modal-close-btn');
+        const characterSheetModalTitle = document.getElementById('character-sheet-modal-title');
+
+        characterSheetModalCloseBtn.addEventListener('click', () => characterSheetModal.classList.add('hidden'));
+        characterSheetModal.addEventListener('click', (e) => { if (e.target === characterSheetModal) { characterSheetModal.classList.add('hidden'); } });
+
         async function handleViewSheet(e) {
             const token = e.target.dataset.token;
             const sheetRef = doc(db, 'characterSheets', token);
             const sheetDoc = await getDoc(sheetRef);
             if (sheetDoc.exists()) {
                 const sheetData = sheetDoc.data();
-                const modalContent = document.getElementById('character-sheet-modal-content');
-                modalContent.innerHTML = generateCharacterSheetHTML(sheetData, true); // true for read-only
-                const closeBtn = document.createElement('button');
-                closeBtn.innerHTML = '&times;';
-                closeBtn.className = 'absolute top-2 right-4 text-3xl text-gray-400 hover:text-white';
-                closeBtn.onclick = () => document.getElementById('character-sheet-modal').classList.add('hidden');
-                modalContent.prepend(closeBtn);
-                document.getElementById('character-sheet-modal').classList.remove('hidden');
+                characterSheetModalTitle.textContent = `Scheda di ${sheetData.characterName || 'Personaggio'}`;
+                characterSheetModalBody.innerHTML = generateCharacterSheetHTML(sheetData, true); // true for read-only
+                characterSheetModal.classList.remove('hidden');
             } else {
                 alert("Scheda non trovata.");
             }
