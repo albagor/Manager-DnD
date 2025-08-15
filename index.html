@@ -154,8 +154,10 @@
                             <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
                             <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
                             <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-                            <div class="cs-box md:col-span-2 text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center" readonly></div>
-                        </div>
+<div class="cs-box md:col-span-2 text-center">
+    <label class="cs-label">Livello Totale</label>
+    <input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
+</div>                        </div>
                         <div class="cs-box mb-2">
                             <label class="cs-label">Classi & Livelli</label>
                             <div id="cs-classes-list" class="space-y-1 mt-1"></div>
@@ -194,13 +196,13 @@
                         <div class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
                                 <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass" readonly></div>
-                                <div class="cs-box text-center">
-                                    <label class="cs-label">Iniziativa</label>
-                                    <div class="flex items-center">
-                                        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center" readonly>
-                                        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2" placeholder="Bonus">
-                                    </div>
-                                </div>
+                               <div class="cs-box text-center">
+    <label class="cs-label">Iniziativa</label>
+    <div class="flex items-center justify-center">
+        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
+        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus">
+    </div>
+</div>
                             </div>
                             <div class="cs-box"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-center" data-field="speed"></div>
                             <div class="cs-box">
