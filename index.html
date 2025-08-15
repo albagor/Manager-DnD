@@ -288,11 +288,11 @@ function setupPlayerDiceRoller(adventureId, playerToken) {
 
   adventureDiceRef = doc(db, 'publicAdventures', adventureId);
 
-  // Listener Firestore per mostrare tutti i tiri in tempo reale
+  // Listener Firestore per mostrare i tiri (OK)
   if (diceListenerUnsub) diceListenerUnsub();
   diceListenerUnsub = onSnapshot(adventureDiceRef, (docSnap) => {
     const data = docSnap.data() || {};
-    const rolls = (data.playerDiceRolls || []).slice(-10); // ultimi 10 tiri
+    const rolls = (data.playerDiceRolls || []).slice(-10);
     diceResultsDiv.innerHTML = rolls.reverse().map(roll =>
       `<div>
         <span class="font-bold text-red-300">${roll.name || "Giocatore"}</span>: 
@@ -302,31 +302,28 @@ function setupPlayerDiceRoller(adventureId, playerToken) {
     ).join('');
   });
 
-  // PATCH: Registra il listener SOLO UNA VOLTA
-  if (!diceFormInitialized) {
-    diceForm.addEventListener('submit', async e => {
-      e.preventDefault();
-      const count = parseInt(document.getElementById('player-dice-count').value) || 1;
-      const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
-      const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
-      const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
-      const total = rolls.reduce((a, b) => a + b, 0) + mod;
-      const userName = currentAdventureData?.players?.find(p => p.token === playerToken)?.name || "Giocatore";
-      const formula = `${count}d${sides}${mod === 0 ? '' : (mod > 0 ? '+' : '') + mod}`;
+  // --- PATCH: rimuovi tutti i listener precedenti e aggiungi sempre quello giusto
+  diceForm.onsubmit = async e => {
+    e.preventDefault();
+    const count = parseInt(document.getElementById('player-dice-count').value) || 1;
+    const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
+    const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
+    const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+    const total = rolls.reduce((a, b) => a + b, 0) + mod;
+    const userName = currentAdventureData?.players?.find(p => p.token === playerToken)?.name || "Giocatore";
+    const formula = `${count}d${sides}${mod === 0 ? '' : (mod > 0 ? '+' : '') + mod}`;
 
-      // Salva su Firestore per condivisione
-      await updateDoc(adventureDiceRef, {
-        playerDiceRolls: arrayUnion({
-          name: userName,
-          formula,
-          rolls,
-          result: total,
-          timestamp: Date.now()
-        })
-      });
+    // Salva su Firestore per condivisione
+    await updateDoc(adventureDiceRef, {
+      playerDiceRolls: arrayUnion({
+        name: userName,
+        formula,
+        rolls,
+        result: total,
+        timestamp: Date.now()
+      })
     });
-    diceFormInitialized = true;
-  }
+  };
 }
         // END PATCH
 
