@@ -155,13 +155,11 @@
                             </aside>
                             <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
                                 <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
-                                <div class="flex justify-between items-center mb-2">
-                                    <h3 class="text-2xl font-bold text-gray-300">Background</h3>
-                                    <button id="share-background-btn" class="font-bold py-1 px-3 rounded-lg text-sm">Condividi</button>
+                                <h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
+                                <div id="chapters-container" class="space-y-4">
+                                    <!-- I capitoli verranno renderizzati qui dinamicamente -->
                                 </div>
-                                <textarea id="adventure-background-textarea" class="w-full h-64 bg-gray-700 border border-gray-600 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui il background..."></textarea>
-                                <div id="background-preview" class="w-full h-64 bg-gray-900 border border-gray-700 rounded-lg p-3 overflow-y-auto font-sans mt-2"></div>
-                                <p id="save-status" class="text-sm text-gray-500 mt-2 h-4 font-sans"></p>
+                                <button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button>
                             </section>
                         </div>
                     </div>
@@ -181,7 +179,7 @@
     <!-- Contenitore Vista Giocatore -->
     <div id="player-view-container" class="p-4 md:p-8">
         <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider text-center mb-8"></h1>
-        <div id="player-shared-items" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div id="player-shared-items" class="space-y-8">
             <!-- Contenuti condivisi verranno inseriti qui -->
         </div>
     </div>
@@ -241,41 +239,47 @@
                     const data = doc.data();
                     const players = data.players || [];
                     
-                    // Validazione del token
                     const isTokenValid = players.some(player => player.token === token);
-
                     if (!isTokenValid) {
                         document.getElementById('player-adventure-title').textContent = "Accesso Negato";
                         document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto. Contatta il tuo Master.</p>';
                         return;
                     }
 
-                    // Se il token è valido, mostra i contenuti
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
                     
-                    const backgroundItem = data.sharedItems.find(item => item.title === '__ADVENTURE_BACKGROUND__');
-                    const otherItems = data.sharedItems.filter(item => item.title !== '__ADVENTURE_BACKGROUND__');
+                    const sharedItems = data.sharedItems || [];
+                    const sharedChapters = sharedItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
+                    const otherItems = sharedItems.filter(item => !item.isChapter);
 
-                    if (backgroundItem) {
-                        const bgEl = document.createElement('div');
-                        bgEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6 col-span-full';
-                        bgEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">Background dell'Avventura</h3><p class="text-gray-300 font-sans">${(backgroundItem.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                        container.appendChild(bgEl);
+                    if (sharedChapters.length > 0) {
+                        sharedChapters.forEach(chapter => {
+                            const chapterEl = document.createElement('div');
+                            chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
+                            chapterEl.innerHTML = `
+                                <h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3>
+                                <p class="text-gray-300 font-sans leading-relaxed">${(chapter.content || '').replace(/\n/g, '<br>')}</p>
+                            `;
+                            container.appendChild(chapterEl);
+                        });
                     }
-
+                    
                     if (otherItems.length > 0) {
+                        const otherItemsContainer = document.createElement('div');
+                        otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
                         otherItems.forEach(item => {
                             const itemEl = document.createElement('div');
                             itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
                             const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
                             itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                            container.appendChild(itemEl);
+                            otherItemsContainer.appendChild(itemEl);
                         });
+                        container.appendChild(otherItemsContainer);
                     }
 
-                    if (!backgroundItem && otherItems.length === 0) {
+                    if (sharedItems.length === 0) {
                          container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla.</p>';
                     }
 
@@ -289,9 +293,7 @@
         // --- GESTIONE MASTER ---
         onAuthStateChanged(auth, user => { 
             if (playerViewId && playerToken) return;
-
             document.getElementById('initial-loader').style.display = 'none';
-
             if (user) { 
                 document.getElementById('auth-container').classList.remove('active');
                 document.getElementById('app-container').classList.add('active'); 
@@ -410,12 +412,7 @@
         const adventureListView = document.getElementById('adventure-list-view');
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        const adventureDetailTitle = document.getElementById('adventure-detail-title');
-        const backgroundTextarea = document.getElementById('adventure-background-textarea');
-        const backgroundPreview = document.getElementById('background-preview');
-        const saveStatus = document.getElementById('save-status');
-        let backgroundSaveTimeout;
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: "", environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const collectionPath = `users/${userId}/adventures`; const q = query(collection(db, collectionPath)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         adventuresList.addEventListener('click', async e => { const target = e.target; const docId = target.dataset.id; if (!docId || !currentUserId) return; if (target.classList.contains('adventure-link')) { openAdventureDetail(currentUserId, docId); } else if (target.classList.contains('delete-btn')) { if (confirm('Sei sicuro di voler eliminare questa avventura?')) { try { await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId)); await deleteDoc(doc(db, 'publicAdventures', docId)); } catch (error) { console.error("Errore eliminazione: ", error); } } } });
         
@@ -429,28 +426,17 @@
             currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
                 if (doc.exists()) {
                     currentAdventureData = doc.data();
-                    adventureDetailTitle.textContent = currentAdventureData.title;
-                    if (document.activeElement !== backgroundTextarea) {
-                        backgroundTextarea.value = currentAdventureData.background || "";
-                    }
-                    renderBackgroundLinks();
+                    document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
+                    renderChaptersUI(currentAdventureData.background || []);
                     renderGroupedNodes('environments', currentAdventureData.environments || []);
                     renderGroupedNodes('pngs', currentAdventureData.pngs || []);
                     renderGroupedNodes('maps', currentAdventureData.maps || []);
-                    updateShareBackgroundButtonState();
                     renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
                 } else {
                     console.error("Avventura non trovata!");
                     backToListBtn.click();
                 }
             });
-        }
-        
-        function updateShareBackgroundButtonState() {
-            const isShared = currentAdventureData.sharedItems?.some(item => item.title === '__ADVENTURE_BACKGROUND__');
-            const shareBgBtn = document.getElementById('share-background-btn');
-            shareBgBtn.textContent = isShared ? 'Non Condividere Background' : 'Condividi Background';
-            shareBgBtn.className = `font-bold py-1 px-3 rounded-lg text-sm ${isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700'}`;
         }
 
         function renderGroupedNodes(type, nodes) {
@@ -476,7 +462,7 @@
                 const groupDetails = document.createElement('details');
                 groupDetails.className = 'bg-gray-700 rounded-lg';
                 let nodesHtml = groups[groupName].map(node => {
-                    const isShared = currentAdventureData.sharedItems?.some(item => item.title === node.title);
+                    const isShared = currentAdventureData.sharedItems?.some(item => item.title === node.title && !item.isChapter);
                     const shareBtnClass = isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700';
                     const shareBtnText = isShared ? 'Non Condividere' : 'Condividi';
                     const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
@@ -516,10 +502,7 @@
             }
         }
         
-        backgroundTextarea.addEventListener('keyup', () => { clearTimeout(backgroundSaveTimeout); saveStatus.textContent = 'Sto scrivendo...'; renderBackgroundLinks(); backgroundSaveTimeout = setTimeout(async () => { saveStatus.textContent = 'Salvataggio...'; if (currentAdventureId) { const newBackground = backgroundTextarea.value; await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: newBackground }); const adventureSnap = await getDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId)); if (adventureSnap.exists()) { const currentSharedItems = adventureSnap.data().sharedItems || []; const isShared = currentSharedItems.some(item => item.title === '__ADVENTURE_BACKGROUND__'); if (isShared) { const newSharedItems = currentSharedItems.map(item => item.title === '__ADVENTURE_BACKGROUND__' ? { ...item, publicContent: newBackground } : item); await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { sharedItems: newSharedItems }); await updateDoc(doc(db, 'publicAdventures', currentAdventureId), { sharedItems: newSharedItems }); } } saveStatus.textContent = 'Salvato!'; setTimeout(() => saveStatus.textContent = '', 2000); } }, 1000); });
-        
-        function renderBackgroundLinks() {
-            const text = backgroundTextarea.value;
+        function renderTextWithLinks(text) {
             const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
             const html = text.replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
                 const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
@@ -528,7 +511,7 @@
                 }
                 return `[[${nodeName}]]`;
             });
-            backgroundPreview.innerHTML = html.replace(/\n/g, '<br>');
+            return html.replace(/\n/g, '<br>');
         }
 
         const modal = document.getElementById('node-modal');
@@ -536,8 +519,8 @@
         const modalContent = document.getElementById('modal-content');
         const modalCloseBtn = document.getElementById('modal-close-btn');
 
-        backgroundPreview.addEventListener('click', e => {
-            if (e.target.classList.contains('node-link')) {
+        document.getElementById('adventure-detail-view').addEventListener('click', e => {
+             if (e.target.classList.contains('node-link')) {
                 e.preventDefault();
                 const nodeName = e.target.dataset.nodeName;
                 if (!modal.classList.contains('hidden') && modalTitle.textContent === nodeName) { modal.classList.add('hidden'); return; }
@@ -611,22 +594,6 @@
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
 
-            if (target.id === 'share-background-btn') {
-                const adventureSnap = await getDoc(adventureRef);
-                if (!adventureSnap.exists()) return;
-                const currentSharedItems = adventureSnap.data().sharedItems || [];
-                const isShared = currentSharedItems.some(item => item.title === '__ADVENTURE_BACKGROUND__');
-                const backgroundItem = { title: '__ADVENTURE_BACKGROUND__', publicContent: adventureSnap.data().background || '', imageUrl: '' };
-                if (isShared) {
-                    const newSharedItems = currentSharedItems.filter(item => item.title !== '__ADVENTURE_BACKGROUND__');
-                    await updateDoc(adventureRef, { sharedItems: newSharedItems });
-                    await updateDoc(publicAdventureRef, { sharedItems: newSharedItems });
-                } else {
-                    await updateDoc(adventureRef, { sharedItems: arrayUnion(backgroundItem) });
-                    await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(backgroundItem) });
-                }
-            }
-
             const container = target.closest('.node-container');
             if (!container) return;
             const title = container.dataset.nodeTitle;
@@ -641,7 +608,7 @@
                         const nodeToDelete = allNodes.find(node => node.title === title);
                         if (nodeToDelete) {
                             try { 
-                                const sharedItemToDelete = adventureSnap.data().sharedItems?.find(item => item.title === title);
+                                const sharedItemToDelete = adventureSnap.data().sharedItems?.find(item => item.title === title && !item.isChapter);
                                 await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) });
                                 if(sharedItemToDelete) {
                                     await updateDoc(adventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
@@ -674,8 +641,8 @@
                         updatedNodes[nodeIndex] = newNode;
                         try {
                             await updateDoc(adventureRef, { [type]: updatedNodes });
-                            if (currentAdventureData.sharedItems?.some(item => item.title === title)) {
-                                const sharedItems = currentAdventureData.sharedItems.map(item => item.title === title ? newNode : item);
+                            if (currentAdventureData.sharedItems?.some(item => item.title === title && !item.isChapter)) {
+                                const sharedItems = currentAdventureData.sharedItems.map(item => (item.title === title && !item.isChapter) ? newNode : item);
                                 await updateDoc(adventureRef, { sharedItems });
                                 await updateDoc(publicAdventureRef, { sharedItems });
                             }
@@ -690,12 +657,12 @@
                     const nodeToShare = allNodes.find(node => node.title === title);
                     if (!nodeToShare) return;
                     const currentSharedItems = adventureSnap.data().sharedItems || [];
-                    const isShared = currentSharedItems.some(item => item.title === title);
+                    const isShared = currentSharedItems.some(item => item.title === title && !item.isChapter);
                     try {
                         if (isShared) {
-                            const newSharedItems = currentSharedItems.filter(item => item.title !== title);
-                            await updateDoc(adventureRef, { sharedItems: newSharedItems });
-                            await updateDoc(publicAdventureRef, { sharedItems: newSharedItems });
+                            const itemToRemove = currentSharedItems.find(item => item.title === title && !item.isChapter);
+                            await updateDoc(adventureRef, { sharedItems: arrayRemove(itemToRemove) });
+                            await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(itemToRemove) });
                         } else {
                             await updateDoc(adventureRef, { sharedItems: arrayUnion(nodeToShare) });
                             await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(nodeToShare) });
@@ -705,7 +672,127 @@
             }
         });
 
-        // --- NUOVE FUNZIONI PER GESTIONE GIOCATORI ---
+        // --- NUOVE FUNZIONI PER GESTIONE CAPITOLI ---
+
+        function renderChaptersUI(chapters = []) {
+            const container = document.getElementById('chapters-container');
+            container.innerHTML = '';
+            if (chapters.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno per iniziare a scrivere la storia!</p>';
+                return;
+            }
+            
+            chapters.forEach(chapter => {
+                const isShared = currentAdventureData.sharedItems?.some(item => item.id === chapter.id && item.isChapter);
+                const shareBtnClass = isShared ? 'bg-yellow-600 hover:bg-yellow-700' : 'bg-blue-600 hover:bg-blue-700';
+                const shareBtnText = isShared ? 'Non Condividere' : 'Condividi';
+
+                const chapterEl = document.createElement('div');
+                chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
+                chapterEl.dataset.chapterId = chapter.id;
+
+                chapterEl.innerHTML = `
+                    <div class="chapter-view-mode p-4">
+                        <div class="flex justify-between items-center mb-2">
+                            <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
+                            <div class="flex items-center gap-2">
+                                <button class="share-chapter-btn text-sm font-bold py-1 px-3 rounded-lg ${shareBtnClass}">${shareBtnText}</button>
+                                <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
+                                <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
+                            </div>
+                        </div>
+                        <div class="chapter-preview font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.content)}</div>
+                    </div>
+                    <div class="chapter-edit-mode hidden p-4 space-y-2">
+                        <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label>
+                        <input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
+                        <label class="font-bold text-sm text-gray-400">Contenuto</label>
+                        <textarea class="chapter-content-edit w-full h-48 bg-gray-600 rounded-lg p-2 font-sans">${chapter.content}</textarea>
+                        <div class="flex gap-2 mt-2">
+                            <button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva Modifiche</button>
+                            <button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(chapterEl);
+            });
+        }
+
+        document.getElementById('add-chapter-btn').addEventListener('click', async () => {
+            if (!currentAdventureId) return;
+            const title = prompt("Inserisci il titolo del nuovo capitolo:", "Nuovo Capitolo");
+            if (!title) return;
+
+            const newChapter = {
+                id: crypto.randomUUID(),
+                title: title,
+                content: "",
+                order: (currentAdventureData.background?.length || 0) + 1
+            };
+
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            await updateDoc(adventureRef, { background: arrayUnion(newChapter) });
+        });
+
+        document.getElementById('chapters-container').addEventListener('click', async e => {
+            const container = e.target.closest('.chapter-container');
+            if (!container) return;
+            const chapterId = container.dataset.chapterId;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
+
+            if (e.target.classList.contains('edit-chapter-btn')) {
+                container.querySelector('.chapter-view-mode').classList.add('hidden');
+                container.querySelector('.chapter-edit-mode').classList.remove('hidden');
+            }
+            if (e.target.classList.contains('cancel-edit-chapter-btn')) {
+                container.querySelector('.chapter-view-mode').classList.remove('hidden');
+                container.querySelector('.chapter-edit-mode').classList.add('hidden');
+            }
+            if (e.target.classList.contains('delete-chapter-btn')) {
+                if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return;
+                const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId);
+                if (chapterToDelete) {
+                    await updateDoc(adventureRef, { background: arrayRemove(chapterToDelete) });
+                    const sharedItemToDelete = currentAdventureData.sharedItems.find(item => item.id === chapterId);
+                    if (sharedItemToDelete) {
+                        await updateDoc(adventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                        await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(sharedItemToDelete) });
+                    }
+                }
+            }
+            if (e.target.classList.contains('save-chapter-btn')) {
+                const newTitle = container.querySelector('.chapter-title-edit').value;
+                const newContent = container.querySelector('.chapter-content-edit').value;
+                const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, content: newContent } : c);
+                await updateDoc(adventureRef, { background: updatedChapters });
+
+                const isShared = currentAdventureData.sharedItems?.some(item => item.id === chapterId);
+                if (isShared) {
+                    const updatedSharedItems = currentAdventureData.sharedItems.map(item => item.id === chapterId ? { ...item, title: newTitle, content: newContent } : item);
+                    await updateDoc(adventureRef, { sharedItems: updatedSharedItems });
+                    await updateDoc(publicAdventureRef, { sharedItems: updatedSharedItems });
+                }
+            }
+            if (e.target.classList.contains('share-chapter-btn')) {
+                const chapterToShare = currentAdventureData.background.find(c => c.id === chapterId);
+                if (!chapterToShare) return;
+
+                const sharedItem = { ...chapterToShare, isChapter: true };
+                const isShared = currentAdventureData.sharedItems?.some(item => item.id === chapterId);
+
+                if (isShared) {
+                    const itemToRemove = currentAdventureData.sharedItems.find(item => item.id === chapterId);
+                    await updateDoc(adventureRef, { sharedItems: arrayRemove(itemToRemove) });
+                    await updateDoc(publicAdventureRef, { sharedItems: arrayRemove(itemToRemove) });
+                } else {
+                    await updateDoc(adventureRef, { sharedItems: arrayUnion(sharedItem) });
+                    await updateDoc(publicAdventureRef, { sharedItems: arrayUnion(sharedItem) });
+                }
+            }
+        });
+
+        // --- GESTIONE GIOCATORI ---
 
         function renderPlayerManagementUI(adventureId, players = []) {
             const shareContainer = document.getElementById('player-share-content');
