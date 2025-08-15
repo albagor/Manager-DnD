@@ -279,53 +279,55 @@
 
             // PATCH: DICE ROLLER CONDIVISO PER GIOCATORI
 
-    let adventureDiceRef = null;
-    let diceListenerUnsub = null;
+    let diceFormInitialized = false;
 
-    function setupPlayerDiceRoller(adventureId, playerToken) {
-      const diceForm = document.getElementById('player-dice-form');
-      const diceResultsDiv = document.getElementById('player-dice-results');
-      if (!diceForm || !diceResultsDiv) return;
+function setupPlayerDiceRoller(adventureId, playerToken) {
+  const diceForm = document.getElementById('player-dice-form');
+  const diceResultsDiv = document.getElementById('player-dice-results');
+  if (!diceForm || !diceResultsDiv) return;
 
-      adventureDiceRef = doc(db, 'publicAdventures', adventureId);
+  adventureDiceRef = doc(db, 'publicAdventures', adventureId);
 
-      // Listener per mostrare tutti i tiri in tempo reale
-      if (diceListenerUnsub) diceListenerUnsub();
-      diceListenerUnsub = onSnapshot(adventureDiceRef, (docSnap) => {
-        const data = docSnap.data() || {};
-        const rolls = (data.playerDiceRolls || []).slice(-10); // ultimi 10 tiri
-        diceResultsDiv.innerHTML = rolls.reverse().map(roll =>
-          `<div>
-            <span class="font-bold text-red-300">${roll.name || "Giocatore"}</span>: 
-            <span>${roll.formula} = <span class="font-bold">${roll.result}</span> [${roll.rolls.join(", ")}]</span>
-            <span class="text-xs text-gray-400 ml-2">${new Date(roll.timestamp).toLocaleTimeString()}</span>
-          </div>`
-        ).join('');
+  // Listener Firestore per mostrare tutti i tiri in tempo reale
+  if (diceListenerUnsub) diceListenerUnsub();
+  diceListenerUnsub = onSnapshot(adventureDiceRef, (docSnap) => {
+    const data = docSnap.data() || {};
+    const rolls = (data.playerDiceRolls || []).slice(-10); // ultimi 10 tiri
+    diceResultsDiv.innerHTML = rolls.reverse().map(roll =>
+      `<div>
+        <span class="font-bold text-red-300">${roll.name || "Giocatore"}</span>: 
+        <span>${roll.formula} = <span class="font-bold">${roll.result}</span> [${roll.rolls.join(", ")}]</span>
+        <span class="text-xs text-gray-400 ml-2">${new Date(roll.timestamp).toLocaleTimeString()}</span>
+      </div>`
+    ).join('');
+  });
+
+  // PATCH: Registra il listener SOLO UNA VOLTA
+  if (!diceFormInitialized) {
+    diceForm.addEventListener('submit', async e => {
+      e.preventDefault();
+      const count = parseInt(document.getElementById('player-dice-count').value) || 1;
+      const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
+      const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
+      const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+      const total = rolls.reduce((a, b) => a + b, 0) + mod;
+      const userName = currentAdventureData?.players?.find(p => p.token === playerToken)?.name || "Giocatore";
+      const formula = `${count}d${sides}${mod === 0 ? '' : (mod > 0 ? '+' : '') + mod}`;
+
+      // Salva su Firestore per condivisione
+      await updateDoc(adventureDiceRef, {
+        playerDiceRolls: arrayUnion({
+          name: userName,
+          formula,
+          rolls,
+          result: total,
+          timestamp: Date.now()
+        })
       });
-
-          // Evita listener multipli
-          diceForm.addEventListener('submit', async e => {
-            e.preventDefault();
-            const count = parseInt(document.getElementById('player-dice-count').value) || 1;
-            const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
-            const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
-            const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
-            const total = rolls.reduce((a, b) => a + b, 0) + mod;
-            const userName = currentAdventureData?.players?.find(p => p.token === playerToken)?.name || "Giocatore";
-            const formula = `${count}d${sides}${mod === 0 ? '' : (mod > 0 ? '+' : '') + mod}`;
-
-            // Salva su Firestore per condivisione
-            await updateDoc(adventureDiceRef, {
-              playerDiceRolls: arrayUnion({
-                name: userName,
-                formula,
-                rolls,
-                result: total,
-                timestamp: Date.now()
-              })
-            });
-          }, { once: true }); // solo una volta!
-        }
+    });
+    diceFormInitialized = true;
+  }
+}
         // END PATCH
 
 
