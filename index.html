@@ -39,17 +39,23 @@
             color: #fca5a5; /* text-red-300 */
         }
         /* Stili per la scheda del personaggio */
+        #character-sheet-modal .cs-main-container {
+            background-color: #f5f5dc; /* Beige */
+            color: #000000; /* Nero */
+        }
         .cs-box {
-            @apply bg-gray-700 border border-gray-600 rounded-lg p-2;
+            background-color: rgba(0,0,0,0.05);
+            @apply border border-gray-400 rounded-lg p-2;
         }
         .cs-label {
-            @apply block text-xs text-gray-400 uppercase tracking-wider font-bold mb-1;
+            @apply block text-xs text-gray-600 uppercase tracking-wider font-bold mb-1;
         }
         .cs-input, .cs-select {
-            @apply bg-gray-200 w-full text-black text-lg focus:outline-none rounded px-2 py-1;
+            @apply bg-white w-full text-black text-lg focus:outline-none rounded px-2 py-1 border border-gray-300;
         }
         .cs-stat-box {
-            @apply cs-box text-center;
+            @apply text-white;
+            background-color: #5a4e46; /* Marrone scuro per contrasto */
         }
         .cs-stat-input {
             @apply bg-transparent w-full text-white text-4xl text-center font-bold focus:outline-none;
@@ -58,10 +64,13 @@
             @apply bg-gray-800 rounded-md w-12 h-8 flex items-center justify-center text-lg mx-auto;
         }
         .cs-textarea {
-            @apply bg-gray-200 w-full h-full text-black text-sm focus:outline-none p-2 rounded-md resize-none;
+            @apply bg-white w-full h-full text-black text-sm focus:outline-none p-2 rounded-md resize-none border border-gray-300;
         }
         details > summary {
             cursor: pointer;
+        }
+        #character-sheet-modal details > summary {
+            color: #991b1b; /* text-red-800 */
         }
     </style>
 </head>
@@ -130,16 +139,16 @@
 
     <!-- Finestra Modale Scheda Personaggio -->
     <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
-        <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-500 flex flex-col">
-            <div class="flex justify-between items-center p-3 border-b border-gray-600 flex-shrink-0">
-                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-400">Scheda Personaggio</h2>
-                <button id="cs-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+        <div class="cs-main-container rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-800 flex flex-col">
+            <div class="flex justify-between items-center p-3 border-b border-gray-400 flex-shrink-0">
+                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-800">Scheda Personaggio</h2>
+                <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
             </div>
-            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans text-gray-300">
+            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
                 
-                <details class="bg-gray-900 rounded-lg p-3 mb-2" open>
-                    <summary class="text-2xl text-red-400">Anagrafica & Background</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-700">
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+                    <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400">
                         <!-- Blocco Anagrafico -->
                         <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
                             <div class="cs-box md:col-span-2"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
@@ -150,7 +159,7 @@
                         <div class="cs-box mb-2">
                             <label class="cs-label">Classi & Livelli</label>
                             <div id="cs-classes-list" class="space-y-1 mt-1"></div>
-                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1">Aggiungi Classe</button>
+                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button>
                         </div>
                          <!-- Colonna Background -->
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
@@ -178,9 +187,9 @@
                         <div class="cs-box">
                              <!-- Tiri Salvezza e Abilità -->
                              <div class="grid grid-cols-1 gap-2">
-                                <div class="cs-box bg-gray-800"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
-                                <div class="cs-box bg-gray-800" id="saving-throws-list"></div>
-                                <div class="cs-box bg-gray-800" id="skills-list"></div>
+                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
+                                <div class="cs-box" id="saving-throws-list"></div>
+                                <div class="cs-box" id="skills-list"></div>
                              </div>
                         </div>
                     </div>
@@ -202,7 +211,7 @@
                         <div class="cs-box">
                             <label class="cs-label mb-2">Difese</label>
                             <div id="cs-defenses-list" class="space-y-1"></div>
-                            <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1">Aggiungi Difesa</button>
+                            <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
                         </div>
                         <div class="cs-box h-48"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
                         <div class="cs-box h-48"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
@@ -675,7 +684,7 @@
         }
         
         const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
-        const DND_RACES = ["Aasimar", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Elfo", "Firbolg", "Genasi", "Gith", "Gnomo", "Goblin", "Goliath", "Halfling", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Nano", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Vedalken", "Warforged", "Yuan-ti"];
+        const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
         const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
         const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
@@ -836,11 +845,11 @@
             const skillsContainer = document.getElementById('skills-list');
             const profs = sheetData.proficiencies || { saves: [], skills: [] };
             
-            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-400 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
+            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
                 <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>
             `).join('');
 
-            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-400 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
+            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
                 <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>
             `).join('');
             
@@ -889,16 +898,15 @@
             container.innerHTML = defenses.map(item => `
                 <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
                     <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
-                    <input type="text" class="cs-defense-name bg-gray-200 text-black rounded px-2 py-1 text-sm w-full" value="${item.name}" placeholder="Nome (es. Scudo)">
-                    <input type="number" class="cs-defense-bonus bg-gray-200 text-black rounded px-2 py-1 text-sm w-20" value="${item.bonus}" placeholder="Bonus">
-                    <button class="cs-delete-defense-btn text-red-400 hover:text-red-300 font-bold">X</button>
+                    <input type="text" class="cs-defense-name cs-input text-sm" value="${item.name}" placeholder="Nome (es. Scudo)">
+                    <input type="number" class="cs-defense-bonus cs-input text-sm w-20" value="${item.bonus}" placeholder="Bonus">
+                    <button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button>
                 </div>
             `).join('');
         }
         
         function renderClasses(classes = []) {
             const container = document.getElementById('cs-classes-list');
-            let optionsHtml = DND_CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
             
             container.innerHTML = classes.map(c => {
                 const isCustom = !DND_CLASSES.includes(c.name) && c.name;
@@ -910,7 +918,7 @@
                     </select>
                     <input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata">
                     <input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl">
-                    <button class="cs-delete-class-btn text-red-400 hover:text-red-300 font-bold">X</button>
+                    <button class="cs-delete-class-btn text-red-600 hover:text-red-800 font-bold">X</button>
                 </div>
             `}).join('');
         }
@@ -1104,4 +1112,5 @@
 
     </script>
 </body>
-</ht
+</html>
+"
