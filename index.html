@@ -123,11 +123,41 @@
     </div>
     
     <!-- Contenitore Vista Giocatore -->
-    <div id="player-view-container" class="p-4 md:p-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
-            <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+   <!-- Contenitore Vista Giocatore -->
+<div id="player-view-container" class="p-4 md:p-8">
+    <div class="flex justify-between items-center mb-8">
+        <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
+        <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+    </div>
+
+    <!-- PATCH: DICE ROLLER CONDIVISO PER GIOCATORI -->
+    <div id="player-dice-roller" class="bg-gray-800 p-4 rounded-lg shadow mb-8 max-w-md mx-auto">
+      <h3 class="text-xl font-bold text-red-400 mb-2">Tira Dadi (condiviso)</h3>
+      <form id="player-dice-form" class="flex flex-wrap gap-2 items-end">
+        <div>
+          <label class="block text-xs text-gray-400">N° dadi</label>
+          <input type="number" id="player-dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
         </div>
+        <div>
+          <label class="block text-xs text-gray-400">Tipo</label>
+          <select id="player-dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
+            <option value="4">d4</option>
+            <option value="6">d6</option>
+            <option value="8">d8</option>
+            <option value="10">d10</option>
+            <option value="12">d12</option>
+            <option value="20">d20</option>
+          </select>
+        </div>
+        <div>
+          <label class="block text-xs text-gray-400">Mod</label>
+          <input type="number" id="player-dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
+        </div>
+        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
+      </form>
+      <div id="player-dice-results" class="mt-3 text-gray-200 font-mono text-sm"></div>
+    </div>
+    <!-- END PATCH -->
         <div id="player-shared-items" class="space-y-8"></div>
     </div>
 
@@ -246,6 +276,69 @@
         import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
         import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
+
+            // PATCH: DICE ROLLER CONDIVISO PER GIOCATORI
+    import { doc, updateDoc, arrayUnion, onSnapshot } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+    let adventureDiceRef = null;
+    let diceListenerUnsub = null;
+
+    function setupPlayerDiceRoller(adventureId, playerToken) {
+      const diceForm = document.getElementById('player-dice-form');
+      const diceResultsDiv = document.getElementById('player-dice-results');
+      if (!diceForm || !diceResultsDiv) return;
+
+      adventureDiceRef = doc(db, 'publicAdventures', adventureId);
+
+      // Listener per mostrare tutti i tiri in tempo reale
+      if (diceListenerUnsub) diceListenerUnsub();
+      diceListenerUnsub = onSnapshot(adventureDiceRef, (docSnap) => {
+        const data = docSnap.data() || {};
+        const rolls = (data.playerDiceRolls || []).slice(-10); // ultimi 10 tiri
+        diceResultsDiv.innerHTML = rolls.reverse().map(roll =>
+          `<div>
+            <span class="font-bold text-red-300">${roll.name || "Giocatore"}</span>: 
+            <span>${roll.formula} = <span class="font-bold">${roll.result}</span> [${roll.rolls.join(", ")}]</span>
+            <span class="text-xs text-gray-400 ml-2">${new Date(roll.timestamp).toLocaleTimeString()}</span>
+          </div>`
+        ).join('');
+      });
+
+      diceForm.addEventListener('submit', async e => {
+        e.preventDefault();
+        const count = parseInt(document.getElementById('player-dice-count').value) || 1;
+        const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
+        const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
+        const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+        const total = rolls.reduce((a, b) => a + b, 0) + mod;
+        const userName = currentAdventureData?.players?.find(p => p.token === playerToken)?.name || "Giocatore";
+        const formula = `${count}d${sides}${mod === 0 ? '' : (mod > 0 ? '+' : '') + mod}`;
+
+        // Salva su Firestore per condivisione
+        await updateDoc(adventureDiceRef, {
+          playerDiceRolls: arrayUnion({
+            name: userName,
+            formula,
+            rolls,
+            result: total,
+            timestamp: Date.now()
+          })
+        });
+      });
+    }
+
+    // Integrazione con la Player View
+    if (playerViewId && playerToken) {
+      // ...già chiami loadPlayerView(playerViewId, playerToken)
+      // Chiama anche il setup del dado condiviso dopo loadPlayerView
+      // (Aspetta che l'HTML sia caricato!)
+      window.addEventListener('DOMContentLoaded', () => {
+        setupPlayerDiceRoller(playerViewId, playerToken);
+      });
+    }
+    // END PATCH
+
+        
         const firebaseConfig = {
             apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
             authDomain: "avventure-dnd.firebaseapp.com",
