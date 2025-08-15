@@ -1,234 +1,87 @@
 <!DOCTYPE html>
 <html lang="it">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>D&D Adventure Manager</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-        h1, h2, h3, h4, .tab-btn, .dice-btn, button {
-             font-family: 'MedievalSharp', cursive;
-        }
-        #app-container, #adventure-detail-view, #player-view-container, #auth-container, .tab-content { display: none; }
-        #app-container.active, #adventure-detail-view.active, #player-view-container.active, .tab-content.active { display: block; }
-        #auth-container.active { display: flex; }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #ef4444;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-        .node-link {
-            color: #f87171; /* text-red-400 */
-            cursor: pointer;
-            text-decoration: underline;
-        }
-        .node-link:hover {
-            color: #fca5a5; /* text-red-300 */
-        }
-        #character-sheet-modal .cs-main-container {
-            background-color: #f5f5dc;
-            color: #000000;
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>D&D Adventure Manager</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=MedievalSharp&family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+  <style>
+    body { font-family: 'Inter', sans-serif; }
+    h1, h2, h3, h4, .tab-btn, .dice-btn, button { font-family: 'MedievalSharp', cursive; }
+    #app-container, #adventure-detail-view, #player-view-container, #auth-container, .tab-content { display: none; }
+    #app-container.active, #adventure-detail-view.active, #player-view-container.active, .tab-content.active { display: block; }
+    #auth-container.active { display: flex; }
+    .loader { border: 4px solid #f3f3f3; border-top: 4px solid #ef4444; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .node-link { color: #f87171; cursor: pointer; text-decoration: underline; }
+    .node-link:hover { color: #fca5a5; }
+    #character-sheet-modal .cs-main-container { background-color: #f5f5dc; color: #000000; }
+  </style>
 </head>
 <body class="bg-gray-900 text-white">
+  <!-- Initial Loading Indicator -->
+  <div id="initial-loader" class="min-h-screen flex items-center justify-center">
+    <div class="loader"></div>
+  </div>
 
-    <!-- Initial Loading Indicator -->
-    <div id="initial-loader" class="min-h-screen flex items-center justify-center">
-        <div class="loader"></div>
-    </div>
-
-    <!-- Contenitore Autenticazione -->
-    <div id="auth-container" class="min-h-screen items-center justify-center p-4">
-        <div class="w-full max-w-md">
-            <div class="bg-gray-800 shadow-lg rounded-lg p-8">
-                <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
-                <form id="login-form">
-                    <h2 class="text-2xl text-center mb-4">Accedi</h2>
-                    <div class="mb-4"><label for="login-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="login-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <div class="mb-6"><label for="login-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="login-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Accedi</button>
-                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Non hai un account? <a href="#" id="show-register" class="text-red-400 hover:text-red-300">Registrati</a></p>
-                </form>
-                <form id="register-form" style="display: none;">
-                    <h2 class="text-2xl text-center mb-4">Crea un Account</h2>
-                    <div class="mb-4"><label for="register-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="register-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <div class="mb-6"><label for="register-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="register-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
-                    <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Registrati</button>
-                    <p class="text-center text-gray-500 text-xs mt-4 font-sans">Hai già un account? <a href="#" id="show-login" class="text-red-400 hover:text-red-300">Accedi</a></p>
-                </form>
-                <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
-            </div>
-        </div>
-    </div>
-
-    <!-- Contenitore App Principale (per il Master) -->
-    <div id="app-container">
-        <div class="container mx-auto p-4 md:p-8">
-            <header class="flex justify-between items-center mb-8">
-                <div><h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1><p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili.</p></div>
-                <div id="user-info" class="text-right"><p id="user-email" class="text-gray-300 font-sans"></p><button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
-            </header>
-            <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button></nav></div></div>
-            <main>
-                <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
-                
-                <!-- DICE ROLLS MASTER VIEW -->
-               <form id="master-dice-form" class="flex flex-wrap gap-2 items-end">
-  <div>
-    <label class="block text-xs text-gray-400">N° dadi</label>
-    <input type="number" id="master-dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
-  </div>
-  <div>
-    <label class="block text-xs text-gray-400">Tipo</label>
-    <select id="master-dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
-      <option value="4">d4</option>
-      <option value="6">d6</option>
-      <option value="8">d8</option>
-      <option value="10">d10</option>
-      <option value="12">d12</option>
-      <option value="20">d20</option>
-    </select>
-  </div>
-  <div>
-    <label class="block text-xs text-gray-400">Mod</label>
-    <input type="number" id="master-dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
-  </div>
-  <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
-</form>
-<div id="master-dice-results-container" class="mt-3 text-gray-200 font-mono text-sm"></div>
-
-<form id="player-dice-form" class="flex flex-wrap gap-2 items-end">
-  <div>
-    <label class="block text-xs text-gray-400">N° dadi</label>
-    <input type="number" id="player-dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
-  </div>
-  <div>
-    <label class="block text-xs text-gray-400">Tipo</label>
-    <select id="player-dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
-      <option value="4">d4</option>
-      <option value="6">d6</option>
-      <option value="8">d8</option>
-      <option value="10">d10</option>
-      <option value="12">d12</option>
-      <option value="20">d20</option>
-    </select>
-  </div>
-  <div>
-    <label class="block text-xs text-gray-400">Mod</label>
-    <input type="number" id="player-dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
-  </div>
-  <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
-</form>
-<div id="master-dice-results-container" class="mt-3 text-gray-200 font-mono text-sm"></div>
-                
-<div id="ai-generator" class="tab-content">
-  <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-    <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-      <div>
-        <div class="mb-4">
-          <label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label>
-          <select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">
-            <option value="PNG">PNG</option>
-            <option value="Mostro">Mostro</option>
-            <option value="Ambientazione">Ambientazione</option>
-            <option value="Mappa">Mappa</option>
-            <option value="Tesoro">Tesoro</option>
-          </select>
-        </div>
-        <div class="mb-4">
-          <label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label>
-          <textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea>
-        </div>
-        <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
-      </div>
-      <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center">
-        <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center">
-          <p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p>
-        </div>
-        <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+  <!-- Contenitore Autenticazione -->
+  <div id="auth-container" class="min-h-screen items-center justify-center p-4">
+    <div class="w-full max-w-md">
+      <div class="bg-gray-800 shadow-lg rounded-lg p-8">
+        <h1 class="text-3xl font-bold text-center text-red-500 mb-6 tracking-wider">D&D Adventure Manager</h1>
+        <form id="login-form">
+          <h2 class="text-2xl text-center mb-4">Accedi</h2>
+          <div class="mb-4"><label for="login-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="login-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+          <div class="mb-6"><label for="login-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="login-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+          <button type="submit" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Accedi</button>
+          <p class="text-center text-gray-500 text-xs mt-4 font-sans">Non hai un account? <a href="#" id="show-register" class="text-red-400 hover:text-red-300">Registrati</a></p>
+        </form>
+        <form id="register-form" style="display: none;">
+          <h2 class="text-2xl text-center mb-4">Crea un Account</h2>
+          <div class="mb-4"><label for="register-email" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Email</label><input type="email" id="register-email" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+          <div class="mb-6"><label for="register-password" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Password</label><input type="password" id="register-password" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white leading-tight focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required></div>
+          <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg focus:outline-none focus:shadow-outline text-lg">Registrati</button>
+          <p class="text-center text-gray-500 text-xs mt-4 font-sans">Hai già un account? <a href="#" id="show-login" class="text-red-400 hover:text-red-300">Accedi</a></p>
+        </form>
+        <p id="auth-error" class="text-red-500 text-center text-sm mt-4 font-sans"></p>
       </div>
     </div>
   </div>
-</div>
-                <div id="adventures" class="tab-content">
-  <div id="adventure-list-view" class="active">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-      <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
-      <form id="add-adventure-form" class="flex gap-4 mb-6">
-        <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required>
-        <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
-      </form>
-      <div id="adventures-list" class="space-y-3"></div>
-    </div>
-  </div>
-  <div id="adventure-detail-view" style="display: none;">
-    <!-- Qui va la vista dettaglio avventura, i tuoi componenti, ecc -->
-    <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-      <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4">
+
+  <!-- Contenitore App Principale (per il Master) -->
+  <div id="app-container">
+    <div class="container mx-auto p-4 md:p-8">
+      <header class="flex justify-between items-center mb-8">
         <div>
-          <h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3>
-          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button>
-          <div id="environments-list" class="space-y-2"></div>
+          <h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1>
+          <p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili.</p>
         </div>
-        <hr class="border-gray-600">
-        <div>
-          <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
-          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
-          <div id="pngs-list" class="space-y-2"></div>
+        <div id="user-info" class="text-right">
+          <p id="user-email" class="text-gray-300 font-sans"></p>
+          <button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button>
         </div>
-        <hr class="border-gray-600">
-        <div>
-          <h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3>
-          <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button>
-          <div id="maps-list" class="space-y-2"></div>
+      </header>
+      <div class="mb-8">
+        <div class="border-b border-gray-700">
+          <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+            <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button>
+            <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button>
+            <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button>
+            <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button>
+          </nav>
         </div>
-      </aside>
-      <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
-        <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
-        <h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
-        <div id="chapters-container" class="space-y-4"></div>
-        <button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button>
-      </section>
-    </div>
-  </div>
-</div>                <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div></div>
-            </main>
-        </div>
-    </div>
-    
-    <!-- Contenitore Vista Giocatore -->
-    <div id="player-view-container" class="p-4 md:p-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
-            <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
-        </div>
-        <!-- DICE ROLLER CONDIVISO -->
-        <div class="bg-gray-800 p-4 rounded-lg shadow mb-8 max-w-md mx-auto">
-          <h3 class="text-xl font-bold text-red-400 mb-2">Tira Dadi (condiviso)</h3>
-          <form id="player-dice-form" class="flex flex-wrap gap-2 items-end">
+      </div>
+      <main>
+        <div id="dice-roller" class="tab-content active">
+          <form id="master-dice-form" class="flex flex-wrap gap-2 items-end mb-4">
             <div>
               <label class="block text-xs text-gray-400">N° dadi</label>
-              <input type="number" id="dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
+              <input type="number" id="master-dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
             </div>
             <div>
               <label class="block text-xs text-gray-400">Tipo</label>
-              <select id="dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
+              <select id="master-dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
                 <option value="4">d4</option>
                 <option value="6">d6</option>
                 <option value="8">d8</option>
@@ -239,40 +92,219 @@
             </div>
             <div>
               <label class="block text-xs text-gray-400">Mod</label>
-              <input type="number" id="dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
+              <input type="number" id="master-dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
             </div>
             <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
           </form>
-          <div id="player-dice-feedback" class="mt-3 text-gray-200 font-mono text-sm"></div>
+          <div id="master-dice-results-container" class="mt-3 text-gray-200 font-mono text-sm"></div>
         </div>
-        <div id="player-shared-items" class="space-y-8"></div>
-    </div>
-
-    <!-- Finestra Modale per i Nodi -->
-    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
-
-    <!-- Finestra Modale per la Condivisione -->
-    <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
-
-    <!-- Finestra Modale Scheda Personaggio -->
-    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
-        <div class="cs-main-container rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-800 flex flex-col">
-            <div class="flex justify-between items-center p-3 border-b border-gray-400 flex-shrink-0">
-                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-800">Scheda Personaggio</h2>
-                <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
+        <div id="ai-generator" class="tab-content">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+            <h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div>
+                <div class="mb-4">
+                  <label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label>
+                  <select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans">
+                    <option value="PNG">PNG</option>
+                    <option value="Mostro">Mostro</option>
+                    <option value="Ambientazione">Ambientazione</option>
+                    <option value="Mappa">Mappa</option>
+                    <option value="Tesoro">Tesoro</option>
+                  </select>
+                </div>
+                <div class="mb-4">
+                  <label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label>
+                  <textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea>
+                </div>
+                <button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button>
+              </div>
+              <div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center">
+                <div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center">
+                  <p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p>
+                </div>
+                <button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button>
+              </div>
             </div>
-            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
-                <!-- ... resto della scheda ... -->
-            </div>
+          </div>
         </div>
+        <div id="adventures" class="tab-content">
+          <div id="adventure-list-view" class="active">
+            <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+              <h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
+              <form id="add-adventure-form" class="flex gap-4 mb-6">
+                <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required>
+                <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
+              </form>
+              <div id="adventures-list" class="space-y-3"></div>
+            </div>
+          </div>
+          <div id="adventure-detail-view" style="display: none;">
+            <button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+              <aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4">
+                <div>
+                  <h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3>
+                  <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button>
+                  <div id="environments-list" class="space-y-2"></div>
+                </div>
+                <hr class="border-gray-600">
+                <div>
+                  <h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3>
+                  <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button>
+                  <div id="pngs-list" class="space-y-2"></div>
+                </div>
+                <hr class="border-gray-600">
+                <div>
+                  <h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3>
+                  <button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button>
+                  <div id="maps-list" class="space-y-2"></div>
+                </div>
+              </aside>
+              <section class="md:col-span-3 bg-gray-800 p-6 rounded-lg">
+                <h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2>
+                <h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
+                <div id="chapters-container" class="space-y-4"></div>
+                <button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button>
+              </section>
+            </div>
+          </div>
+        </div>
+        <div id="player-view-master" class="tab-content">
+          <div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div></div>
+        </div>
+      </main>
     </div>
-
-<script type="module">
+  </div>
+  <!-- Contenitore Vista Giocatore -->
+  <div id="player-view-container" class="p-4 md:p-8">
+    <div class="flex justify-between items-center mb-8">
+      <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
+      <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
+    </div>
+    <form id="player-dice-form" class="flex flex-wrap gap-2 items-end mb-4">
+      <div>
+        <label class="block text-xs text-gray-400">N° dadi</label>
+        <input type="number" id="player-dice-count" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="1" min="1" max="100">
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400">Tipo</label>
+        <select id="player-dice-type" class="bg-gray-700 border border-gray-600 rounded px-2 py-1 text-white">
+          <option value="4">d4</option>
+          <option value="6">d6</option>
+          <option value="8">d8</option>
+          <option value="10">d10</option>
+          <option value="12">d12</option>
+          <option value="20">d20</option>
+        </select>
+      </div>
+      <div>
+        <label class="block text-xs text-gray-400">Mod</label>
+        <input type="number" id="player-dice-mod" class="bg-gray-700 border border-gray-600 rounded w-16 px-2 py-1 text-center text-white" value="0">
+      </div>
+      <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold px-3 py-1 rounded">Tira</button>
+    </form>
+    <div id="player-dice-feedback" class="mt-3 text-gray-200 font-mono text-sm"></div>
+    <div id="player-shared-items" class="space-y-8"></div>
+  </div>
+  <!-- Modali: nodi, share, scheda PG -->
+  <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
+  <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
+  <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
+    <div class="cs-main-container rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-800 flex flex-col">
+      <div class="flex justify-between items-center p-3 border-b border-gray-400 flex-shrink-0">
+        <h2 id="cs-modal-title" class="text-2xl font-bold text-red-800">Scheda Personaggio</h2>
+        <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
+      </div>
+      <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
+          <div class="bg-yellow-100 text-black rounded-lg p-4 shadow-lg max-w-4xl mx-auto">
+  <form id="character-sheet-form">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <div>
+        <label class="font-bold">Nome Personaggio</label>
+        <input type="text" data-field="characterName" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Background</label>
+        <input type="text" data-field="background" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Classe/i</label>
+        <input type="text" data-field="class" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Livello totale</label>
+        <input type="number" data-field="level" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-4">
+      </div>
+      <div>
+        <label class="font-bold">Punti Ferita</label>
+        <div class="flex gap-2 items-center mb-2">
+          <input type="number" data-field="hp.max" class="w-24 bg-gray-200 rounded-lg p-2 font-sans" placeholder="Max">
+          <span class="font-bold">/</span>
+          <input type="number" data-field="hp.current" class="w-24 bg-gray-200 rounded-lg p-2 font-sans" placeholder="Attuali">
+        </div>
+        <label class="font-bold">Dadi Vita</label>
+        <input type="text" data-field="hitDice" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Classe Armatura</label>
+        <input type="number" data-field="armorClass" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Iniziativa</label>
+        <input type="number" data-field="initiativeBonus" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+        <label class="font-bold">Velocità</label>
+        <input type="text" data-field="speed" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <div>
+        <h4 class="font-bold mb-2">Statistiche</h4>
+        <div class="grid grid-cols-2 gap-2">
+          <div>Forza <input type="number" data-field="stats.strength" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="strength" class="ml-2 font-bold"></span></div>
+          <div>Destrezza <input type="number" data-field="stats.dexterity" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="dexterity" class="ml-2 font-bold"></span></div>
+          <div>Costituzione <input type="number" data-field="stats.constitution" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="constitution" class="ml-2 font-bold"></span></div>
+          <div>Intelligenza <input type="number" data-field="stats.intelligence" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="intelligence" class="ml-2 font-bold"></span></div>
+          <div>Saggezza <input type="number" data-field="stats.wisdom" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="wisdom" class="ml-2 font-bold"></span></div>
+          <div>Carisma <input type="number" data-field="stats.charisma" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="charisma" class="ml-2 font-bold"></span></div>
+        </div>
+        <label class="font-bold mt-3">Bonus Competenza</label>
+        <input type="text" data-field="proficiencyBonus" class="w-16 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+      </div>
+      <div>
+        <label class="font-bold">Tiri Salvezza</label>
+        <textarea data-field="savingThrows" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+        <label class="font-bold">Abilità</label>
+        <textarea data-field="skills" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+      </div>
+      <div>
+        <h4 class="font-bold">Difese / Armature / Scudi</h4>
+        <textarea data-field="defenses" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-20 mb-2"></textarea>
+      </div>
+    </div>
+    <hr class="my-4">
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div>
+        <label class="font-bold">Equipaggiamento</label>
+        <textarea data-field="equipment" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+        <label class="font-bold">Attacchi & Incantesimi</label>
+        <textarea data-field="attacksSpellcasting" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+      </div>
+      <div>
+        <label class="font-bold">Tratti, Ideali, Legami, Difetti</label>
+        <textarea data-field="personalityTraits" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Tratti"></textarea>
+        <textarea data-field="ideals" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Ideali"></textarea>
+        <textarea data-field="bonds" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Legami"></textarea>
+        <textarea data-field="flaws" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Difetti"></textarea>
+        <label class="font-bold">Tratti & Abilità Speciali</label>
+        <textarea data-field="featuresTraits" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16"></textarea>
+      </div>
+    </div>
+    <div class="flex justify-end mt-6">
+      <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-lg text-lg">Salva Scheda</button>
+    </div>
+  </form>
+</div>
+      </div>
+    </div>
+  </div>
+  <!-- SCRIPT -->
+  <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-import { getFirestore, collection, addDoc, query, where, orderBy, onSnapshot, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+import { getFirestore, collection, addDoc, query, onSnapshot, doc, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc, serverTimestamp, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-// FIREBASE INIT
 const firebaseConfig = {
     apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
     authDomain: "avventure-dnd.firebaseapp.com",
@@ -290,176 +322,45 @@ let currentAdventureId = null;
 let currentAdventureData = {};
 let currentAdventureUnsubscribe = null;
 
-// --- PATCH: DICE ROLLER CONDIVISO FIRESTORE ---
-// Tiro dadi locale (tab Master)
-const masterDiceForm = document.getElementById("master-dice-form");
-if (masterDiceForm) {
-  masterDiceForm.onsubmit = function(e) {
+const loginForm = document.getElementById('login-form');
+const registerForm = document.getElementById('register-form');
+const showRegister = document.getElementById('show-register');
+const showLogin = document.getElementById('show-login');
+const authError = document.getElementById('auth-error');
+const logoutBtn = document.getElementById('logout-btn');
+
+showRegister.onclick = (e) => { e.preventDefault(); loginForm.style.display = 'none'; registerForm.style.display = 'block'; authError.textContent = ''; };
+showLogin.onclick = (e) => { e.preventDefault(); registerForm.style.display = 'none'; loginForm.style.display = 'block'; authError.textContent = ''; };
+
+registerForm.onsubmit = (e) => {
     e.preventDefault();
-    const count = parseInt(document.getElementById("master-dice-count").value) || 1;
-    const sides = parseInt(document.getElementById("master-dice-type").value) || 6;
-    const mod = parseInt(document.getElementById("master-dice-mod").value) || 0;
-    let rolls = [];
-    let total = 0;
-    for (let i = 0; i < count; i++) {
-      const result = Math.floor(Math.random() * sides) + 1;
-      rolls.push(result);
-      total += result;
-    }
-    const finalTotal = total + mod;
-    let res = `<p class="text-lg text-gray-300">Tiri: [${rolls.join(", ")}]</p>`;
-    res += `<p class="text-4xl font-bold mt-2">${total} ${(mod !== 0 ? (mod > 0 ? "+" : "") + mod : "")} = <b>${finalTotal}</b></p>`;
-    document.getElementById("master-dice-results-container").innerHTML = res;
-  };
-}
-// GIOCATORE: salva il tiro
-function setupPlayerDiceRollerFirestore(adventureId, playerToken, playerName) {
-  const diceForm = document.getElementById('player-dice-form');
-  const feedbackDiv = document.getElementById('player-dice-feedback');
-  if (!diceForm) return;
-  diceForm.onsubmit = async function(e) {
-    e.preventDefault();
-    const count = parseInt(document.getElementById('player-dice-count').value) || 1;
-    const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
-    const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
-    const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
-    const total = rolls.reduce((a, b) => a + b, 0) + mod;
-    const formula = `${count}d${sides}` + (mod ? (mod > 0 ? `+${mod}` : mod) : '');
-    await addDoc(collection(db, "diceRolls"), {
-      adventureId,
-      playerToken,
-      playerName,
-      formula,
-      rolls,
-      result: total,
-      timestamp: Date.now()
-    });
-    feedbackDiv.textContent = `Hai tirato ${formula}: ${total} [${rolls.join(", ")}]`;
-    setTimeout(() => feedbackDiv.textContent = '', 4000);
-  };
-}
-
-// MASTER: visualizza lista tiri
-function setupMasterDiceListener(adventureId) {
-  const rollsDiv = document.getElementById('master-dice-rolls-list');
-  const masterDiceRollsBlock = document.getElementById('master-dice-rolls');
-  if (!rollsDiv || !adventureId) return;
-  masterDiceRollsBlock.style.display = 'block';
-  const q = query(
-    collection(db, "diceRolls"),
-    where("adventureId", "==", adventureId),
-    orderBy("timestamp", "desc")
-  );
-  onSnapshot(q, (querySnapshot) => {
-    rollsDiv.innerHTML = '';
-    querySnapshot.forEach((doc) => {
-      const roll = doc.data();
-      const el = document.createElement('div');
-      el.innerHTML = `<b>${roll.playerName || "Giocatore"}</b>: ${roll.formula} → <b>${roll.result}</b> [${roll.rolls.join(", ")}] <span style="font-size:12px;color:#aaa;">${new Date(roll.timestamp).toLocaleTimeString()}</span>`;
-      rollsDiv.appendChild(el);
-    });
-  });
-}
-
-// --- Patch: attivazione dice roller nella player view ---
-const urlParams = new URLSearchParams(window.location.search);
-const playerViewId = urlParams.get('player_view');
-const playerToken = urlParams.get('token');
-
-if (playerViewId && playerToken) {
-    document.getElementById('initial-loader').style.display = 'none';
-    document.getElementById('auth-container').style.display = 'none';
-    document.getElementById('app-container').style.display = 'none';
-    document.getElementById('player-view-container').classList.add('active');
-    loadPlayerView(playerViewId, playerToken);
-}
-
-// FUNZIONE PLAYER VIEW CORRETTA
-function loadPlayerView(adventureId, token) {
-    const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-    onSnapshot(publicAdventureRef, (docSnap) => {
-        if (docSnap.exists()) {
-            const data = docSnap.data();
-            currentAdventureData = data;
-            const players = data.players || [];
-            const currentPlayer = players.find(p => p.token === token);
-            if (!currentPlayer) {
-                document.getElementById('player-adventure-title').textContent = "Accesso Negato";
-                document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
-                return;
-            }
-            document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
-           document.getElementById('player-open-sheet-btn').onclick = function() {
-  openCharacterSheetModal(token, true);
+    const email = document.getElementById('register-email').value;
+    const password = document.getElementById('register-password').value;
+    createUserWithEmailAndPassword(auth, email, password).catch(error => { authError.textContent = error.message; });
 };
-            // PATCH: attiva dado roller firestore
-            setupPlayerDiceRollerFirestore(adventureId, token, currentPlayer.name);
+loginForm.onsubmit = (e) => {
+    e.preventDefault();
+    const email = document.getElementById('login-email').value;
+    const password = document.getElementById('login-password').value;
+    signInWithEmailAndPassword(auth, email, password).catch(error => { authError.textContent = error.message; });
+};
+logoutBtn.onclick = () => signOut(auth);
 
-            // ---- BLOCCO DI RENDERING ITEMS CONDIVISI, SOLO QUI DENTRO! ----
-            const container = document.getElementById('player-shared-items');
-            container.innerHTML = '';
-            
-            const allSharedItems = data.sharedItems || [];
-            const visibleItems = allSharedItems.filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
-            
-            const sharedChapters = visibleItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
-            const otherItems = visibleItems.filter(item => !item.isChapter);
-
-            if (sharedChapters.length > 0) {
-                sharedChapters.forEach(chapter => {
-                    const chapterEl = document.createElement('div');
-                    chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                    chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                    container.appendChild(chapterEl);
-                });
-            }
-            
-            if (otherItems.length > 0) {
-                const otherItemsContainer = document.createElement('div');
-                otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
-                otherItems.forEach(item => {
-                    const itemEl = document.createElement('div');
-                    itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                    const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
-                    itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                    otherItemsContainer.appendChild(itemEl);
-                });
-                container.appendChild(otherItemsContainer);
-            }
-
-            if (visibleItems.length === 0) {
-                 container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
-            }
-            // ---- FINE BLOCCO DI RENDERING ----
-        } else {
-            document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
-            document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
-        }
-    });
-}
-    onAuthStateChanged(auth, user => { 
-    if (playerViewId && playerToken) return;
+onAuthStateChanged(auth, user => {
     document.getElementById('initial-loader').style.display = 'none';
-    if (user) { 
+    if (user) {
         document.getElementById('auth-container').classList.remove('active');
-        document.getElementById('app-container').classList.add('active'); 
-        document.getElementById('user-email').textContent = user.email; 
-        currentUserId = user.uid; 
-        loadAdventures(user.uid); 
+        document.getElementById('app-container').classList.add('active');
+        document.getElementById('user-email').textContent = user.email;
+        currentUserId = user.uid;
+        loadAdventures(user.uid);
     } else {
-        document.getElementById('app-container').classList.remove('active'); 
+        document.getElementById('app-container').classList.remove('active');
         document.getElementById('auth-container').classList.add('active');
-        currentUserId = null; 
-    } 
+        currentUserId = null;
+    }
 });
 
-document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
-document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-document.getElementById('login-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('login-email').value; const password = document.getElementById('login-password').value; signInWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
-document.getElementById('logout-btn').addEventListener('click', () => { signOut(auth); });
-
-// --- TABS ---
 const tabButtons = document.querySelectorAll('.tab-btn');
 const tabContents = document.querySelectorAll('.tab-content');
 tabButtons.forEach(button => {
@@ -475,7 +376,66 @@ tabButtons.forEach(button => {
     });
 });
 
-// --- AVVENTURE ---
+document.addEventListener("DOMContentLoaded", () => {
+    const masterDiceForm = document.getElementById("master-dice-form");
+    if (masterDiceForm) {
+        masterDiceForm.onsubmit = function(e) {
+            e.preventDefault();
+            const count = parseInt(document.getElementById("master-dice-count").value) || 1;
+            const sides = parseInt(document.getElementById("master-dice-type").value) || 6;
+            const mod = parseInt(document.getElementById("master-dice-mod").value) || 0;
+            let rolls = [];
+            let total = 0;
+            for (let i = 0; i < count; i++) {
+                const result = Math.floor(Math.random() * sides) + 1;
+                rolls.push(result);
+                total += result;
+            }
+            const finalTotal = total + mod;
+            let res = `<p class="text-lg text-gray-300">Tiri: [${rolls.join(", ")}]</p>`;
+            res += `<p class="text-4xl font-bold mt-2">${total} ${(mod !== 0 ? (mod > 0 ? "+" : "") + mod : "")} = <b>${finalTotal}</b></p>`;
+            document.getElementById("master-dice-results-container").innerHTML = res;
+        };
+    }
+});
+
+function setupPlayerDiceRollerFirestore(adventureId, playerToken, playerName) {
+    const diceForm = document.getElementById('player-dice-form');
+    const feedbackDiv = document.getElementById('player-dice-feedback');
+    if (!diceForm) return;
+    diceForm.onsubmit = async function(e) {
+        e.preventDefault();
+        const count = parseInt(document.getElementById('player-dice-count').value) || 1;
+        const sides = parseInt(document.getElementById('player-dice-type').value) || 6;
+        const mod = parseInt(document.getElementById('player-dice-mod').value) || 0;
+        const rolls = Array.from({length: count}, () => Math.floor(Math.random() * sides) + 1);
+        const total = rolls.reduce((a, b) => a + b, 0) + mod;
+        const formula = `${count}d${sides}` + (mod ? (mod > 0 ? `+${mod}` : mod) : '');
+        await addDoc(collection(db, "diceRolls"), {
+            adventureId,
+            playerToken,
+            playerName,
+            formula,
+            rolls,
+            result: total,
+            timestamp: Date.now()
+        });
+        feedbackDiv.textContent = `Hai tirato ${formula}: ${total} [${rolls.join(", ")}]`;
+        setTimeout(() => feedbackDiv.textContent = '', 4000);
+    };
+}
+
+const urlParams = new URLSearchParams(window.location.search);
+const playerViewId = urlParams.get('player_view');
+const playerToken = urlParams.get('token');
+if (playerViewId && playerToken) {
+    document.getElementById('initial-loader').style.display = 'none';
+    document.getElementById('auth-container').style.display = 'none';
+    document.getElementById('app-container').style.display = 'none';
+    document.getElementById('player-view-container').classList.add('active');
+    loadPlayerView(playerViewId, playerToken);
+}
+
 const addAdventureForm = document.getElementById('add-adventure-form');
 const adventureTitleInput = document.getElementById('adventure-title-input');
 const adventuresList = document.getElementById('adventures-list');
@@ -544,832 +504,557 @@ adventuresList.addEventListener('click', async e => {
         }
     }
 });
-
-// --- APERTURA AVVENTURA MASTER (con tiri dadi condivisi) ---
-function openAdventureDetail(userId, docId) {
+  function openAdventureDetail(userId, docId) {
     adventureListView.style.display = 'none';
     adventureDetailView.style.display = 'block';
     currentAdventureId = docId;
     if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
     const adventureRef = doc(db, `users/${userId}/adventures`, docId);
-    currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
-        if (doc.exists()) {
-            currentAdventureData = doc.data();
-            // PATCH: attiva listener tiri dadi
-            setupMasterDiceListener(docId);
-
-                    
-                    document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
-                    renderChaptersUI(currentAdventureData.background || []);
-                    renderGroupedNodes('environments', currentAdventureData.environments || []);
-                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                    renderGroupedNodes('maps', currentAdventureData.maps || []);
-                    renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
-                } else { backToListBtn.click(); }
-            });
-        }
-
-        function renderGroupedNodes(type, nodes) {
-            const listEl = document.getElementById(`${type}-list`);
-            listEl.innerHTML = '';
-            const typeName = type === 'pngs' ? 'PNG' : (type === 'maps' ? 'mappa' : 'ambiente');
-            if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`; return; }
-            const groups = nodes.reduce((acc, node) => { (acc[node.group || 'Senza Gruppo'] = acc[node.group || 'Senza Gruppo'] || []).push(node); return acc; }, {});
-            for (const groupName in groups) {
-                const groupDetails = document.createElement('details');
-                groupDetails.className = 'bg-gray-700 rounded-lg';
-                let nodesHtml = groups[groupName].map(node => {
-                    const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === node.title)?.sharedWith || [];
-                    const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
-                    const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
-                    const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
-                    return `
-                    <div class="p-2 border-t border-gray-600 node-container" data-node-id="${node.title}" data-node-type="${type}">
-                        <div class="node-view-mode">
-                             <details><summary class="cursor-pointer text-base flex justify-between items-center"><span>${node.title}</span><div class="flex-shrink-0"><button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button><button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button></div></summary>
-                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${imageHtml}<div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>${masterNotesHtml}<button class="open-share-modal-btn w-full mt-2 p-1 rounded-lg text-sm bg-blue-600 hover:bg-blue-700">${shareStatus}</button></div>
-                            </details>
-                        </div>
-                        <div class="node-edit-mode hidden p-2 space-y-2">
-                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
-                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
-                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
-                            <div class="flex gap-2 mt-2"><button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div>
-                        </div>
-                    </div>`;
-                }).join('');
-                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
-                listEl.appendChild(groupDetails);
-            }
-        }
-        
-        function renderTextWithLinks(text) {
-            const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
-            return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
-                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
-                return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`;
-            }).replace(/\n/g, '<br>');
-        }
-
-        const nodeModal = document.getElementById('node-modal');
-        const modalTitle = document.getElementById('modal-title');
-        const modalContent = document.getElementById('modal-content');
-        const modalCloseBtn = document.getElementById('modal-close-btn');
-
-        document.getElementById('adventure-detail-view').addEventListener('click', e => {
-             if (e.target.classList.contains('node-link')) {
-                e.preventDefault();
-                const nodeName = e.target.dataset.nodeName;
-                const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || [])];
-                const nodeData = allNodes.find(node => node.title.toLowerCase() === nodeName.toLowerCase());
-                if (nodeData) {
-                    modalTitle.textContent = nodeData.title;
-                    const imageHtml = nodeData.imageUrl ? `<img src="${nodeData.imageUrl}" class="mb-4 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : ''
-                    const masterNotesHtml = nodeData.masterContent ? `<div class="mt-4 pt-4 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-lg">Note Master</h4><div class="text-gray-300">${(nodeData.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
-                    modalContent.innerHTML = `${imageHtml}${(nodeData.publicContent || '').replace(/\n/g, '<br>')}${masterNotesHtml}`;
-                    nodeModal.classList.remove('hidden');
-                }
-            }
-        });
-        modalCloseBtn.addEventListener('click', () => nodeModal.classList.add('hidden'));
-        nodeModal.addEventListener('click', (e) => { if (e.target === nodeModal) nodeModal.classList.add('hidden'); });
-
-        backToListBtn.addEventListener('click', () => { adventureDetailView.style.display = 'none'; adventureListView.style.display = 'block'; currentAdventureId = null; if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; } document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';});
-        
-        document.querySelectorAll('.node-add-btn').forEach(btn => {
-            btn.addEventListener('click', async (e) => {
-                if (!currentAdventureId) return;
-                const type = btn.dataset.type;
-                if (type === 'maps') {
-                    if (document.querySelector('.new-node-form-container')) return;
-                    const listEl = document.getElementById('maps-list');
-                    const formContainer = document.createElement('div');
-                    formContainer.className = 'p-2 mb-2 new-node-form-container';
-                    formContainer.innerHTML = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
-                    listEl.prepend(formContainer);
-                    formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
-                    formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
-                        const title = formContainer.querySelector('.new-node-title').value.trim();
-                        if (!title) { alert('Il titolo è obbligatorio.'); return; }
-                        const newNode = { title, imageUrl: formContainer.querySelector('.new-node-image-url').value.trim(), publicContent: formContainer.querySelector('.new-node-public-content').value.trim(), masterContent: formContainer.querySelector('.new-node-master-content').value.trim(), group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo" };
-                        try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { 'maps': arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error("Errore aggiunta mappa:", error); }
-                    });
-                } else {
-                    const typeName = (type === 'pngs') ? 'PNG' : 'Ambiente';
-                    const title = prompt(`Titolo del nuovo ${typeName}:`);
-                    if (!title) return;
-                    const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
-                    try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
-                }
-            });
-        });
-
-        document.getElementById('adventure-detail-view').addEventListener('click', async (e) => {
-            const target = e.target;
-            const container = target.closest('.node-container');
-            if (!container) return;
-            const nodeId = container.dataset.nodeId;
-            const type = container.dataset.nodeType;
-            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-
-            if (target.classList.contains('delete-node-btn')) {
-                e.preventDefault();
-                if (!confirm(`Sei sicuro di voler eliminare "${nodeId}"?`)) return;
-                const adventureSnap = await getDoc(adventureRef);
-                if (adventureSnap.exists()) {
-                    const nodes = adventureSnap.data()[type] || [];
-                    const nodeToDelete = nodes.find(n => n.title === nodeId);
-                    const sharedItems = adventureSnap.data().sharedItems || [];
-                    const sharedItemToDelete = sharedItems.find(item => item.id === nodeId);
-                    const updatePayload = { [type]: arrayRemove(nodeToDelete) };
-                    if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete);
-                    await updateDoc(adventureRef, updatePayload);
-                }
-            } else if (target.classList.contains('edit-node-btn')) {
-                e.preventDefault();
-                container.querySelector('.node-view-mode').classList.add('hidden');
-                container.querySelector('.node-edit-mode').classList.remove('hidden');
-            } else if (target.classList.contains('cancel-edit-btn')) {
-                container.querySelector('.node-view-mode').classList.remove('hidden');
-                container.querySelector('.node-edit-mode').classList.add('hidden');
-            } else if (target.classList.contains('save-node-btn')) {
-                const adventureSnap = await getDoc(adventureRef);
-                if (adventureSnap.exists()) {
-                    const nodes = adventureSnap.data()[type] || [];
-                    const nodeIndex = nodes.findIndex(n => n.title === nodeId);
-                    if (nodeIndex !== -1) {
-                        const updatedNodes = [...nodes];
-                        const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
-                        updatedNodes[nodeIndex] = newNodeData;
-                        const sharedItems = adventureSnap.data().sharedItems || [];
-                        const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
-                        const updatePayload = { [type]: updatedNodes };
-                        if (sharedItemIndex > -1) {
-                            const updatedSharedItems = [...sharedItems];
-                            updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData };
-                            updatePayload.sharedItems = updatedSharedItems;
-                        }
-                        await updateDoc(adventureRef, updatePayload);
-                    }
-                }
-            }
-        });
-
-        function renderChaptersUI(chapters = []) {
-            const container = document.getElementById('chapters-container');
-            container.innerHTML = '';
-            if (chapters.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno!</p>'; return; }
-            chapters.forEach(chapter => {
-                const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === chapter.id)?.sharedWith || [];
-                const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
-                const chapterEl = document.createElement('div');
-                chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
-                chapterEl.dataset.chapterId = chapter.id;
-                chapterEl.innerHTML = `
-                    <div class="chapter-view-mode p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
-                            <div class="flex items-center gap-2">
-                                <button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button>
-                                <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
-                                <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
-                            </div>
-                        </div>
-                        <div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.publicContent)}</div>
-                        <div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div></div>
-                    </div>
-                    <div class="chapter-edit-mode hidden p-4 space-y-2">
-                        <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
-                        <label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea>
-                        <label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea>
-                        <div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div>
-                    </div>`;
-                container.appendChild(chapterEl);
-            });
-        }
-
-        document.getElementById('add-chapter-btn').addEventListener('click', async () => {
-            if (!currentAdventureId) return;
-            const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo");
-            if (!title) return;
-            const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) };
-            await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) });
-        });
-
-        document.getElementById('chapters-container').addEventListener('click', async e => {
-            const container = e.target.closest('.chapter-container');
-            if (!container) return;
-            const chapterId = container.dataset.chapterId;
-            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-            if (e.target.classList.contains('edit-chapter-btn')) {
-                container.querySelector('.chapter-view-mode').classList.add('hidden');
-                container.querySelector('.chapter-edit-mode').classList.remove('hidden');
-            } else if (e.target.classList.contains('cancel-edit-chapter-btn')) {
-                container.querySelector('.chapter-view-mode').classList.remove('hidden');
-                container.querySelector('.chapter-edit-mode').classList.add('hidden');
-            } else if (e.target.classList.contains('delete-chapter-btn')) {
-                if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return;
-                const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId);
-                const sharedItemToDelete = currentAdventureData.sharedItems.find(item => item.id === chapterId);
-                const updatePayload = { background: arrayRemove(chapterToDelete) };
-                if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete);
-                await updateDoc(adventureRef, updatePayload);
-            } else if (e.target.classList.contains('save-chapter-btn')) {
-                const newTitle = container.querySelector('.chapter-title-edit').value;
-                const newPublicContent = container.querySelector('.chapter-public-content-edit').value;
-                const newMasterContent = container.querySelector('.chapter-master-content-edit').value;
-                const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, publicContent: newPublicContent, masterContent: newMasterContent } : c);
-                const updatedSharedItems = currentAdventureData.sharedItems.map(item => item.id === chapterId ? { ...item, title: newTitle, publicContent: newPublicContent } : item);
-                await updateDoc(adventureRef, { background: updatedChapters, sharedItems: updatedSharedItems });
-            }
-        });
-
-        function renderPlayerManagementUI(adventureId, players = []) {
-            const shareContainer = document.getElementById('player-share-content');
-            const baseUrl = window.location.href.split('?')[0];
-            let playerListHtml = players.map(player => `
-                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
-                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
-                    <div class="flex items-center gap-2">
-                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
-                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
-                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
-                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
-                    </div>
-                </div>`).join('');
-            shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
-            document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
-            shareContainer.addEventListener('click', (e) => { 
-                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
-                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
-                if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token);
-            });
-        }
-
-// PATCH VELOCITÀ: costanti e funzioni per velocità D&D
-const DND_RACE_SPEEDS = {
-    "Umano": 9,
-    "Umano (Variant)": 9,
-    "Nano (Delle Colline)": 7.5,
-    "Nano (Delle Montagne)": 7.5,
-    "Nano (Duergar)": 7.5,
-    "Elfo (Alto)": 9,
-    "Elfo (Dei Boschi)": 10.5,
-    "Elfo (Drow)": 9,
-    "Elfo (Shadar-kai)": 9,
-    "Mezzelfo": 9,
-    "Mezzorco": 9,
-    "Halfling (Piedelesto)": 7.5,
-    "Halfling (Tozzo)": 7.5,
-    "Dragonide": 9,
-    "Tiefling": 9,
-    "Gnomo (Delle Foreste)": 7.5,
-    "Gnomo (Delle Rocce)": 7.5,
-    "Goblin": 9,
-    "Hobgoblin": 9,
-    "Bugbear": 9,
-    "Goliath": 9,
-    "Lizardfolk": 9,
-    "Tabaxi": 12,
-    "Tritone": 9,
-    "Leonin": 12,
-    "Minotauro": 9,
-    "Satiro": 10.5,
-    "Warforged": 9,
-    "Firbolg": 9,
-    "Kenku": 9,
-    "Koboldo": 9,
-    "Orco": 9,
-    "Shifter": 9,
-    "Yuan-ti": 9,
-    "Vedalken": 9,
-    "Loxodon": 9,
-    "Simic Hybrid": 9,
-    "Genasi (Acqua)": 9,
-    "Genasi (Aria)": 9,
-    "Genasi (Fuoco)": 9,
-    "Genasi (Terra)": 9,
-    "Cangiante": 9,
-    "Centauro": 12,
-    "Aasimar (Protettore)": 9,
-    "Aasimar (Flagello)": 9,
-    "Aasimar (Caduto)": 9,
-    "Kalashtar": 9,
-    "default": 9
-};
-function getMonkBonusSpeed(level) {
-    if (level >= 18) return 15;
-    if (level >= 14) return 12;
-    if (level >= 10) return 9;
-    if (level >= 6) return 6;
-    if (level >= 2) return 3;
-    return 0;
+    currentAdventureUnsubscribe = onSnapshot(adventureRef, (docSnap) => {
+        if (docSnap.exists()) {
+            currentAdventureData = docSnap.data();
+            document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
+            renderChaptersUI(currentAdventureData.background || []);
+            renderGroupedNodes('environments', currentAdventureData.environments || []);
+            renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+            renderGroupedNodes('maps', currentAdventureData.maps || []);
+            renderPlayerManagementUI(docId, currentAdventureData.players || []);
+        } else { backToListBtn.click(); }
+    });
 }
-function getBarbarianBonusSpeed(level, heavyArmor) {
-    if (level >= 5 && !heavyArmor) return 3;
-    return 0;
-}
-function calcBaseSpeed(race, classes, heavyArmor = false) {
-    let speed = DND_RACE_SPEEDS[race] || DND_RACE_SPEEDS["default"];
-    const monkClass = classes.find(c => c.name === "Monaco");
-    if (monkClass) speed += getMonkBonusSpeed(parseInt(monkClass.level));
-    const barbarianClass = classes.find(c => c.name === "Barbaro");
-    if (barbarianClass) speed += getBarbarianBonusSpeed(parseInt(barbarianClass.level), heavyArmor);
-    return speed;
-}
-function updateSpeedField(sheetData) {
-    const race = sheetData.race || "Umano";
-    const classes = sheetData.classes || [];
-    // PATCH: se vuoi automatizzare la rilevazione dell'armatura pesante, qui puoi mettere true se necessario
-    const heavyArmor = false;
-    const baseSpeed = calcBaseSpeed(race, classes, heavyArmor);
-    const speedMod = sheetData.speedModifier || '';
-    let display = `${baseSpeed} m`;
-    // Se c'è un bonus/malus scritto, mostralo accanto
-    document.getElementById('cs-speed-auto').value = display;
-    document.getElementById('cs-speed-modifier').value = speedMod;
-}
-// FINE PATCH VELOCITÀ
-        
-        const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
-        const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
-        const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
-        const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
-        function createEmptyCharacterSheet() {
-            const sheet = {
-                characterName: "",
-                classes: [{ id: crypto.randomUUID(), name: "Guerriero", level: 1 }],
-                background: "", race: "Umano",
-                stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
-                proficiencyBonus: "+2",
-                initiativeBonus: 0, 
-                speed: "9m",
-                hp: { max: 10, current: 10 }, hitDice: "",
-                attacksSpellcasting: "", equipment: "",
-                personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
-                proficiencies: { saves: [], skills: [] },
-                defenses: []
-            };
-            return sheet;
-        }
-
-        async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID(), characterSheet: createEmptyCharacterSheet() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
-        function handleCopyLink(e) { const button = e.target; const link = button.dataset.link; navigator.clipboard.writeText(link).then(() => { button.textContent = 'Copiato!'; button.classList.replace('bg-blue-600', 'bg-green-600'); setTimeout(() => { button.textContent = 'Copia'; button.classList.replace('bg-green-600', 'bg-blue-600'); }, 2000); }); }
-        async function handleDeletePlayer(e) { if (!currentAdventureId || !currentUserId) return; const tokenToDelete = e.target.dataset.token; if (!confirm("Sei sicuro di voler rimuovere questo giocatore?")) return; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); const adventureSnap = await getDoc(adventureRef); if (adventureSnap.exists()) { const playerToDelete = (adventureSnap.data().players || []).find(p => p.token === tokenToDelete); if (playerToDelete) { try { await updateDoc(adventureRef, { players: arrayRemove(playerToDelete) }); await updateDoc(publicAdventureRef, { players: arrayRemove(playerToDelete) }); } catch (error) { console.error("Errore rimozione giocatore:", error); } } } }
-
-        const shareModal = document.getElementById('share-modal');
-        const shareModalTitle = document.getElementById('share-modal-title');
-        const sharePlayerList = document.getElementById('share-player-list');
-        let currentSharingItem = { id: null, type: null };
-
-        document.getElementById('adventure-detail-view').addEventListener('click', (e) => {
-            if (e.target.classList.contains('open-share-modal-btn')) {
-                const chapterContainer = e.target.closest('.chapter-container');
-                const nodeContainer = e.target.closest('.node-container');
-                if (chapterContainer) {
-                    currentSharingItem.id = chapterContainer.dataset.chapterId;
-                    currentSharingItem.type = 'chapter';
-                } else if (nodeContainer) {
-                    currentSharingItem.id = nodeContainer.dataset.nodeId;
-                    currentSharingItem.type = 'node';
-                }
-                openShareModal();
-            }
-        });
-
-        function openShareModal() {
-            const players = currentAdventureData.players || [];
-            if (players.length === 0) { alert("Aggiungi almeno un giocatore prima di poter condividere."); return; }
-            
-            const sharedItem = currentAdventureData.sharedItems?.find(item => item.id === currentSharingItem.id);
-            const sharedWith = sharedItem?.sharedWith || [];
-
-            shareModalTitle.textContent = `Condividi "${currentSharingItem.id}"`;
-            sharePlayerList.innerHTML = `
-                <div class="flex items-center"><input type="checkbox" id="share-all-players" class="w-4 h-4" ${sharedWith.includes('all') ? 'checked' : ''}><label for="share-all-players" class="ml-2">Tutti i giocatori</label></div>
-                <hr class="border-gray-600 my-2">
-                ${players.map(p => `
-                    <div class="flex items-center"><input type="checkbox" id="share-${p.token}" data-token="${p.token}" class="w-4 h-4 player-checkbox" ${sharedWith.includes(p.token) ? 'checked' : ''}><label for="share-${p.token}" class="ml-2">${p.name}</label></div>
-                `).join('')}`;
-            
-            const allPlayersCheckbox = document.getElementById('share-all-players');
-            const playerCheckboxes = sharePlayerList.querySelectorAll('.player-checkbox');
-            allPlayersCheckbox.addEventListener('change', () => { playerCheckboxes.forEach(cb => { cb.checked = allPlayersCheckbox.checked; cb.disabled = allPlayersCheckbox.checked; }); });
-            if (allPlayersCheckbox.checked) { playerCheckboxes.forEach(cb => { cb.disabled = true; }); }
-            shareModal.classList.remove('hidden');
-        }
-
-        document.getElementById('share-modal-cancel').addEventListener('click', () => shareModal.classList.add('hidden'));
-        document.getElementById('share-modal-save').addEventListener('click', async () => {
-            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-            const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
-            
-            let sharedWith = [];
-            if (document.getElementById('share-all-players').checked) {
-                sharedWith.push('all');
-            } else {
-                sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token));
-            }
-
-            let sharedItems = [...(currentAdventureData.sharedItems || [])];
-            let itemIndex = sharedItems.findIndex(item => item.id === currentSharingItem.id);
-
-            if (sharedWith.length > 0) {
-                if (itemIndex > -1) {
-                    sharedItems[itemIndex].sharedWith = sharedWith;
-                } else {
-                    let sourceItem;
-                    if (currentSharingItem.type === 'chapter') {
-                        sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
-                        if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith });
-                    } else {
-                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps];
-                        sourceItem = allNodes.find(n => n.title === currentSharingItem.id);
-                        if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
-                    }
-                }
-            } else {
-                if (itemIndex > -1) sharedItems.splice(itemIndex, 1);
-            }
-            
-            try {
-                await updateDoc(adventureRef, { sharedItems });
-                const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; });
-                await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems });
-                shareModal.classList.add('hidden');
-            } catch (error) {
-                console.error("Errore durante la condivisione:", error);
-                alert("Si è verificato un errore.");
-            }
-        });
-        
-        // --- LOGICA SCHEDA PERSONAGGIO ---
-        const csModal = document.getElementById('character-sheet-modal');
-        const csModalContent = document.getElementById('cs-modal-content');
-
-        function openCharacterSheetModal(playerToken, isPlayerView = false) {
-            const player = currentAdventureData.players.find(p => p.token === playerToken);
-            if (!player) return;
-            
-            document.getElementById('cs-modal-title').textContent = `Scheda di ${player.name}`;
-            csModal.dataset.currentToken = playerToken;
-            csModal.dataset.isPlayerView = isPlayerView;
-
-            populateCharacterSheet(player.characterSheet || createEmptyCharacterSheet());
-            csModal.classList.remove('hidden');
-        }
-
-        function populateCharacterSheet(sheetData) {
-            csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field)) return;
-                const fieldPath = el.dataset.field;
-                const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
-                el.value = value;
-            });
-            updateAllModifiers(sheetData);
-            renderSkillsAndSaves(sheetData);
-            renderDefenses(sheetData.defenses || []);
-            renderClasses(sheetData.classes || [{ id: crypto.randomUUID(), name: '', level: 1 }]);
-            renderRace(sheetData.race || '');
-            updateTotalLevel(sheetData);
-            updateAC(sheetData);
-            updateInitiative(sheetData);
-            // PATCH VELOCITÀ: aggiorna visualizzazione velocità
-    updateSpeedField(sheetData);
-        }
-
-        function getModifier(score) {
-            const mod = Math.floor((parseInt(score || 10) - 10) / 2);
-            return mod; // Ritorna il numero
-        }
-
-        function formatModifier(mod) {
-             return mod >= 0 ? `+${mod}` : mod.toString();
-        }
-
-        function updateAllModifiers(sheetData) {
-            const stats = sheetData.stats || {};
-            for (const statName in stats) {
-                const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`);
-                if (modEl) modEl.textContent = formatModifier(getModifier(stats[statName]));
-            }
-        }
-        
-        function renderSkillsAndSaves(sheetData) {
-            const savesContainer = document.getElementById('saving-throws-list');
-            const skillsContainer = document.getElementById('skills-list');
-            const profs = sheetData.proficiencies || { saves: [], skills: [] };
-            
-            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
-                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>
-            `).join('');
-
-            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
-                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>
-            `).join('');
-            
-            updateSkillAndSaveBonuses(sheetData);
-        }
-        
-        function updateSkillAndSaveBonuses(sheetData) {
-            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
-            const stats = sheetData.stats || {};
-            
-            csModalContent.querySelectorAll('[data-save-prof]').forEach(el => {
-                const saveName = el.dataset.saveProf;
-                const statName = DND_SAVES[saveName];
-                const statMod = getModifier(stats[statName]);
-                const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = formatModifier(bonus);
-            });
-
-            csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => {
-                const skillName = el.dataset.skillProf;
-                const statName = DND_SKILLS[skillName];
-                const statMod = getModifier(stats[statName]);
-                const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = formatModifier(bonus);
-            });
-        }
-        
-        function renderRace(raceName) {
-            const container = document.getElementById('cs-race-container');
-            const isCustom = !DND_RACES.includes(raceName) && raceName;
-            
-            let optionsHtml = DND_RACES.map(r => `<option value="${r}" ${r === raceName ? 'selected' : ''}>${r}</option>`).join('');
-            
-            container.innerHTML = `
-                <label class="cs-label">Razza</label>
-                <select class="cs-select" id="cs-race-select">
-                    ${optionsHtml}
-                    <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
-                </select>
-                <input type="text" id="cs-race-custom" class="cs-input mt-1 ${isCustom ? '' : 'hidden'}" value="${isCustom ? raceName : ''}" placeholder="Razza personalizzata">
-            `;
-        }
-
-        function renderDefenses(defenses = []) {
-            const container = document.getElementById('cs-defenses-list');
-            container.innerHTML = defenses.map(item => `
-                <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
-                    <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
-                    <input type="text" class="cs-defense-name cs-input text-sm flex-grow" value="${item.name}" placeholder="Nome (es. Scudo)">
-                    <input type="number" class="cs-defense-value cs-input text-sm w-20" value="${item.value}" placeholder="Valore">
-                    <select class="cs-defense-type cs-select text-sm w-32">
-                        <option value="other" ${item.type === 'other' ? 'selected' : ''}>Altro</option>
-                        <option value="light" ${item.type === 'light' ? 'selected' : ''}>Leggera</option>
-                        <option value="medium" ${item.type === 'medium' ? 'selected' : ''}>Media</option>
-                        <option value="heavy" ${item.type === 'heavy' ? 'selected' : ''}>Pesante</option>
-                        <option value="shield" ${item.type === 'shield' ? 'selected' : ''}>Scudo</option>
-                    </select>
-                    <button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button>
-                </div>
-            `).join('');
-        }
-        
-        function renderClasses(classes = []) {
-            const container = document.getElementById('cs-classes-list');
-            
-            container.innerHTML = classes.map(c => {
-                const isCustom = !DND_CLASSES.includes(c.name) && c.name;
-                return `
-                <div class="flex items-center gap-2 class-item" data-id="${c.id}">
-                    <select class="cs-class-name cs-select">
-                        ${DND_CLASSES.map(cn => `<option value="${cn}" ${cn === c.name ? 'selected' : ''}>${cn}</option>`).join('')}
-                        <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
-                    </select>
-                    <input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata">
-                    <input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl">
-                    <button class="cs-delete-class-btn text-red-600 hover:text-red-800 font-bold">X</button>
-                </div>
-            `}).join('');
-        }
-
-        function updateTotalLevel(sheetData) {
-            const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0);
-            const totalLevelInput = document.getElementById('cs-total-level');
-            if (totalLevelInput) {
-                totalLevelInput.value = totalLevel;
-            }
-        }
-
-        function updateAC(sheetData) {
-            const dexMod = getModifier(sheetData.stats.dexterity);
-            let totalAC = 10;
-            let armorBonus = 0;
-            let dexBonus = dexMod;
-            let otherBonuses = 0;
-
-            const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type));
-            
-            if (wornArmor) {
-                armorBonus = parseInt(wornArmor.value || 0);
-                if (wornArmor.type === 'medium') {
-                    dexBonus = Math.min(dexMod, 2);
-                } else if (wornArmor.type === 'heavy') {
-                    dexBonus = 0;
-                }
-            }
-            
-            (sheetData.defenses || []).forEach(item => {
-                if (item.worn && (item.type === 'shield' || item.type === 'other')) {
-                    otherBonuses += parseInt(item.value || 0);
-                }
-            });
-
-            if (wornArmor) {
-                totalAC = armorBonus + dexBonus + otherBonuses;
-            } else {
-                totalAC = 10 + dexBonus + otherBonuses;
-            }
-            
-            const acInput = csModalContent.querySelector('[data-field="armorClass"]');
-            acInput.value = totalAC;
-        }
-        
-        function updateInitiative(sheetData) {
-            const dexMod = getModifier(sheetData.stats.dexterity);
-            const bonus = parseInt(sheetData.initiativeBonus || 0);
-            const total = dexMod + bonus;
-            document.getElementById('cs-initiative-total').value = formatModifier(total);
-        }
-
-        // PATCH VELOCITÀ: aggiorna la velocità quando cambia qualsiasi campo che la influenza
-csModalContent.addEventListener('input', (e) => {
-    const token = csModal.dataset.currentToken;
-    if (!token) return;
-    const sheetDataForUI = readSheetFromDOM();
-    if (
-        e.target.dataset.field && (
-            e.target.dataset.field.startsWith('stats.') ||
-            e.target.dataset.field === 'initiativeBonus' ||
-            e.target.dataset.field === 'speed'
-        )
-    ) {
-        updateAllModifiers(sheetDataForUI);
-        updateSkillAndSaveBonuses(sheetDataForUI);
-        updateAC(sheetDataForUI);
-        updateInitiative(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
-    }
-    if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
-        updateSkillAndSaveBonuses(sheetDataForUI);
-    }
-    if (e.target.closest('.defense-item')) {
-        updateAC(sheetDataForUI);
-    }
-    if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
-        updateTotalLevel(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
-    }
-    // PATCH VELOCITÀ: aggiorna velocità anche se cambia la razza
-    if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
-        updateSpeedField(sheetDataForUI);
-    }
-    // Debounce the save to Firestore
-    clearTimeout(characterSheetUpdateTimeout);
-    characterSheetUpdateTimeout = setTimeout(() => {
-        const sheetDataToSave = readSheetFromDOM();
-        saveCharacterSheet(token, sheetDataToSave);
-    }, 500);
+backToListBtn.addEventListener('click', () => {
+    adventureDetailView.style.display = 'none';
+    adventureListView.style.display = 'block';
+    currentAdventureId = null;
+    if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; }
+    document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';
 });
-        
-        csModalContent.addEventListener('change', e => {
-            if (e.target.classList.contains('cs-class-name')) {
-                const customInput = e.target.nextElementSibling;
-                if (e.target.value === 'Altro...') {
-                    customInput.classList.remove('hidden');
-                } else {
-                    customInput.classList.add('hidden');
-                }
-            }
-            if (e.target.id === 'cs-race-select') {
-                const customInput = document.getElementById('cs-race-custom');
-                 if (e.target.value === 'Altro...') {
-                    customInput.classList.remove('hidden');
-                } else {
-                    customInput.classList.add('hidden');
-                }
-            }
-        });
 
-        csModalContent.addEventListener('click', e => {
-            const token = csModal.dataset.currentToken;
-            if (!token) return;
-
-            if (e.target.id === 'cs-add-defense-btn') {
-                const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false };
-                const sheetData = readSheetFromDOM();
-                sheetData.defenses.push(newDefense);
-                renderDefenses(sheetData.defenses);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.classList.contains('cs-delete-defense-btn')) {
-                const itemEl = e.target.closest('.defense-item');
-                const itemId = itemEl.dataset.id;
-                let sheetData = readSheetFromDOM();
-                sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId);
-                renderDefenses(sheetData.defenses);
-                updateAC(sheetData);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.id === 'cs-add-class-btn') {
-                const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 };
-                const sheetData = readSheetFromDOM();
-                sheetData.classes.push(newClass);
-                renderClasses(sheetData.classes);
-                updateTotalLevel(sheetData);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.classList.contains('cs-delete-class-btn')) {
-                const itemEl = e.target.closest('.class-item');
-                const itemId = itemEl.dataset.id;
-                let sheetData = readSheetFromDOM();
-                if (sheetData.classes.length > 1) {
-                    sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
-                    renderClasses(sheetData.classes);
-                    updateTotalLevel(sheetData);
-                    saveCharacterSheet(token, sheetData);
-                }
-            }
-        });
-
-       function readSheetFromDOM() {
-    const sheetData = createEmptyCharacterSheet();
-    csModalContent.querySelectorAll('[data-field]').forEach(el => {
-        const fieldPath = el.dataset.field;
-        if (fieldPath === "speed") return; // PATCH VELOCITÀ: ignora campo speed manuale
-        const keys = fieldPath.split('.');
-        let current = sheetData;
-        keys.forEach((key, index) => {
-            if (index === keys.length - 1) {
-                current[key] = el.value;
-            } else {
-                current[key] = current[key] || {};
-                current = current[key];
-            }
-        });
+function renderChaptersUI(chapters = []) {
+    const container = document.getElementById('chapters-container');
+    container.innerHTML = '';
+    if (chapters.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno!</p>'; return; }
+    chapters.forEach(chapter => {
+        const chapterEl = document.createElement('div');
+        chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
+        chapterEl.dataset.chapterId = chapter.id;
+        chapterEl.innerHTML = `
+            <div class="chapter-view-mode p-4">
+                <div class="flex justify-between items-center mb-2">
+                    <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
+                    <div class="flex items-center gap-2">
+                        <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
+                        <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
+                    </div>
+                </div>
+                <div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</div>
+                <div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(chapter.masterContent || '').replace(/\n/g, '<br>')}</div></div>
+            </div>
+            <div class="chapter-edit-mode hidden p-4 space-y-2">
+                <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
+                <label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea>
+                <label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea>
+                <div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div>
+            </div>`;
+        container.appendChild(chapterEl);
     });
-    const raceSelect = document.getElementById('cs-race-select');
-    if (raceSelect.value === 'Altro...') {
-        sheetData.race = document.getElementById('cs-race-custom').value;
-    } else {
-        sheetData.race = raceSelect.value;
-    }
-    sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
-    sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
-    sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
-        id: itemEl.dataset.id,
-        name: itemEl.querySelector('.cs-defense-name').value,
-        value: itemEl.querySelector('.cs-defense-value').value,
-        type: itemEl.querySelector('.cs-defense-type').value,
-        worn: itemEl.querySelector('.cs-defense-worn').checked
-    }));
-    sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
-        const classSelect = itemEl.querySelector('.cs-class-name');
-        let className = classSelect.value;
-        if (className === 'Altro...') {
-            className = itemEl.querySelector('.cs-class-name-custom').value;
-        }
-        return {
-            id: itemEl.dataset.id,
-            name: className,
-            level: itemEl.querySelector('.cs-class-level').value
-        }
-    });
-    // PATCH VELOCITÀ: salva il bonus/malus manuale
-    sheetData.speedModifier = document.getElementById('cs-speed-modifier').value;
-    return sheetData;
 }
 
-        async function saveCharacterSheet(token, sheetData) {
-            const isPlayerView = csModal.dataset.isPlayerView === 'true';
-            const adventureId = isPlayerView ? playerViewId : currentAdventureId;
-            const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
-            if (!adventureId || !userId) return;
+document.getElementById('add-chapter-btn').addEventListener('click', async () => {
+    if (!currentAdventureId) return;
+    const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo");
+    if (!title) return;
+    const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) };
+    await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) });
+});
 
-            const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
-            const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
+document.getElementById('chapters-container').addEventListener('click', async e => {
+    const container = e.target.closest('.chapter-container');
+    if (!container) return;
+    const chapterId = container.dataset.chapterId;
+    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+    if (e.target.classList.contains('edit-chapter-btn')) {
+        container.querySelector('.chapter-view-mode').classList.add('hidden');
+        container.querySelector('.chapter-edit-mode').classList.remove('hidden');
+    } else if (e.target.classList.contains('cancel-edit-chapter-btn')) {
+        container.querySelector('.chapter-view-mode').classList.remove('hidden');
+        container.querySelector('.chapter-edit-mode').classList.add('hidden');
+    } else if (e.target.classList.contains('delete-chapter-btn')) {
+        if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return;
+        const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId);
+        await updateDoc(adventureRef, { background: arrayRemove(chapterToDelete) });
+    } else if (e.target.classList.contains('save-chapter-btn')) {
+        const newTitle = container.querySelector('.chapter-title-edit').value;
+        const newPublicContent = container.querySelector('.chapter-public-content-edit').value;
+        const newMasterContent = container.querySelector('.chapter-master-content-edit').value;
+        const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, publicContent: newPublicContent, masterContent: newMasterContent } : c);
+        await updateDoc(adventureRef, { background: updatedChapters });
+    }
+});
 
-            const adventureSnap = await getDoc(adventureRef);
-            if (adventureSnap.exists()) {
-                const players = adventureSnap.data().players || [];
-                const playerIndex = players.findIndex(p => p.token === token);
-                if (playerIndex > -1) {
-                    players[playerIndex].characterSheet = sheetData;
-                    try {
-                        await updateDoc(adventureRef, { players: players });
-                        await updateDoc(publicAdventureRef, { players: players });
-                    } catch (error) {
-                        console.error("Errore salvataggio scheda:", error);
-                    }
+function renderGroupedNodes(type, nodes) {
+    const listEl = document.getElementById(`${type}-list`);
+    listEl.innerHTML = '';
+    const typeName = type === 'pngs' ? 'PNG' : (type === 'maps' ? 'mappa' : 'ambiente');
+    if (!nodes || nodes.length === 0) { listEl.innerHTML = `<p class="text-gray-500 text-sm font-sans">Nessun ${typeName}.</p>`; return; }
+    const groups = nodes.reduce((acc, node) => { (acc[node.group || 'Senza Gruppo'] = acc[node.group || 'Senza Gruppo'] || []).push(node); return acc; }, {});
+    for (const groupName in groups) {
+        const groupDetails = document.createElement('details');
+        groupDetails.className = 'bg-gray-700 rounded-lg';
+        let nodesHtml = groups[groupName].map(node => {
+            const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
+            const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
+            return `
+            <div class="p-2 border-t border-gray-600 node-container" data-node-id="${node.title}" data-node-type="${type}">
+                <div class="node-view-mode">
+                    <details><summary class="cursor-pointer text-base flex justify-between items-center"><span>${node.title}</span><div class="flex-shrink-0"><button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button><button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button></div></summary>
+                        <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${imageHtml}<div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>${masterNotesHtml}<button class="open-share-modal-btn w-full mt-2 p-1 rounded-lg text-sm bg-blue-600 hover:bg-blue-700">Condividi</button></div>
+                    </details>
+                </div>
+                <div class="node-edit-mode hidden p-2 space-y-2">
+                    <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
+                    <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
+                    <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
+                    <div class="flex gap-2 mt-2"><button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div>
+                </div>
+            </div>`;
+        }).join('');
+        groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg">${groupName}</summary>${nodesHtml}`;
+        listEl.appendChild(groupDetails);
+    }
+}
+
+document.querySelectorAll('.node-add-btn').forEach(btn => {
+    btn.addEventListener('click', async (e) => {
+        if (!currentAdventureId) return;
+        const type = btn.dataset.type;
+        if (type === 'maps') {
+            if (document.querySelector('.new-node-form-container')) return;
+            const listEl = document.getElementById('maps-list');
+            const formContainer = document.createElement('div');
+            formContainer.className = 'p-2 mb-2 new-node-form-container';
+            formContainer.innerHTML = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione visibile ai giocatori..."></textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Appunti, trappole, tesori..."></textarea></div><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
+            listEl.prepend(formContainer);
+            formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
+            formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+                const title = formContainer.querySelector('.new-node-title').value.trim();
+                if (!title) { alert('Il titolo è obbligatorio.'); return; }
+                const newNode = { title, imageUrl: formContainer.querySelector('.new-node-image-url').value.trim(), publicContent: formContainer.querySelector('.new-node-public-content').value.trim(), masterContent: formContainer.querySelector('.new-node-master-content').value.trim(), group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo" };
+                try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { 'maps': arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error("Errore aggiunta mappa:", error); }
+            });
+        } else {
+            const typeName = (type === 'pngs') ? 'PNG' : 'Ambiente';
+            const title = prompt(`Titolo del nuovo ${typeName}:`);
+            if (!title) return;
+            const newNode = { title, publicContent: "", masterContent: "", group: "Senza Gruppo", imageUrl: "" };
+            try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); } catch (error) { console.error("Errore aggiunta nodo:", error); }
+        }
+    });
+});
+
+document.getElementById('adventure-detail-view').addEventListener('click', async (e) => {
+    const target = e.target;
+    const container = target.closest('.node-container');
+    if (!container) return;
+    const nodeId = container.dataset.nodeId;
+    const type = container.dataset.nodeType;
+    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+
+    if (target.classList.contains('delete-node-btn')) {
+        e.preventDefault();
+        if (!confirm(`Sei sicuro di voler eliminare "${nodeId}"?`)) return;
+        const adventureSnap = await getDoc(adventureRef);
+        if (adventureSnap.exists()) {
+            const nodes = adventureSnap.data()[type] || [];
+            const nodeToDelete = nodes.find(n => n.title === nodeId);
+            await updateDoc(adventureRef, { [type]: arrayRemove(nodeToDelete) });
+        }
+    } else if (target.classList.contains('edit-node-btn')) {
+        e.preventDefault();
+        container.querySelector('.node-view-mode').classList.add('hidden');
+        container.querySelector('.node-edit-mode').classList.remove('hidden');
+    } else if (target.classList.contains('cancel-edit-btn')) {
+        container.querySelector('.node-view-mode').classList.remove('hidden');
+        container.querySelector('.node-edit-mode').classList.add('hidden');
+    } else if (target.classList.contains('save-node-btn')) {
+        const adventureSnap = await getDoc(adventureRef);
+        if (adventureSnap.exists()) {
+            const nodes = adventureSnap.data()[type] || [];
+            const nodeIndex = nodes.findIndex(n => n.title === nodeId);
+            if (nodeIndex !== -1) {
+                const updatedNodes = [...nodes];
+                const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
+                updatedNodes[nodeIndex] = newNodeData;
+                await updateDoc(adventureRef, { [type]: updatedNodes });
+            }
+        }
+    }
+});
+function openNodeModal(title, html) {
+    const modal = document.getElementById('node-modal');
+    document.getElementById('modal-title').textContent = title;
+    document.getElementById('modal-content').innerHTML = html;
+    modal.classList.remove('hidden');
+}
+document.getElementById('modal-close-btn').onclick = () => document.getElementById('node-modal').classList.add('hidden');
+
+function openShareModal(nodeType, nodeTitle) {
+    const modal = document.getElementById('share-modal');
+    document.getElementById('share-modal-title').textContent = `Condividi "${nodeTitle}"`;
+    const adventure = currentAdventureData;
+    const playerListDiv = document.getElementById('share-player-list');
+    playerListDiv.innerHTML = '';
+    (adventure.players || []).forEach(player => {
+        const id = `player-share-${player.token}`;
+        playerListDiv.innerHTML += `<label class="flex items-center gap-2 mb-1"><input type="checkbox" class="player-share-checkbox" id="${id}" value="${player.token}"> ${player.name}</label>`;
+    });
+    playerListDiv.innerHTML += `<label class="flex items-center gap-2 mt-2"><input type="checkbox" id="share-all-players"> Tutti i giocatori</label>`;
+    modal.classList.remove('hidden');
+    document.getElementById('share-modal-save').onclick = async () => {
+        let tokens = [];
+        if (document.getElementById('share-all-players').checked) {
+            tokens = ['all'];
+        } else {
+            tokens = Array.from(document.querySelectorAll('.player-share-checkbox:checked')).map(cb => cb.value);
+        }
+        if (!tokens.length) { alert("Seleziona almeno un giocatore."); return; }
+        const adventureRef = doc(db, 'publicAdventures', currentAdventureId);
+        const adventureDoc = await getDoc(adventureRef);
+        if (adventureDoc.exists()) {
+            const sharedItems = adventureDoc.data().sharedItems || [];
+            const nodeArray = currentAdventureData[nodeType];
+            const node = nodeArray.find(n => n.title === nodeTitle);
+            if (node) {
+                const newSharedItem = { ...node, sharedWith: tokens };
+                const filtered = sharedItems.filter(item => !(item.title === nodeTitle && item.type === nodeType));
+                filtered.push({ ...newSharedItem, type: nodeType });
+                await updateDoc(adventureRef, { sharedItems: filtered });
+            }
+        }
+        modal.classList.add('hidden');
+    };
+    document.getElementById('share-modal-cancel').onclick = () => modal.classList.add('hidden');
+}
+
+document.getElementById('adventure-detail-view').addEventListener('click', (e) => {
+    if (e.target.classList.contains('open-share-modal-btn')) {
+        const container = e.target.closest('.node-container');
+        if (!container) return;
+        const nodeId = container.dataset.nodeId;
+        const nodeType = container.dataset.nodeType;
+        openShareModal(nodeType, nodeId);
+    }
+});
+
+function renderPlayerManagementUI(adventureId, players) {
+    const shareDiv = document.getElementById('player-share-content');
+    shareDiv.innerHTML = `<h3 class="text-xl font-bold mb-3 text-red-400">Giocatori</h3>
+        <div id="player-list" class="space-y-2 mb-4"></div>
+        <form id="add-player-form" class="flex gap-2">
+            <input type="text" id="add-player-name" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" placeholder="Nome giocatore" required>
+            <button type="submit" class="bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-4 rounded-lg text-base">Aggiungi</button>
+        </form>`;
+    const playerListDiv = document.getElementById('player-list');
+    if (players.length === 0) {
+        playerListDiv.innerHTML = '<p class="text-gray-400 font-sans">Nessun giocatore aggiunto.</p>';
+    } else {
+        players.forEach(player => {
+            const link = `${location.origin}${location.pathname}?player_view=${adventureId}&token=${player.token}`;
+            playerListDiv.innerHTML += `<div class="flex items-center gap-2 justify-between"><span class="font-sans">${player.name}</span><a href="${link}" target="_blank" class="text-blue-400 underline text-xs">link</a><button data-token="${player.token}" class="remove-player-btn text-red-400 hover:text-red-600 text-base">&times;</button></div>`;
+        });
+    }
+    document.getElementById('add-player-form').onsubmit = async (e) => {
+        e.preventDefault();
+        const name = document.getElementById('add-player-name').value.trim();
+        if (!name) return;
+        const token = crypto.randomUUID();
+        const newPlayer = { name, token };
+        const ref = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+        await updateDoc(ref, { players: arrayUnion(newPlayer) });
+        await updateDoc(doc(db, 'publicAdventures', currentAdventureId), { players: arrayUnion(newPlayer) });
+        document.getElementById('add-player-name').value = '';
+    };
+    playerListDiv.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('remove-player-btn')) {
+            const token = e.target.dataset.token;
+            if (!confirm("Rimuovere questo giocatore?")) return;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            const adventureDoc = await getDoc(adventureRef);
+            if (adventureDoc.exists()) {
+                const arr = adventureDoc.data().players.filter(p => p.token !== token);
+                await updateDoc(adventureRef, { players: arr });
+                const pubRef = doc(db, 'publicAdventures', currentAdventureId);
+                const pubDoc = await getDoc(pubRef);
+                if (pubDoc.exists()) {
+                    const pubArr = pubDoc.data().players.filter(p => p.token !== token);
+                    await updateDoc(pubRef, { players: pubArr });
                 }
             }
         }
+    });
+}
 
-        document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
+function openCharacterSheetModal(token, isPlayer) {
+    const modal = document.getElementById('character-sheet-modal');
+    document.getElementById('cs-modal-title').textContent = isPlayer ? "La Mia Scheda" : "Scheda Personaggio";
+    const adventureId = currentAdventureId || new URLSearchParams(location.search).get('player_view');
+    const pubRef = doc(db, 'publicAdventures', adventureId);
+    getDoc(pubRef).then(docSnap => {
+        let sheetData = {};
+        if (docSnap.exists()) {
+            const player = (docSnap.data().players || []).find(p => p.token === token);
+            sheetData = (player && player.sheet) ? player.sheet : {};
+        }
+        renderCharacterSheet(sheetData, token, isPlayer);
+        modal.classList.remove('hidden');
+    });
+}
+document.getElementById('cs-modal-close-btn').onclick = () => document.getElementById('character-sheet-modal').classList.add('hidden');
 
-    </script>
+function renderCharacterSheet(sheetData = {}, token, isPlayer) {
+    const contentDiv = document.getElementById('cs-modal-content');
+    contentDiv.innerHTML = `
+    <div class="bg-yellow-100 text-black rounded-lg p-4 shadow-lg max-w-4xl mx-auto">
+      <form id="character-sheet-form">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div>
+            <label class="font-bold">Nome Personaggio</label>
+            <input type="text" data-field="characterName" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Background</label>
+            <input type="text" data-field="background" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Classe/i</label>
+            <input type="text" data-field="class" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Livello totale</label>
+            <input type="number" data-field="level" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-4">
+          </div>
+          <div>
+            <label class="font-bold">Punti Ferita</label>
+            <div class="flex gap-2 items-center mb-2">
+              <input type="number" data-field="hp.max" class="w-24 bg-gray-200 rounded-lg p-2 font-sans" placeholder="Max">
+              <span class="font-bold">/</span>
+              <input type="number" data-field="hp.current" class="w-24 bg-gray-200 rounded-lg p-2 font-sans" placeholder="Attuali">
+            </div>
+            <label class="font-bold">Dadi Vita</label>
+            <input type="text" data-field="hitDice" class="w-full bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Classe Armatura</label>
+            <input type="number" data-field="armorClass" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Iniziativa</label>
+            <input type="number" data-field="initiativeBonus" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+            <label class="font-bold">Velocità</label>
+            <input type="text" data-field="speed" class="w-24 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <h4 class="font-bold mb-2">Statistiche</h4>
+            <div class="grid grid-cols-2 gap-2">
+              <div>Forza <input type="number" data-field="stats.strength" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="strength" class="ml-2 font-bold"></span></div>
+              <div>Destrezza <input type="number" data-field="stats.dexterity" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="dexterity" class="ml-2 font-bold"></span></div>
+              <div>Costituzione <input type="number" data-field="stats.constitution" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="constitution" class="ml-2 font-bold"></span></div>
+              <div>Intelligenza <input type="number" data-field="stats.intelligence" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="intelligence" class="ml-2 font-bold"></span></div>
+              <div>Saggezza <input type="number" data-field="stats.wisdom" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="wisdom" class="ml-2 font-bold"></span></div>
+              <div>Carisma <input type="number" data-field="stats.charisma" class="w-16 bg-gray-200 rounded-lg p-2 font-sans"><span data-mod="charisma" class="ml-2 font-bold"></span></div>
+            </div>
+            <label class="font-bold mt-3">Bonus Competenza</label>
+            <input type="text" data-field="proficiencyBonus" class="w-16 bg-gray-200 rounded-lg p-2 font-sans mb-2">
+          </div>
+          <div>
+            <label class="font-bold">Tiri Salvezza</label>
+            <textarea data-field="savingThrows" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+            <label class="font-bold">Abilità</label>
+            <textarea data-field="skills" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+          </div>
+          <div>
+            <h4 class="font-bold">Difese / Armature / Scudi</h4>
+            <textarea data-field="defenses" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-20 mb-2"></textarea>
+          </div>
+        </div>
+        <hr class="my-4">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label class="font-bold">Equipaggiamento</label>
+            <textarea data-field="equipment" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+            <label class="font-bold">Attacchi & Incantesimi</label>
+            <textarea data-field="attacksSpellcasting" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16 mb-2"></textarea>
+          </div>
+          <div>
+            <label class="font-bold">Tratti, Ideali, Legami, Difetti</label>
+            <textarea data-field="personalityTraits" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Tratti"></textarea>
+            <textarea data-field="ideals" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Ideali"></textarea>
+            <textarea data-field="bonds" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Legami"></textarea>
+            <textarea data-field="flaws" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-12 mb-1" placeholder="Difetti"></textarea>
+            <label class="font-bold">Tratti & Abilità Speciali</label>
+            <textarea data-field="featuresTraits" class="w-full bg-gray-200 rounded-lg p-2 font-sans h-16"></textarea>
+          </div>
+        </div>
+        <div class="flex justify-end mt-6">
+            <button type="submit" class="bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-6 rounded-lg text-lg">Salva Scheda</button>
+        </div>
+      </form>
+    </div>
+    `;
+    function setFieldValue(parent, path, val) {
+        if (typeof val === "object" && val !== null) {
+            for (const k in val) setFieldValue(parent, path ? `${path}.${k}` : k, val[k]);
+        } else {
+            const el = parent.querySelector(`[data-field="${path}"]`);
+            if (el) el.value = val;
+        }
+    }
+    setFieldValue(contentDiv, "", sheetData);
+    function calculateMod(val) { return Math.floor((Number(val || 10) - 10) / 2); }
+    const statFields = ["strength", "dexterity", "constitution", "intelligence", "wisdom", "charisma"];
+    statFields.forEach(stat => {
+        const el = contentDiv.querySelector(`[data-field="stats.${stat}"]`);
+        const modEl = contentDiv.querySelector(`[data-mod="${stat}"]`);
+        const updateMod = () => { modEl.textContent = `(${calculateMod(el.value) >= 0 ? "+" : ""}${calculateMod(el.value)})`; };
+        if (el) { el.addEventListener("input", updateMod); updateMod(); }
+    });
+    contentDiv.querySelector("#character-sheet-form").onsubmit = async function(e) {
+        e.preventDefault();
+        function getFieldValue(parent, path) {
+            const el = parent.querySelector(`[data-field="${path}"]`);
+            if (!el) return undefined;
+            if (el.type === "number") return Number(el.value);
+            return el.value;
+        }
+        const sheet = {
+            characterName: getFieldValue(this, "characterName"),
+            background: getFieldValue(this, "background"),
+            class: getFieldValue(this, "class"),
+            level: getFieldValue(this, "level"),
+            hp: { max: getFieldValue(this, "hp.max"), current: getFieldValue(this, "hp.current") },
+            hitDice: getFieldValue(this, "hitDice"),
+            armorClass: getFieldValue(this, "armorClass"),
+            initiativeBonus: getFieldValue(this, "initiativeBonus"),
+            speed: getFieldValue(this, "speed"),
+            stats: {
+                strength: getFieldValue(this, "stats.strength"),
+                dexterity: getFieldValue(this, "stats.dexterity"),
+                constitution: getFieldValue(this, "stats.constitution"),
+                intelligence: getFieldValue(this, "stats.intelligence"),
+                wisdom: getFieldValue(this, "stats.wisdom"),
+                charisma: getFieldValue(this, "stats.charisma")
+            },
+            proficiencyBonus: getFieldValue(this, "proficiencyBonus"),
+            savingThrows: getFieldValue(this, "savingThrows"),
+            skills: getFieldValue(this, "skills"),
+            defenses: getFieldValue(this, "defenses"),
+            equipment: getFieldValue(this, "equipment"),
+            attacksSpellcasting: getFieldValue(this, "attacksSpellcasting"),
+            personalityTraits: getFieldValue(this, "personalityTraits"),
+            ideals: getFieldValue(this, "ideals"),
+            bonds: getFieldValue(this, "bonds"),
+            flaws: getFieldValue(this, "flaws"),
+            featuresTraits: getFieldValue(this, "featuresTraits"),
+        };
+        const adventureId = currentAdventureId || new URLSearchParams(location.search).get('player_view');
+        const pubRef = doc(db, 'publicAdventures', adventureId);
+        const pubSnap = await getDoc(pubRef);
+        if (pubSnap.exists()) {
+            const players = pubSnap.data().players || [];
+            const idx = players.findIndex(p => p.token === token);
+            if (idx !== -1) {
+                players[idx] = { ...players[idx], sheet };
+                await updateDoc(pubRef, { players });
+            }
+        }
+        document.getElementById('character-sheet-modal').classList.add('hidden');
+    };
+}
+      function loadPlayerView(adventureId, token) {
+    const pubRef = doc(db, 'publicAdventures', adventureId);
+    getDoc(pubRef).then(async (pubSnap) => {
+        if (!pubSnap.exists()) { document.body.innerHTML = "<h1 class='text-red-600 text-4xl text-center mt-16'>Avventura non trovata!</h1>"; return; }
+        const adventure = pubSnap.data();
+        document.getElementById('player-adventure-title').textContent = adventure.title;
+        setupPlayerDiceRollerFirestore(adventureId, token, getPlayerName(adventure, token));
+        document.getElementById('player-open-sheet-btn').onclick = () => openCharacterSheetModal(token, true);
+        onSnapshot(pubRef, (snap) => {
+            const data = snap.data();
+            const shared = (data.sharedItems || []).filter(item =>
+                (item.sharedWith && (item.sharedWith.includes('all') || item.sharedWith.includes(token)))
+            );
+            renderSharedItems(shared);
+        });
+    });
+}
+function getPlayerName(adventure, token) {
+    const player = (adventure.players || []).find(p => p.token === token);
+    return player ? player.name : "Giocatore";
+}
+function renderSharedItems(items) {
+    const div = document.getElementById('player-shared-items');
+    div.innerHTML = '';
+    if (!items.length) { div.innerHTML = '<p class="text-gray-400 font-sans text-center mt-12">Nessun contenuto condiviso dal Master.</p>'; return; }
+    items.forEach(item => {
+        let content = "";
+        if (item.imageUrl) content += `<div class="mb-2"><img src="${item.imageUrl}" class="rounded-lg max-w-full mx-auto" onerror="this.style.display='none'"></div>`;
+        if (item.publicContent) content += `<div class="mb-2">${item.publicContent.replace(/\n/g, '<br>')}</div>`;
+        div.innerHTML += `<div class="bg-gray-800 rounded-lg p-4 mb-4 border-l-4 border-red-500"><h3 class="text-xl font-bold text-red-400 mb-1">${item.title}</h3>${content}</div>`;
+    });
+}
+
+document.getElementById('player-open-sheet-btn')?.addEventListener('click', () => {
+    const adventureId = urlParams.get('player_view');
+    const token = urlParams.get('token');
+    openCharacterSheetModal(token, true);
+});
+
+document.getElementById('generate-btn')?.addEventListener('click', async () => {
+    const type = document.getElementById('generator-type').value;
+    const prompt = document.getElementById('generator-prompt').value.trim();
+    if (!prompt) { alert('Scrivi una descrizione per generare un contenuto!'); return; }
+    const resultDiv = document.getElementById('generator-result-container');
+    resultDiv.innerHTML = '<div class="text-center text-gray-400">⏳ Attendi, sto generando il contenuto...</div>';
+    setTimeout(() => {
+        let result = "";
+        if (type === 'PNG') {
+            result = `<div><strong>PNG generato:</strong><br>Nome: ${prompt}<br>Descrizione: PNG carismatico generato sulla base della descrizione fornita.<br><img src="https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(prompt)}" class="rounded-lg my-2" style="width:160px;height:160px"></div>`;
+        } else if (type === 'Mostro') {
+            result = `<div><strong>Mostro generato:</strong><br><b>Nome:</b> ${prompt}<br><b>Descrizione:</b> Mostro originale per D&D. <br><b>Statistiche:</b> For+3, Cos+2, Int-1, AC 15, HP 27</div>`;
+        } else if (type === 'Ambientazione') {
+            result = `<div><strong>Ambientazione:</strong><br>${prompt}<br>Tema fantasy, atmosfera evocativa. Ambientazione generata!</div>`;
+        } else if (type === 'Mappa') {
+            result = `<div><strong>Mappa generata:</strong><br>Un'immagine di mappa generica - <img src="https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(prompt)}" class="rounded-lg my-2" style="width:160px;height:160px"></div>`;
+        } else if (type === 'Tesoro') {
+            result = `<div><strong>Tesoro generato:</strong><br>${prompt}<br>Oggetto magico unico con proprietà speciali!</div>`;
+        }
+        resultDiv.innerHTML = result;
+        document.getElementById('save-to-adventure-btn').classList.remove('hidden');
+    }, 1200);
+});
+
+document.getElementById('save-to-adventure-btn')?.addEventListener('click', async () => {
+    const type = document.getElementById('generator-type').value;
+    const prompt = document.getElementById('generator-prompt').value.trim();
+    let node = { title: prompt, publicContent: '', masterContent: '', group: "Generato AI", imageUrl: "" };
+    if (type === 'PNG') {
+        node.imageUrl = `https://api.dicebear.com/7.x/adventurer/svg?seed=${encodeURIComponent(prompt)}`;
+        node.publicContent = "PNG generato automaticamente.";
+        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { pngs: arrayUnion(node) });
+    } else if (type === 'Mostro') {
+        node.publicContent = `Mostro: ${prompt}\nStatistiche: For+3, Cos+2, Int-1, AC 15, HP 27`;
+        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { environments: arrayUnion(node) });
+    } else if (type === 'Ambientazione') {
+        node.publicContent = `Ambientazione: ${prompt}\nTema fantasy generato.`;
+        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { environments: arrayUnion(node) });
+    } else if (type === 'Mappa') {
+        node.imageUrl = `https://api.dicebear.com/7.x/shapes/svg?seed=${encodeURIComponent(prompt)}`;
+        node.publicContent = "Mappa generata automaticamente.";
+        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { maps: arrayUnion(node) });
+    } else if (type === 'Tesoro') {
+        node.publicContent = `Tesoro: ${prompt}\nOggetto magico generato.`;
+        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { environments: arrayUnion(node) });
+    }
+    document.getElementById('generator-result-container').innerHTML = '<span class="text-green-400">✅ Salvato nell\'avventura!</span>';
+    document.getElementById('save-to-adventure-btn').classList.add('hidden');
+});
+      
+  
+  
+  </script>
 </body>
 </html>
