@@ -45,7 +45,7 @@
         .cs-label {
             @apply block text-xs text-gray-400 uppercase tracking-wider font-bold mb-1;
         }
-        .cs-input {
+        .cs-input, .cs-select {
             @apply bg-gray-200 w-full text-black text-lg focus:outline-none rounded px-2 py-1;
         }
         .cs-stat-box {
@@ -59,6 +59,9 @@
         }
         .cs-textarea {
             @apply bg-gray-200 w-full h-full text-black text-sm focus:outline-none p-2 rounded-md resize-none;
+        }
+        details > summary {
+            cursor: pointer;
         }
     </style>
 </head>
@@ -133,18 +136,31 @@
                 <button id="cs-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
             </div>
             <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans text-gray-300">
-                <!-- Blocco Anagrafico -->
-                <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
-                    <div class="cs-box md:col-span-2"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
-                    <div class="cs-box"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-                    <div class="cs-box"><label class="cs-label">Razza</label><input type="text" class="cs-input" data-field="race"></div>
-                    <div class="cs-box text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center" readonly></div>
-                </div>
-                <div class="cs-box mb-2">
-                    <label class="cs-label">Classi & Livelli</label>
-                    <div id="cs-classes-list" class="space-y-1 mt-1"></div>
-                    <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1">Aggiungi Classe</button>
-                </div>
+                
+                <details class="bg-gray-900 rounded-lg p-3 mb-2" open>
+                    <summary class="text-2xl text-red-400">Anagrafica & Background</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-700">
+                        <!-- Blocco Anagrafico -->
+                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
+                            <div class="cs-box md:col-span-2"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
+                            <div class="cs-box" id="cs-race-container"><label class="cs-label">Razza</label></div>
+                            <div class="cs-box"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
+                            <div class="cs-box text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center" readonly></div>
+                        </div>
+                        <div class="cs-box mb-2">
+                            <label class="cs-label">Classi & Livelli</label>
+                            <div id="cs-classes-list" class="space-y-1 mt-1"></div>
+                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1">Aggiungi Classe</button>
+                        </div>
+                         <!-- Colonna Background -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
+                            <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
+                            <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
+                        </div>
+                    </div>
+                </details>
 
                 <!-- Corpo Scheda -->
                 <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
@@ -191,13 +207,9 @@
                         <div class="cs-box h-48"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
                         <div class="cs-box h-48"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
                     </div>
-                    <!-- Colonna Destra: Background, Privilegi -->
+                    <!-- Colonna Destra: Privilegi -->
                     <div class="space-y-2">
-                        <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
-                        <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
-                        <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
-                        <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
-                        <div class="cs-box flex-grow h-48"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                        <div class="cs-box flex-grow h-full"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
                     </div>
                 </div>
             </div>
@@ -662,14 +674,16 @@
             });
         }
         
+        const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
+        const DND_RACES = ["Aasimar", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Elfo", "Firbolg", "Genasi", "Gith", "Gnomo", "Goblin", "Goliath", "Halfling", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Nano", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Vedalken", "Warforged", "Yuan-ti"];
         const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
         const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
         function createEmptyCharacterSheet() {
             const sheet = {
                 characterName: "",
-                classes: [{ id: crypto.randomUUID(), name: "", level: 1 }],
-                background: "", race: "",
+                classes: [{ id: crypto.randomUUID(), name: "Guerriero", level: 1 }],
+                background: "", race: "Umano",
                 stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
                 proficiencyBonus: "+2",
                 initiative: "+0", speed: "9m",
@@ -790,7 +804,7 @@
 
         function populateCharacterSheet(sheetData) {
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (el.dataset.field === 'armorClass') return; // Skip AC field
+                if (el.dataset.field === 'armorClass' || el.dataset.field === 'race') return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 el.value = value;
@@ -799,6 +813,7 @@
             renderSkillsAndSaves(sheetData);
             renderDefenses(sheetData.defenses || []);
             renderClasses(sheetData.classes || [{ id: crypto.randomUUID(), name: '', level: 1 }]);
+            renderRace(sheetData.race || '');
             updateTotalLevel(sheetData);
             updateAC(sheetData);
         }
@@ -852,6 +867,22 @@
                 el.nextElementSibling.textContent = bonus >= 0 ? `+${bonus}` : bonus;
             });
         }
+        
+        function renderRace(raceName) {
+            const container = document.getElementById('cs-race-container');
+            const isCustom = !DND_RACES.includes(raceName) && raceName;
+            
+            let optionsHtml = DND_RACES.map(r => `<option value="${r}" ${r === raceName ? 'selected' : ''}>${r}</option>`).join('');
+            
+            container.innerHTML = `
+                <label class="cs-label">Razza</label>
+                <select class="cs-select" id="cs-race-select">
+                    ${optionsHtml}
+                    <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
+                </select>
+                <input type="text" id="cs-race-custom" class="cs-input mt-1 ${isCustom ? '' : 'hidden'}" value="${isCustom ? raceName : ''}" placeholder="Razza personalizzata">
+            `;
+        }
 
         function renderDefenses(defenses = []) {
             const container = document.getElementById('cs-defenses-list');
@@ -867,13 +898,21 @@
         
         function renderClasses(classes = []) {
             const container = document.getElementById('cs-classes-list');
-            container.innerHTML = classes.map(c => `
+            let optionsHtml = DND_CLASSES.map(c => `<option value="${c}">${c}</option>`).join('');
+            
+            container.innerHTML = classes.map(c => {
+                const isCustom = !DND_CLASSES.includes(c.name) && c.name;
+                return `
                 <div class="flex items-center gap-2 class-item" data-id="${c.id}">
-                    <input type="text" class="cs-class-name cs-input" value="${c.name || ''}" placeholder="Nome Classe">
+                    <select class="cs-class-name cs-select">
+                        ${DND_CLASSES.map(cn => `<option value="${cn}" ${cn === c.name ? 'selected' : ''}>${cn}</option>`).join('')}
+                        <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
+                    </select>
+                    <input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata">
                     <input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl">
                     <button class="cs-delete-class-btn text-red-400 hover:text-red-300 font-bold">X</button>
                 </div>
-            `).join('');
+            `}).join('');
         }
 
         function updateTotalLevel(sheetData) {
@@ -926,6 +965,25 @@
                 saveCharacterSheet(token, sheetDataToSave);
             }, 500);
         });
+        
+        csModalContent.addEventListener('change', e => {
+            if (e.target.classList.contains('cs-class-name')) {
+                const customInput = e.target.nextElementSibling;
+                if (e.target.value === 'Altro...') {
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+            }
+            if (e.target.id === 'cs-race-select') {
+                const customInput = document.getElementById('cs-race-custom');
+                 if (e.target.value === 'Altro...') {
+                    customInput.classList.remove('hidden');
+                } else {
+                    customInput.classList.add('hidden');
+                }
+            }
+        });
 
         csModalContent.addEventListener('click', e => {
             const token = csModal.dataset.currentToken;
@@ -948,7 +1006,7 @@
                 saveCharacterSheet(token, sheetData);
             }
             if (e.target.id === 'cs-add-class-btn') {
-                const newClass = { id: crypto.randomUUID(), name: '', level: 1 };
+                const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 };
                 const sheetData = readSheetFromDOM();
                 sheetData.classes.push(newClass);
                 renderClasses(sheetData.classes);
@@ -984,6 +1042,13 @@
                 });
             });
 
+            const raceSelect = document.getElementById('cs-race-select');
+            if (raceSelect.value === 'Altro...') {
+                sheetData.race = document.getElementById('cs-race-custom').value;
+            } else {
+                sheetData.race = raceSelect.value;
+            }
+
             sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
             sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
             
@@ -994,11 +1059,18 @@
                 worn: itemEl.querySelector('.cs-defense-worn').checked
             }));
 
-            sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => ({
-                id: itemEl.dataset.id,
-                name: itemEl.querySelector('.cs-class-name').value,
-                level: itemEl.querySelector('.cs-class-level').value
-            }));
+            sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
+                const classSelect = itemEl.querySelector('.cs-class-name');
+                let className = classSelect.value;
+                if (className === 'Altro...') {
+                    className = itemEl.querySelector('.cs-class-name-custom').value;
+                }
+                return {
+                    id: itemEl.dataset.id,
+                    name: className,
+                    level: itemEl.querySelector('.cs-class-level').value
+                }
+            });
 
             return sheetData;
         }
@@ -1032,4 +1104,4 @@
 
     </script>
 </body>
-</html>
+</ht
