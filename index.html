@@ -150,11 +150,11 @@
                     <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400">
                         <!-- Blocco Anagrafico -->
-                        <div class="grid grid-cols-1 md:grid-cols-5 gap-2 mb-2">
-                            <div class="cs-box md:col-span-2"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
-                            <div class="cs-box" id="cs-race-container"><label class="cs-label">Razza</label></div>
-                            <div class="cs-box"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-                            <div class="cs-box text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center" readonly></div>
+                        <div class="grid grid-cols-1 md:grid-cols-10 gap-2 mb-2">
+                            <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
+                            <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
+                            <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
+                            <div class="cs-box md:col-span-2 text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center" readonly></div>
                         </div>
                         <div class="cs-box mb-2">
                             <label class="cs-label">Classi & Livelli</label>
@@ -171,55 +171,60 @@
                     </div>
                 </details>
 
-                <!-- Corpo Scheda -->
-                <div class="grid grid-cols-1 lg:grid-cols-3 gap-2">
-                    <!-- Colonna Sinistra: Statistiche e Abilità -->
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 lg:grid-cols-2 gap-2">
-                            <!-- Statistiche -->
-                            <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
-                            <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
-                            <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
-                            <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
-                            <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
-                            <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
-                        </div>
-                        <div class="cs-box">
-                             <!-- Tiri Salvezza e Abilità -->
-                             <div class="grid grid-cols-1 gap-2">
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+                    <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
+                        <!-- Colonna Sinistra: Statistiche e Abilità -->
+                        <div class="space-y-2">
+                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                                <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
+                                <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
+                            </div>
+                            <div class="cs-box">
                                 <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
-                                <div class="cs-box" id="saving-throws-list"></div>
-                                <div class="cs-box" id="skills-list"></div>
-                             </div>
-                        </div>
-                    </div>
-                    <!-- Colonna Centrale: Combattimento, Equipaggiamento -->
-                    <div class="space-y-2">
-                        <div class="grid grid-cols-3 gap-2">
-                            <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass" readonly></div>
-                            <div class="cs-box text-center"><label class="cs-label">Iniziativa</label><input type="text" class="cs-input text-3xl text-center" data-field="initiative"></div>
-                            <div class="cs-box text-center"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-3xl text-center" data-field="speed"></div>
-                        </div>
-                        <div class="cs-box">
-                            <label class="cs-label">Punti Ferita</label>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
-                                <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
+                                <div class="cs-box mt-2" id="saving-throws-list"></div>
+                                <div class="cs-box mt-2" id="skills-list"></div>
                             </div>
                         </div>
-                        <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
-                        <div class="cs-box">
-                            <label class="cs-label mb-2">Difese</label>
-                            <div id="cs-defenses-list" class="space-y-1"></div>
-                            <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
+                        <!-- Colonna Destra: Combattimento -->
+                        <div class="space-y-2">
+                             <div class="grid grid-cols-2 gap-2">
+                                <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center" data-field="armorClass" readonly></div>
+                                <div class="cs-box text-center">
+                                    <label class="cs-label">Iniziativa</label>
+                                    <div class="flex items-center">
+                                        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center" readonly>
+                                        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2" placeholder="Bonus">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="cs-box"><label class="cs-label">Velocità</label><input type="text" class="cs-input text-center" data-field="speed"></div>
+                            <div class="cs-box">
+                                <label class="cs-label">Punti Ferita</label>
+                                <div class="grid grid-cols-2 gap-2">
+                                    <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
+                                    <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
+                                </div>
+                            </div>
+                            <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
+                            <div class="cs-box">
+                                <label class="cs-label mb-2">Difese</label>
+                                <div id="cs-defenses-list" class="space-y-1"></div>
+                                <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
+                            </div>
                         </div>
-                        <div class="cs-box h-48"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
-                        <div class="cs-box h-48"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
                     </div>
-                    <!-- Colonna Destra: Privilegi -->
-                    <div class="space-y-2">
-                        <div class="cs-box flex-grow h-full"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
-                    </div>
+                </details>
+
+                <!-- Resto della Scheda -->
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
+                     <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
+                     <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
+                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
                 </div>
             </div>
         </div>
@@ -695,7 +700,8 @@
                 background: "", race: "Umano",
                 stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
                 proficiencyBonus: "+2",
-                initiative: "+0", speed: "9m",
+                initiativeBonus: 0, 
+                speed: "9m",
                 hp: { max: 10, current: 10 }, hitDice: "",
                 attacksSpellcasting: "", equipment: "",
                 personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
@@ -813,7 +819,7 @@
 
         function populateCharacterSheet(sheetData) {
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (el.dataset.field === 'armorClass' || el.dataset.field === 'race') return;
+                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field)) return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 el.value = value;
@@ -825,18 +831,23 @@
             renderRace(sheetData.race || '');
             updateTotalLevel(sheetData);
             updateAC(sheetData);
+            updateInitiative(sheetData);
         }
 
         function getModifier(score) {
             const mod = Math.floor((parseInt(score || 10) - 10) / 2);
-            return mod >= 0 ? `+${mod}` : mod.toString();
+            return mod; // Ritorna il numero
+        }
+
+        function formatModifier(mod) {
+             return mod >= 0 ? `+${mod}` : mod.toString();
         }
 
         function updateAllModifiers(sheetData) {
             const stats = sheetData.stats || {};
             for (const statName in stats) {
                 const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`);
-                if (modEl) modEl.textContent = getModifier(stats[statName]);
+                if (modEl) modEl.textContent = formatModifier(getModifier(stats[statName]));
             }
         }
         
@@ -863,17 +874,17 @@
             csModalContent.querySelectorAll('[data-save-prof]').forEach(el => {
                 const saveName = el.dataset.saveProf;
                 const statName = DND_SAVES[saveName];
-                const statMod = parseInt(getModifier(stats[statName]));
+                const statMod = getModifier(stats[statName]);
                 const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = bonus >= 0 ? `+${bonus}` : bonus;
+                el.nextElementSibling.textContent = formatModifier(bonus);
             });
 
             csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => {
                 const skillName = el.dataset.skillProf;
                 const statName = DND_SKILLS[skillName];
-                const statMod = parseInt(getModifier(stats[statName]));
+                const statMod = getModifier(stats[statName]);
                 const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = bonus >= 0 ? `+${bonus}` : bonus;
+                el.nextElementSibling.textContent = formatModifier(bonus);
             });
         }
         
@@ -898,8 +909,15 @@
             container.innerHTML = defenses.map(item => `
                 <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
                     <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
-                    <input type="text" class="cs-defense-name cs-input text-sm" value="${item.name}" placeholder="Nome (es. Scudo)">
-                    <input type="number" class="cs-defense-bonus cs-input text-sm w-20" value="${item.bonus}" placeholder="Bonus">
+                    <input type="text" class="cs-defense-name cs-input text-sm flex-grow" value="${item.name}" placeholder="Nome (es. Scudo)">
+                    <input type="number" class="cs-defense-value cs-input text-sm w-20" value="${item.value}" placeholder="Valore">
+                    <select class="cs-defense-type cs-select text-sm w-32">
+                        <option value="other" ${item.type === 'other' ? 'selected' : ''}>Altro</option>
+                        <option value="light" ${item.type === 'light' ? 'selected' : ''}>Leggera</option>
+                        <option value="medium" ${item.type === 'medium' ? 'selected' : ''}>Media</option>
+                        <option value="heavy" ${item.type === 'heavy' ? 'selected' : ''}>Pesante</option>
+                        <option value="shield" ${item.type === 'shield' ? 'selected' : ''}>Scudo</option>
+                    </select>
                     <button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button>
                 </div>
             `).join('');
@@ -932,17 +950,44 @@
         }
 
         function updateAC(sheetData) {
-            const dexMod = parseInt(getModifier(sheetData.stats.dexterity));
-            let totalAC = 10 + dexMod;
+            const dexMod = getModifier(sheetData.stats.dexterity);
+            let totalAC = 10;
+            let armorBonus = 0;
+            let dexBonus = dexMod;
+            let otherBonuses = 0;
+
+            const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type));
+            
+            if (wornArmor) {
+                armorBonus = parseInt(wornArmor.value || 0);
+                if (wornArmor.type === 'medium') {
+                    dexBonus = Math.min(dexMod, 2);
+                } else if (wornArmor.type === 'heavy') {
+                    dexBonus = 0;
+                }
+            }
             
             (sheetData.defenses || []).forEach(item => {
-                if (item.worn) {
-                    totalAC += parseInt(item.bonus || 0);
+                if (item.worn && (item.type === 'shield' || item.type === 'other')) {
+                    otherBonuses += parseInt(item.value || 0);
                 }
             });
+
+            if (wornArmor) {
+                totalAC = armorBonus + dexBonus + otherBonuses;
+            } else {
+                totalAC = 10 + dexBonus + otherBonuses;
+            }
             
             const acInput = csModalContent.querySelector('[data-field="armorClass"]');
             acInput.value = totalAC;
+        }
+        
+        function updateInitiative(sheetData) {
+            const dexMod = getModifier(sheetData.stats.dexterity);
+            const bonus = parseInt(sheetData.initiativeBonus || 0);
+            const total = dexMod + bonus;
+            document.getElementById('cs-initiative-total').value = formatModifier(total);
         }
 
         csModalContent.addEventListener('input', (e) => {
@@ -951,15 +996,16 @@
             
             // Trigger UI updates immediately
             const sheetDataForUI = readSheetFromDOM();
-            if (e.target.dataset.field && e.target.dataset.field.startsWith('stats.')) {
+            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus')) {
                  updateAllModifiers(sheetDataForUI);
                  updateSkillAndSaveBonuses(sheetDataForUI);
                  updateAC(sheetDataForUI);
+                 updateInitiative(sheetDataForUI);
             }
             if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
                  updateSkillAndSaveBonuses(sheetDataForUI);
             }
-            if (e.target.classList.contains('cs-defense-worn') || e.target.classList.contains('cs-defense-bonus')) {
+            if (e.target.closest('.defense-item')) {
                 updateAC(sheetDataForUI);
             }
             if (e.target.classList.contains('cs-class-level')) {
@@ -998,7 +1044,7 @@
             if (!token) return;
 
             if (e.target.id === 'cs-add-defense-btn') {
-                const newDefense = { id: crypto.randomUUID(), name: '', bonus: 0, worn: false };
+                const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false };
                 const sheetData = readSheetFromDOM();
                 sheetData.defenses.push(newDefense);
                 renderDefenses(sheetData.defenses);
@@ -1063,7 +1109,8 @@
             sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
                 id: itemEl.dataset.id,
                 name: itemEl.querySelector('.cs-defense-name').value,
-                bonus: itemEl.querySelector('.cs-defense-bonus').value,
+                value: itemEl.querySelector('.cs-defense-value').value,
+                type: itemEl.querySelector('.cs-defense-type').value,
                 worn: itemEl.querySelector('.cs-defense-worn').checked
             }));
 
@@ -1113,4 +1160,3 @@
     </script>
 </body>
 </html>
-"
