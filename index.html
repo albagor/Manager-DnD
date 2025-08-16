@@ -1635,7 +1635,7 @@ csModalContent.addEventListener('input', (e) => {
                     const diceSides = parseInt(diceSidesStr);
                     if (!isNaN(numDice) && !isNaN(diceSides)) {
                          for (let i = 0; i < numDice; i++) {
-                            const roll = Math.floor(Math.random() * diceSides) + 1;
+                            const roll = Math.floor(Math.random() * sides) + 1;
                             rolls.push(roll);
                             diceTotal += roll;
                         }
