@@ -200,7 +200,7 @@
                 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400"><div class="cs-box h-96"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div></div>
+                    <div class="mt-2 pt-2 border-t border-gray-400"><div class="cs-box h-[32rem]"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div></div>
                 </details>
 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
@@ -210,13 +210,17 @@
                             <div class="cs-box h-96 flex flex-col"><label class="cs-label">Equipaggiamento</label><div id="cs-equipment-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div><button id="cs-add-equipment-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Oggetto</button></div>
                         </div>
                         <div>
-                            <div class="cs-box grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
-                                <div class="text-center"><label class="cs-label">Rame</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
-                                <div class="text-center"><label class="cs-label">Argento</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
-                                <div class="text-center"><label class="cs-label">Oro</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
-                                <div class="text-center"><label class="cs-label">Platino</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
+                            <div class="flex gap-4 h-full">
+                                <div class="cs-box w-32 flex-shrink-0">
+                                    <div class="space-y-3">
+                                        <div class="text-center"><label class="cs-label">Rame</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
+                                        <div class="text-center"><label class="cs-label">Argento</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
+                                        <div class="text-center"><label class="cs-label">Oro</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
+                                        <div class="text-center"><label class="cs-label">Platino</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
+                                    </div>
+                                </div>
+                                <div class="cs-box flex-grow h-[384px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
                             </div>
-                            <div class="cs-box h-[320px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
                         </div>
                     </div>
                 </details>
@@ -1119,7 +1123,7 @@
             try { await updateDoc(doc(db, 'publicAdventures', adventureId), { diceRolls: arrayUnion(rollData) }); } catch (error) { console.error("Errore nell'invio del tiro al log:", error); }
         }
 
-        function parseAndRollDamage(damageString) { const parts = damageString.toLowerCase().replace(/\s/g, '').split('+'); let diceTotal = 0; const rolls = []; let flatBonus = 0; for (const part of parts) { if (part.includes('d')) { const [numDiceStr, diceSidesStr] = part.split('d'); const numDice = parseInt(numDiceStr) || 1; const diceSides = parseInt(diceSidesStr); if (!isNaN(numDice) && !isNaN(diceSides)) { for (let i = 0; i < numDice; i++) { const roll = Math.floor(Math.random() * diceSides) + 1; rolls.push(roll); diceTotal += roll; } } } else { const bonus = parseInt(part); if (!isNaN(bonus)) flatBonus += bonus; } } return { diceTotal, rolls, flatBonus }; }
+        function parseAndRollDamage(damageString) { const parts = damageString.toLowerCase().replace(/\s/g, '').split('+'); let diceTotal = 0; const rolls = []; let flatBonus = 0; for (const part of parts) { if (part.includes('d')) { const [numDiceStr, diceSidesStr] = part.split('d'); const numDice = parseInt(numDiceStr) || 1; const diceSides = parseInt(diceSidesStr); if (!isNaN(numDice) && !isNaN(diceSides)) { for (let i = 0; i < numDice; i++) { const roll = Math.floor(Math.random() * sides) + 1; rolls.push(roll); diceTotal += roll; } } } else { const bonus = parseInt(part); if (!isNaN(bonus)) flatBonus += bonus; } } return { diceTotal, rolls, flatBonus }; }
 
         async function handleWeaponRoll(type, weaponIndex, isVersatile = false) {
             const token = csModal.dataset.currentToken;
@@ -1139,3 +1143,5 @@
     </script>
 </body>
 </html>
+"
+I would like to incorporate a music player into the application. The music player should have play, pause, and stop buttons. Additionally, there should be a button to switch between different music tracks. The music player should be displayed below the "D&D Adventure Manager" title and above the ta
