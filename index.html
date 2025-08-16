@@ -301,16 +301,54 @@
                 </details>
                 <!-- === FINE BLOCCO ARMI & ATTACCHI === -->
                 
-                <!-- === INIZIO BLOCCO PRIVILEGI, TRATTI & EQUIPAGGIAMENTO === -->
+                <!-- === INIZIO BLOCCO PRIVILEGI & TRATTI === -->
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Privilegi, Tratti & Equipaggiamento</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-2">
-                        <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
-                        <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
-                        <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
+                    <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400">
+                        <div class="cs-box h-96"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
                     </div>
                 </details>
-                <!-- === FINE BLOCCO PRIVILEGI, TRATTI & EQUIPAGGIAMENTO === -->
+                <!-- === FINE BLOCCO PRIVILEGI & TRATTI === -->
+
+                <!-- === INIZIO BLOCCO EQUIPAGGIAMENTO & TESORO === -->
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
+                    <summary class="text-2xl text-red-800 font-bold">Equipaggiamento & Tesoro</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div>
+                            <div class="cs-box h-96 flex flex-col">
+                                <label class="cs-label">Equipaggiamento</label>
+                                <div id="cs-equipment-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div>
+                                <button id="cs-add-equipment-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">+</button>
+                            </div>
+                        </div>
+                        <div>
+                            <div class="cs-box grid grid-cols-3 gap-2 mb-2">
+                                <div class="text-center"><label class="cs-label">Rame</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
+                                <div class="text-center"><label class="cs-label">Argento</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
+                                <div class="text-center"><label class="cs-label">Oro</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
+                            </div>
+                            <div class="cs-box h-[320px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
+                        </div>
+                    </div>
+                </details>
+                <!-- === FINE BLOCCO EQUIPAGGIAMENTO & TESORO === -->
+
+                <!-- === INIZIO BLOCCO INCANTESIMI === -->
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
+                    <summary class="text-2xl text-red-800 font-bold">Incantesimi</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400">
+                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
+                            <div class="cs-box"><label class="cs-label">Classe da Incantatore</label><input type="text" class="cs-input" data-field="spellcasting.class"></div>
+                            <div class="cs-box"><label class="cs-label">Caratteristica</label><input type="text" class="cs-input" data-field="spellcasting.ability"></div>
+                            <div class="cs-box"><label class="cs-label">CD Tiro Salvezza</label><input type="number" class="cs-input text-center" data-field="spellcasting.saveDC"></div>
+                            <div class="cs-box"><label class="cs-label">Bonus Attacco Inc.</label><input type="text" class="cs-input text-center" data-field="spellcasting.attackBonus"></div>
+                        </div>
+                        <div id="cs-spell-levels-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
+                            <!-- Spell levels will be generated here by JS -->
+                        </div>
+                    </div>
+                </details>
+                <!-- === FINE BLOCCO INCANTESIMI === -->
 
             </div>
         </div>
@@ -1786,3 +1824,4 @@ csModalContent.addEventListener('input', (e) => {
     </script>
 </body>
 </html>
+" and the user query is "Perfetto, sempre nella scheda personaggio, i privilegi e i tratti vanno bene, aumenta solo il campo di input facendolo adattare alla finestra dentro cui è conservato. Poi inserisci una nuova sezione comprimibile: Equipaggiamento e tesoro (quindi togli la voce "equipaggiamento" nel titolo di Privilegi e tratti). In questa sezione dell'equipaggiamento metti dei campi di input che si generano man mano uno preme invio o preme (da cellulare) un tasto + per aggiungere un nuovo campo di input legato all'equipaggiamento. Ovviamente ogni campo di input deve poter essere cancellato. Accanto alla colonna "Equipaggiamento" ci andrebbe quella "tesoro" in cui tre campi rispettivamente: oro, argento, rame. E accanto un campo di testo più grande per "Altri tesori". Dopo questa sezione ci andrà quella degli incantesimi e, come le schede ufficiali componi questa parte come sono composte le schede ufficiali di dnd 5e con le liste degli incantesimi per livello, anche qui se puoi renderli auto generanti e cancellabili. In testa occorrerebbe anche una parte sul GS, sui bonus. Insomma esattamente come è compilata una scheda ufficia
