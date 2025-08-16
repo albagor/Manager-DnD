@@ -174,6 +174,13 @@
                     </div>
                 </details>
 
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
+                    <summary class="text-2xl text-red-800 font-bold">Tratti e Privilegi di Classe (Automatici)</summary>
+                    <div id="cs-class-features-auto" class="mt-2 pt-2 border-t border-gray-400 space-y-4 text-sm">
+                        <!-- Content will be generated here by JavaScript -->
+                    </div>
+                </details>
+
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
                     <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -297,7 +304,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                      <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
                      <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
-                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti (Manuali)</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
                 </div>
             </div>
         </div>
@@ -1095,6 +1102,7 @@ function updateSpeedField(sheetData) {
             updateInitiative(sheetData);
             updateSpeedField(sheetData);
             renderWeaponsList(sheetData);
+            renderClassFeatures(sheetData); // Aggiunta chiamata
             window.currentSheetData = sheetData; // Cache for immediate UI updates
         }
         
@@ -1439,6 +1447,7 @@ csModalContent.addEventListener('input', (e) => {
     if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
         updateTotalLevel(sheetDataForUI);
         updateSpeedField(sheetDataForUI); 
+        renderClassFeatures(sheetDataForUI);
     }
     if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
         updateSpeedField(sheetDataForUI);
@@ -1496,6 +1505,7 @@ csModalContent.addEventListener('input', (e) => {
                 sheetData.classes.push(newClass);
                 renderClasses(sheetData.classes);
                 updateTotalLevel(sheetData);
+                renderClassFeatures(sheetData);
                 saveCharacterSheet(token, sheetData);
             }
             if (e.target.classList.contains('cs-delete-class-btn')) {
@@ -1506,6 +1516,7 @@ csModalContent.addEventListener('input', (e) => {
                     sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
                     renderClasses(sheetData.classes);
                     updateTotalLevel(sheetData);
+                    renderClassFeatures(sheetData);
                     saveCharacterSheet(token, sheetData);
                 }
             }
@@ -1683,6 +1694,75 @@ csModalContent.addEventListener('input', (e) => {
                 await addRollToLog(rollData);
             }
         }
+
+        const DND_CLASS_FEATURES = {
+            "Guerriero": {
+                1: [{ name: "Stile di Combattimento", description: "Adotti uno stile di combattimento particolare come tua specialità. Scegli una delle opzioni disponibili." }, { name: "Recuperare Energie", description: "Puoi usare un'azione bonus per recuperare un numero di punti ferita pari a 1d10 + il tuo livello da guerriero." }],
+                2: [{ name: "Azione Impetuosa", description: "Puoi spingerti oltre i tuoi limiti normali per un istante. Nel tuo turno, puoi effettuare un'azione aggiuntiva." }],
+                3: [{ name: "Archetipo Marziale", description: "Scegli un archetipo che definisce il tuo approccio al combattimento." }],
+                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
+                5: [{ name: "Attacco Extra", description: "Puoi attaccare due volte, invece di una, ogni volta che effettui l'azione di Attacco nel tuo turno." }]
+            },
+            "Ladro": {
+                1: [{ name: "Maestria", description: "Scegli due delle tue abilità competenti. Il tuo bonus di competenza è raddoppiato per qualsiasi prova di abilità che fai che usa una delle competenze scelte." }, { name: "Attacco Furtivo", description: "Una volta per turno, puoi infliggere 1d6 danni extra a una creatura che colpisci con un attacco se hai vantaggio sul tiro per colpire." }, { name: "Gergo Ladresco", description: "Conosci il gergo ladresco, un misto di dialetto, gergo e codice segreto che ti permette di passare messaggi nascosti." }],
+                2: [{ name: "Azione Scaltra", description: "La tua rapidità di pensiero e agilità ti permettono di muoverti e agire rapidamente. Puoi usare un'azione bonus nel tuo turno per effettuare l'azione di Scatto, Disimpegno o Nascondersi." }],
+                3: [{ name: "Archetipo Ladresco", description: "Scegli un archetipo che riflette il tuo stile preferito di furfanteria." }],
+                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
+                5: [{ name: "Schivata Prodigiosa", description: "Quando un attaccante che puoi vedere ti colpisce con un attacco, puoi usare la tua reazione per dimezzare il danno dell'attacco contro di te." }]
+            },
+             "Mago": {
+                1: [{ name: "Incantesimi", description: "Come studente di magia arcana, possiedi un libro degli incantesimi che contiene gli incantesimi che conosci." }, { name: "Recupero Arcano", description: "Una volta al giorno, quando finisci un riposo breve, puoi scegliere di recuperare slot incantesimo spesi." }],
+                2: [{ name: "Tradizione Arcana", description: "Scegli una tradizione arcana, che modella la tua pratica della magia." }],
+                3: [{ name: "Incantesimi di 2° Livello", description: "Puoi preparare e lanciare incantesimi di 2° livello." }],
+                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
+                5: [{ name: "Incantesimi di 3° Livello", description: "Puoi preparare e lanciare incantesimi di 3° livello." }]
+            },
+            "Chierico": {
+                1: [{ name: "Incantesimi", description: "Come condotto del potere divino, puoi lanciare incantesimi da chierico." }, { name: "Dominio Divino", description: "Scegli un dominio legato alla tua divinità. Il tuo dominio ti concede incantesimi di dominio e altri privilegi." }],
+                2: [{ name: "Incanalare Divinità", description: "Ottieni la capacità di incanalare l'energia divina direttamente dalla tua divinità, usando quell'energia per alimentare effetti magici." }],
+                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
+                5: [{ name: "Distruggere Non Morti (GS 1/2)", description: "Quando un non morto fallisce il suo tiro salvezza contro il tuo Scacciare Non Morti, la creatura viene istantaneamente distrutta se il suo grado di sfida è pari o inferiore a 1/2." }]
+            }
+        };
+
+        function renderClassFeatures(sheetData) {
+            const container = document.getElementById('cs-class-features-auto');
+            container.innerHTML = '';
+            if (!sheetData || !sheetData.classes || sheetData.classes.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">Nessuna classe selezionata.</p>';
+                return;
+            }
+
+            sheetData.classes.forEach(c => {
+                const className = c.name;
+                const classLevel = parseInt(c.level) || 0;
+                const classFeatures = DND_CLASS_FEATURES[className];
+
+                if (!classFeatures) return;
+
+                const classContainer = document.createElement('div');
+                classContainer.className = 'mb-3';
+                
+                const classTitle = document.createElement('h4');
+                classTitle.className = 'text-lg font-bold text-red-700';
+                classTitle.textContent = `${className} (Livello ${classLevel})`;
+                classContainer.appendChild(classTitle);
+
+                for (let level = 1; level <= classLevel; level++) {
+                    if (classFeatures[level]) {
+                        const levelFeatures = classFeatures[level];
+                        levelFeatures.forEach(feature => {
+                            const featureEl = document.createElement('div');
+                            featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-gray-300';
+                            featureEl.innerHTML = `<p><strong class="font-bold text-black">${feature.name} (Liv. ${level}):</strong> ${feature.description}</p>`;
+                            classContainer.appendChild(featureEl);
+                        });
+                    }
+                }
+                container.appendChild(classContainer);
+            });
+        }
+
 
         document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
 
