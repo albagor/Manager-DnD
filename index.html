@@ -1093,150 +1093,159 @@ function updateSpeedField(sheetData) {
             updateTotalLevel(sheetData);
             updateAC(sheetData);
             updateInitiative(sheetData);
-            // PATCH VELOCITÀ: aggiorna visualizzazione velocità
-    updateSpeedField(sheetData);
-            // ARMI
+            updateSpeedField(sheetData);
             renderWeaponsList(sheetData);
-window.currentSheetData = sheetData;
+            window.currentSheetData = sheetData; // Cache for immediate UI updates
         }
+        
         // === INIZIO LOGICA ARMI & ATTACCHI ===
-function getStatMod(stat, stats) {
-  return Math.floor((stats[stat] - 10) / 2);
-}
-function getAttackStat(weapon, stats) {
-  if ((weapon.properties || '').toLowerCase().includes('finesse')) {
-    return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength';
-  }
-  if (weapon.type === 'distanza') return 'dexterity';
-  if (weapon.type === 'magica') return weapon.spellStat || 'intelligence';
-  return 'strength';
-}
-function calcAttackBonus(weapon, stats, proficiencyBonus) {
-  const stat = getAttackStat(weapon, stats);
-  const mod = getStatMod(stat, stats);
-  let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0);
-  return bonus >= 0 ? `+${bonus}` : `${bonus}`;
-}
-function calcDamageString(weapon, stats) {
-  const stat = getAttackStat(weapon, stats);
-  const mod = getStatMod(stat, stats);
-  let str = weapon.damage;
-  let total = mod + (parseInt(weapon.damageBonus) || 0);
-  if (!isNaN(total) && total !== 0) {
-    str += total > 0 ? `+${total}` : `${total}`;
-  }
-  return str;
-}
-function renderWeaponsList(sheetData) {
-  const container = document.getElementById('weapons-list-container');
-  container.innerHTML = '';
-  if (!sheetData.weapons || sheetData.weapons.length === 0) {
-    container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
-    return;
-  }
-  const types = ['mischia', 'distanza', 'magica', 'altro'];
-  types.forEach(type => {
-    const weapons = sheetData.weapons.filter(w => w.type === type);
-    if (weapons.length === 0) return;
-    const groupDiv = document.createElement('div');
-    groupDiv.className = 'mb-2';
-    groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
-      <table class="w-full text-xs md:text-sm mb-2">
-        <thead>
-          <tr class="bg-gray-300 text-black">
-            <th>Nome</th>
-            <th>Proprietà</th>
-            <th>Tiro x Colpire</th>
-            <th>Danni</th>
-            <th>Tipo</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody>
-          ${weapons.map((w, i) => `
-            <tr>
-              <td>${w.name}</td>
-              <td>${w.properties}</td>
-              <td>${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</td>
-              <td>${calcDamageString(w, sheetData.stats)}</td>
-              <td>${w.damageType}</td>
-              <td>
-                <button class="edit-weapon-btn text-blue-600" data-idx="${i}">✎</button>
-                <button class="delete-weapon-btn text-red-600" data-idx="${i}">&times;</button>
-              </td>
-            </tr>
-          `).join('')}
-        </tbody>
-      </table>`;
-    container.appendChild(groupDiv);
-  });
-}
-document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
-function openWeaponModal(weapon = null, idx = null) {
-  document.getElementById('weapon-modal').classList.remove('hidden');
-  document.getElementById('weapon-form').reset();
-  document.getElementById('weapon-index').value = idx !== null ? idx : '';
-  if (weapon) {
-    document.getElementById('weapon-name').value = weapon.name;
-    document.getElementById('weapon-type').value = weapon.type;
-    document.getElementById('weapon-damage').value = weapon.damage;
-    document.getElementById('weapon-damage-type').value = weapon.damageType;
-    document.getElementById('weapon-properties').value = weapon.properties;
-    document.getElementById('weapon-proficient').checked = weapon.proficient;
-    document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
-    document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
-  }
-}
-document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
-  document.getElementById('weapon-modal').classList.add('hidden');
-});
-document.getElementById('weapon-form').addEventListener('submit', e => {
-  e.preventDefault();
-  const idx = document.getElementById('weapon-index').value;
-  const newWeapon = {
-    name: document.getElementById('weapon-name').value,
-    type: document.getElementById('weapon-type').value,
-    damage: document.getElementById('weapon-damage').value,
-    damageType: document.getElementById('weapon-damage-type').value,
-    properties: document.getElementById('weapon-properties').value,
-    proficient: document.getElementById('weapon-proficient').checked,
-    attackBonus: document.getElementById('weapon-attack-bonus').value,
-    damageBonus: document.getElementById('weapon-damage-bonus').value
-  };
-  let sheetData = getCurrentSheetData();
-  if (!sheetData.weapons) sheetData.weapons = [];
-  if (idx !== '') {
-    sheetData.weapons[idx] = newWeapon;
-  } else {
-    sheetData.weapons.push(newWeapon);
-  }
-  saveSheetData(sheetData);
-  document.getElementById('weapon-modal').classList.add('hidden');
-  renderWeaponsList(sheetData);
-});
-document.getElementById('weapons-list-container').addEventListener('click', e => {
-  if (e.target.classList.contains('edit-weapon-btn')) {
-    const idx = e.target.dataset.idx;
-    let sheetData = getCurrentSheetData();
-    openWeaponModal(sheetData.weapons[idx], idx);
-  }
-  if (e.target.classList.contains('delete-weapon-btn')) {
-    const idx = e.target.dataset.idx;
-    let sheetData = getCurrentSheetData();
-    sheetData.weapons.splice(idx, 1);
-    saveSheetData(sheetData);
-    renderWeaponsList(sheetData);
-  }
-});
-// Supporto: da adattare alla tua logica dati
-function getCurrentSheetData() {
-  return window.currentSheetData || {};
-}
-function saveSheetData(sheetData) {
-  window.currentSheetData = sheetData;
-  // Aggiorna anche il DB se necessario!
-}
-// === FINE LOGICA ARMI & ATTACCHI ===
+        function getStatMod(stat, stats) {
+          return Math.floor(((stats[stat] || 10) - 10) / 2);
+        }
+
+        function getAttackStat(weapon, stats) {
+          if ((weapon.properties || '').toLowerCase().includes('finesse')) {
+            return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength';
+          }
+          if (weapon.type === 'distanza') return 'dexterity';
+          if (weapon.type === 'magica') return weapon.spellStat || 'intelligence';
+          return 'strength';
+        }
+
+        function calcAttackBonus(weapon, stats, proficiencyBonus) {
+          const stat = getAttackStat(weapon, stats);
+          const mod = getStatMod(stat, stats);
+          let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0);
+          return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+        }
+
+        function calcDamageString(weapon, stats) {
+          const stat = getAttackStat(weapon, stats);
+          const mod = getStatMod(stat, stats);
+          let str = weapon.damage;
+          let total = mod + (parseInt(weapon.damageBonus) || 0);
+          if (!isNaN(total) && total !== 0) {
+            str += total > 0 ? ` + ${total}` : ` ${total}`;
+          }
+          return str;
+        }
+
+        function renderWeaponsList(sheetData) {
+          const container = document.getElementById('weapons-list-container');
+          container.innerHTML = '';
+          if (!sheetData.weapons || sheetData.weapons.length === 0) {
+            container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
+            return;
+          }
+          const types = ['mischia', 'distanza', 'magica', 'altro'];
+          types.forEach(type => {
+            const weapons = sheetData.weapons.filter(w => w.type === type);
+            if (weapons.length === 0) return;
+            const groupDiv = document.createElement('div');
+            groupDiv.className = 'mb-2';
+            groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
+              <table class="w-full text-xs md:text-sm mb-2">
+                <thead>
+                  <tr class="bg-gray-300 text-black">
+                    <th class="p-1">Nome</th><th class="p-1">Proprietà</th><th class="p-1">TxC</th><th class="p-1">Danni</th><th class="p-1">Tipo</th><th></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  ${weapons.map(w => {
+                    const globalIndex = sheetData.weapons.indexOf(w);
+                    return `
+                    <tr class="border-b border-gray-200 text-center">
+                      <td class="p-1">${w.name}</td>
+                      <td class="p-1">${w.properties}</td>
+                      <td class="p-1">${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</td>
+                      <td class="p-1">${calcDamageString(w, sheetData.stats)}</td>
+                      <td class="p-1">${w.damageType}</td>
+                      <td class="p-1">
+                        <button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button>
+                        <button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button>
+                      </td>
+                    </tr>
+                  `}).join('')}
+                </tbody>
+              </table>`;
+            container.appendChild(groupDiv);
+          });
+        }
+
+        document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
+
+        function openWeaponModal(weapon = null, idx = null) {
+          document.getElementById('weapon-modal').classList.remove('hidden');
+          document.getElementById('weapon-form').reset();
+          document.getElementById('weapon-index').value = idx !== null ? idx : '';
+          if (weapon) {
+            document.getElementById('weapon-name').value = weapon.name;
+            document.getElementById('weapon-type').value = weapon.type;
+            document.getElementById('weapon-damage').value = weapon.damage;
+            document.getElementById('weapon-damage-type').value = weapon.damageType;
+            document.getElementById('weapon-properties').value = weapon.properties;
+            document.getElementById('weapon-proficient').checked = weapon.proficient;
+            document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
+            document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
+          }
+        }
+
+        document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
+          document.getElementById('weapon-modal').classList.add('hidden');
+        });
+
+        document.getElementById('weapon-form').addEventListener('submit', e => {
+          e.preventDefault();
+          const token = csModal.dataset.currentToken;
+          if (!token) return;
+
+          const idx = document.getElementById('weapon-index').value;
+          const newWeapon = {
+            name: document.getElementById('weapon-name').value,
+            type: document.getElementById('weapon-type').value,
+            damage: document.getElementById('weapon-damage').value,
+            damageType: document.getElementById('weapon-damage-type').value,
+            properties: document.getElementById('weapon-properties').value,
+            proficient: document.getElementById('weapon-proficient').checked,
+            attackBonus: document.getElementById('weapon-attack-bonus').value,
+            damageBonus: document.getElementById('weapon-damage-bonus').value
+          };
+
+          let sheetData = readSheetFromDOM();
+          if (!sheetData.weapons) sheetData.weapons = [];
+
+          if (idx !== '') {
+            sheetData.weapons[parseInt(idx)] = newWeapon;
+          } else {
+            sheetData.weapons.push(newWeapon);
+          }
+
+          saveCharacterSheet(token, sheetData);
+          populateCharacterSheet(sheetData);
+          document.getElementById('weapon-modal').classList.add('hidden');
+        });
+
+        document.getElementById('weapons-list-container').addEventListener('click', e => {
+          const token = csModal.dataset.currentToken;
+          if (!token) return;
+          
+          const btn = e.target.closest('.edit-weapon-btn, .delete-weapon-btn');
+          if (!btn) return;
+
+          const idx = btn.dataset.idx ? parseInt(btn.dataset.idx) : null;
+          if (idx === null) return;
+
+          let sheetData = readSheetFromDOM();
+
+          if (btn.classList.contains('edit-weapon-btn')) {
+            openWeaponModal(sheetData.weapons[idx], idx);
+          } else if (btn.classList.contains('delete-weapon-btn')) {
+            sheetData.weapons.splice(idx, 1);
+            saveCharacterSheet(token, sheetData);
+            populateCharacterSheet(sheetData);
+          }
+        });
+        // === FINE LOGICA ARMI & ATTACCHI ===
         
 
         function getModifier(score) {
@@ -1395,7 +1404,6 @@ function saveSheetData(sheetData) {
             document.getElementById('cs-initiative-total').value = formatModifier(total);
         }
 
-        // PATCH VELOCITÀ: aggiorna la velocità quando cambia qualsiasi campo che la influenza
 csModalContent.addEventListener('input', (e) => {
     const token = csModal.dataset.currentToken;
     if (!token) return;
@@ -1411,7 +1419,7 @@ csModalContent.addEventListener('input', (e) => {
         updateSkillAndSaveBonuses(sheetDataForUI);
         updateAC(sheetDataForUI);
         updateInitiative(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+        updateSpeedField(sheetDataForUI); 
     }
     if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
         updateSkillAndSaveBonuses(sheetDataForUI);
@@ -1421,9 +1429,8 @@ csModalContent.addEventListener('input', (e) => {
     }
     if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
         updateTotalLevel(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); // PATCH VELOCITÀ: aggiorna subito
+        updateSpeedField(sheetDataForUI); 
     }
-    // PATCH VELOCITÀ: aggiorna velocità anche se cambia la razza
     if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
         updateSpeedField(sheetDataForUI);
     }
@@ -1538,8 +1545,9 @@ csModalContent.addEventListener('input', (e) => {
             level: itemEl.querySelector('.cs-class-level').value
         }
     });
-    // PATCH VELOCITÀ: salva il bonus/malus manuale
     sheetData.speedModifier = document.getElementById('cs-speed-modifier').value;
+    // Leggi le armi dal DOM se necessario, ma è meglio prenderle dalla cache
+    sheetData.weapons = window.currentSheetData.weapons || [];
     return sheetData;
 }
 
