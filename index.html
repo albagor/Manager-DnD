@@ -960,6 +960,34 @@ function updateSpeedField(sheetData) {
         const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
         const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
+        // Cache per i dati JSON caricati
+        let racesData = null;
+        let classesData = null;
+
+        // Funzione per caricare i dati JSON una sola volta
+        async function loadGameData() {
+            if (racesData && classesData) {
+                return; // Già caricati
+            }
+            
+            try {
+                if (!racesData) {
+                    const racesResponse = await fetch('./races.json');
+                    racesData = await racesResponse.json();
+                }
+                
+                if (!classesData) {
+                    const classesResponse = await fetch('./classes.json');
+                    classesData = await classesResponse.json();
+                }
+            } catch (error) {
+                console.error('Errore nel caricamento dei dati di gioco:', error);
+                // Fallback ai dati vuoti per evitare errori
+                racesData = racesData || [];
+                classesData = classesData || [];
+            }
+        }
+
         function createEmptyCharacterSheet() {
             const sheet = {
                 characterName: "",
@@ -1102,7 +1130,12 @@ function updateSpeedField(sheetData) {
             updateInitiative(sheetData);
             updateSpeedField(sheetData);
             renderWeaponsList(sheetData);
-            renderClassFeatures(sheetData); // Aggiunta chiamata
+            
+            // Carica i dati di gioco e poi renderizza le caratteristiche
+            loadGameData().then(() => {
+                renderClassFeatures(sheetData);
+            });
+            
             window.currentSheetData = sheetData; // Cache for immediate UI updates
         }
         
@@ -1447,10 +1480,15 @@ csModalContent.addEventListener('input', (e) => {
     if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
         updateTotalLevel(sheetDataForUI);
         updateSpeedField(sheetDataForUI); 
-        renderClassFeatures(sheetDataForUI);
+        loadGameData().then(() => {
+            renderClassFeatures(sheetDataForUI);
+        });
     }
     if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
         updateSpeedField(sheetDataForUI);
+        loadGameData().then(() => {
+            renderClassFeatures(sheetDataForUI);
+        });
     }
     // Debounce the save to Firestore
     clearTimeout(characterSheetUpdateTimeout);
@@ -1505,7 +1543,9 @@ csModalContent.addEventListener('input', (e) => {
                 sheetData.classes.push(newClass);
                 renderClasses(sheetData.classes);
                 updateTotalLevel(sheetData);
-                renderClassFeatures(sheetData);
+                loadGameData().then(() => {
+                    renderClassFeatures(sheetData);
+                });
                 saveCharacterSheet(token, sheetData);
             }
             if (e.target.classList.contains('cs-delete-class-btn')) {
@@ -1516,7 +1556,9 @@ csModalContent.addEventListener('input', (e) => {
                     sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
                     renderClasses(sheetData.classes);
                     updateTotalLevel(sheetData);
-                    renderClassFeatures(sheetData);
+                    loadGameData().then(() => {
+                        renderClassFeatures(sheetData);
+                    });
                     saveCharacterSheet(token, sheetData);
                 }
             }
@@ -1725,42 +1767,133 @@ csModalContent.addEventListener('input', (e) => {
             }
         };
 
-        function renderClassFeatures(sheetData) {
+        async function renderClassFeatures(sheetData) {
             const container = document.getElementById('cs-class-features-auto');
             container.innerHTML = '';
-            if (!sheetData || !sheetData.classes || sheetData.classes.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">Nessuna classe selezionata.</p>';
+            
+            // Assicurati che i dati di gioco siano caricati
+            await loadGameData();
+            
+            if (!sheetData) {
+                container.innerHTML = '<p class="text-gray-500">Nessun dato personaggio disponibile.</p>';
+                return;
+            }
+
+            // === TRATTI RAZZIALI ===
+            const race = sheetData.race || '';
+            if (race && racesData) {
+                const raceData = racesData.find(r => r.name === race);
+                if (raceData && raceData.traits && raceData.traits.length > 0) {
+                    const raceContainer = document.createElement('div');
+                    raceContainer.className = 'mb-4';
+                    
+                    const raceTitle = document.createElement('h4');
+                    raceTitle.className = 'text-lg font-bold text-blue-700';
+                    raceTitle.textContent = `Tratti Razziali: ${race}`;
+                    raceContainer.appendChild(raceTitle);
+
+                    raceData.traits.forEach(trait => {
+                        const traitEl = document.createElement('div');
+                        traitEl.className = 'ml-2 mt-1 p-2 border-l-2 border-blue-300 bg-blue-50';
+                        traitEl.innerHTML = `<p><strong class="font-bold text-black">${trait.name}:</strong> ${trait.description}</p>`;
+                        raceContainer.appendChild(traitEl);
+                    });
+                    
+                    container.appendChild(raceContainer);
+                }
+            }
+
+            // === PRIVILEGI DI CLASSE ===
+            if (!sheetData.classes || sheetData.classes.length === 0) {
+                if (!race) {
+                    container.innerHTML = '<p class="text-gray-500">Nessuna classe o razza selezionata.</p>';
+                }
                 return;
             }
 
             sheetData.classes.forEach(c => {
                 const className = c.name;
                 const classLevel = parseInt(c.level) || 0;
-                const classFeatures = DND_CLASS_FEATURES[className];
+                const subclassName = c.subclass || '';
 
-                if (!classFeatures) return;
+                if (!className || classLevel <= 0) return;
 
-                const classContainer = document.createElement('div');
-                classContainer.className = 'mb-3';
+                // Trova i dati della classe dal JSON
+                const classData = classesData ? classesData.find(cd => cd.className === className) : null;
                 
-                const classTitle = document.createElement('h4');
-                classTitle.className = 'text-lg font-bold text-red-700';
-                classTitle.textContent = `${className} (Livello ${classLevel})`;
-                classContainer.appendChild(classTitle);
+                if (classData) {
+                    const classContainer = document.createElement('div');
+                    classContainer.className = 'mb-4';
+                    
+                    const classTitle = document.createElement('h4');
+                    classTitle.className = 'text-lg font-bold text-red-700';
+                    classTitle.textContent = `${className} (Livello ${classLevel})`;
+                    classContainer.appendChild(classTitle);
 
-                for (let level = 1; level <= classLevel; level++) {
-                    if (classFeatures[level]) {
-                        const levelFeatures = classFeatures[level];
-                        levelFeatures.forEach(feature => {
-                            const featureEl = document.createElement('div');
-                            featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-gray-300';
-                            featureEl.innerHTML = `<p><strong class="font-bold text-black">${feature.name} (Liv. ${level}):</strong> ${feature.description}</p>`;
-                            classContainer.appendChild(featureEl);
-                        });
+                    // Aggiungi privilegi della classe base per ogni livello
+                    for (let level = 1; level <= classLevel; level++) {
+                        if (classData.featuresByLevel && classData.featuresByLevel[level.toString()]) {
+                            const features = classData.featuresByLevel[level.toString()];
+                            features.forEach(featureName => {
+                                const featureEl = document.createElement('div');
+                                featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-gray-300';
+                                featureEl.innerHTML = `<p><strong class="font-bold text-black">${featureName} (Liv. ${level}):</strong> Privilegio di classe</p>`;
+                                classContainer.appendChild(featureEl);
+                            });
+                        }
+                    }
+
+                    // Aggiungi privilegi della sottoclasse se presente
+                    if (subclassName && classData.subclasses) {
+                        const subclassData = classData.subclasses.find(sc => sc.subclassName === subclassName);
+                        if (subclassData && subclassData.featuresByLevel) {
+                            for (let level = 1; level <= classLevel; level++) {
+                                if (subclassData.featuresByLevel[level.toString()]) {
+                                    const features = subclassData.featuresByLevel[level.toString()];
+                                    features.forEach(featureName => {
+                                        const featureEl = document.createElement('div');
+                                        featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-purple-400 bg-purple-50';
+                                        featureEl.innerHTML = `<p><strong class="font-bold text-black">${featureName} (${subclassName}, Liv. ${level}):</strong> Privilegio di sottoclasse</p>`;
+                                        classContainer.appendChild(featureEl);
+                                    });
+                                }
+                            }
+                        }
+                    }
+                    
+                    container.appendChild(classContainer);
+                } else {
+                    // Fallback ai dati hardcoded per classi non presenti nel JSON
+                    const classFeatures = DND_CLASS_FEATURES[className];
+                    if (classFeatures) {
+                        const classContainer = document.createElement('div');
+                        classContainer.className = 'mb-4';
+                        
+                        const classTitle = document.createElement('h4');
+                        classTitle.className = 'text-lg font-bold text-red-700';
+                        classTitle.textContent = `${className} (Livello ${classLevel}) - Dati Base`;
+                        classContainer.appendChild(classTitle);
+
+                        for (let level = 1; level <= classLevel; level++) {
+                            if (classFeatures[level]) {
+                                const levelFeatures = classFeatures[level];
+                                levelFeatures.forEach(feature => {
+                                    const featureEl = document.createElement('div');
+                                    featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-gray-300';
+                                    featureEl.innerHTML = `<p><strong class="font-bold text-black">${feature.name} (Liv. ${level}):</strong> ${feature.description}</p>`;
+                                    classContainer.appendChild(featureEl);
+                                });
+                            }
+                        }
+                        container.appendChild(classContainer);
                     }
                 }
-                container.appendChild(classContainer);
             });
+
+            // Se nessun contenuto è stato aggiunto
+            if (container.children.length === 0) {
+                container.innerHTML = '<p class="text-gray-500">Nessun tratto o privilegio da mostrare.</p>';
+            }
         }
 
 
