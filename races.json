@@ -1,0 +1,613 @@
+[
+  {
+    "name": "Umano",
+    "traits": [
+      {
+        "name": "Versatilità",
+        "description": "Ottieni un punto caratteristica in tutte le caratteristiche."
+      }
+    ]
+  },
+  {
+    "name": "Umano (Variante)",
+    "traits": [
+      {
+        "name": "Versatilità",
+        "description": "Ottieni un punto caratteristica in due caratteristiche a scelta, una competenza, e un talento."
+      }
+    ]
+  },
+  {
+    "name": "Nano (Delle Colline)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Resilienza Nanica",
+        "description": "Hai vantaggio contro il veleno e resistenza ai danni da veleno."
+      },
+      {
+        "name": "Competenza negli Attrezzi",
+        "description": "Scegli un tipo di attrezzo da fabbro, birraio o scalpellino."
+      },
+      {
+        "name": "Saggezza +1",
+        "description": "Il tuo punteggio di Saggezza aumenta di 1."
+      },
+      {
+        "name": "Resistenza Nanica",
+        "description": "I tuoi punti ferita massimi aumentano di 1 per ogni livello."
+      }
+    ]
+  },
+  {
+    "name": "Nano (Delle Montagne)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Resilienza Nanica",
+        "description": "Hai vantaggio contro il veleno e resistenza ai danni da veleno."
+      },
+      {
+        "name": "Competenza negli Attrezzi",
+        "description": "Scegli un tipo di attrezzo da fabbro, birraio o scalpellino."
+      },
+      {
+        "name": "Forza +2",
+        "description": "Il tuo punteggio di Forza aumenta di 2."
+      },
+      {
+        "name": "Addestramento nelle Armature Naniche",
+        "description": "Sei competente nelle armature leggere e medie."
+      }
+    ]
+  },
+  {
+    "name": "Nano (Duergar)",
+    "traits": [
+      {
+        "name": "Scurovisione Superiore",
+        "description": "Puoi vedere al buio fino a 36 metri."
+      },
+      {
+        "name": "Resilienza Nanica",
+        "description": "Hai vantaggio contro il veleno e resistenza ai danni da veleno."
+      },
+      {
+        "name": "Resistenza Mentale",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, paralisi e illusioni."
+      }
+    ]
+  },
+  {
+    "name": "Elfo (Alto)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Trance",
+        "description": "Non dormi, ma mediti profondamente per 4 ore al giorno."
+      },
+      {
+        "name": "Retaggio Fatato",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, e la magia non può addormentarti."
+      },
+      {
+        "name": "Addestramento alle Armi Elfiche",
+        "description": "Competenza in spada lunga, spada corta, arco corto e arco lungo."
+      },
+      {
+        "name": "Cantrip",
+        "description": "Impari un trucchetto da mago a tua scelta."
+      }
+    ]
+  },
+  {
+    "name": "Elfo (Drow)",
+    "traits": [
+      {
+        "name": "Scurovisione Superiore",
+        "description": "Puoi vedere al buio fino a 36 metri."
+      },
+      {
+        "name": "Trance",
+        "description": "Non dormi, ma mediti profondamente per 4 ore al giorno."
+      },
+      {
+        "name": "Retaggio Fatato",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, e la magia non può addormentarti."
+      },
+      {
+        "name": "Magia dei Drow",
+        "description": "Impari alcuni incantesimi da mago."
+      }
+    ]
+  },
+  {
+    "name": "Elfo (Dei Boschi)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Trance",
+        "description": "Non dormi, ma mediti profondamente per 4 ore al giorno."
+      },
+      {
+        "name": "Retaggio Fatato",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, e la magia non può addormentarti."
+      },
+      {
+        "name": "Piede Leggero",
+        "description": "La tua velocità aumenta di 1,5 metri."
+      },
+      {
+        "name": "Maschera della Natura",
+        "description": "Puoi tentare di nasconderti anche quando sei leggermente coperto da natura."
+      }
+    ]
+  },
+  {
+    "name": "Elfo (Shadar-kai)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Trance",
+        "description": "Non dormi, ma mediti profondamente per 4 ore al giorno."
+      },
+      {
+        "name": "Retaggio Fatato",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, e la magia non può addormentarti."
+      },
+      {
+        "name": "Benedizione della Regina del Corvo",
+        "description": "Puoi usare l'abilità 'Benedizione della Regina del Corvo' una volta per riposo lungo."
+      }
+    ]
+  },
+  {
+    "name": "Mezzelfo",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Retaggio Fatato",
+        "description": "Hai vantaggio ai tiri salvezza contro charme, e la magia non può addormentarti."
+      },
+      {
+        "name": "Versatilità nelle Abilità",
+        "description": "Ottieni competenza in due abilità a tua scelta."
+      }
+    ]
+  },
+  {
+    "name": "Mezzorco",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Tenacia Implacabile",
+        "description": "Quando vieni portato a 0 pf, puoi rimanere a 1 pf una volta per riposo lungo."
+      },
+      {
+        "name": "Attacchi Selvaggi",
+        "description": "Quando fai un critico con un'arma da mischia, puoi tirare un dado extra."
+      }
+    ]
+  },
+  {
+    "name": "Halfling (Piedelesto)",
+    "traits": [
+      {
+        "name": "Fortunato",
+        "description": "Quando tiri un 1 su un d20 per un attacco, prova o TS, puoi ritirare il dado."
+      },
+      {
+        "name": "Coraggioso",
+        "description": "Hai vantaggio ai TS contro essere spaventato."
+      },
+      {
+        "name": "Agile",
+        "description": "Puoi muoverti attraverso lo spazio di creature più grandi."
+      },
+      {
+        "name": "Piede Lesto",
+        "description": "Puoi muoverti attraverso la zona minacciata da una creatura di taglia superiore senza subire attacchi di opportunità."
+      }
+    ]
+  },
+  {
+    "name": "Halfling (Tozzo)",
+    "traits": [
+      {
+        "name": "Fortunato",
+        "description": "Quando tiri un 1 su un d20 per un attacco, prova o TS, puoi ritirare il dado."
+      },
+      {
+        "name": "Coraggioso",
+        "description": "Hai vantaggio ai TS contro essere spaventato."
+      },
+      {
+        "name": "Agile",
+        "description": "Puoi muoverti attraverso lo spazio di creature più grandi."
+      },
+      {
+        "name": "Resistenza Halfling",
+        "description": "Hai vantaggio ai TS contro il veleno, e resistenza ai danni da veleno."
+      }
+    ]
+  },
+  {
+    "name": "Dragonide",
+    "traits": [
+      {
+        "name": "Arma a Soffio",
+        "description": "Puoi usare il tuo soffio draconico come attacco."
+      },
+      {
+        "name": "Resistenza Draconica",
+        "description": "Hai resistenza a un tipo di danno a seconda del tuo lignaggio draconico."
+      }
+    ]
+  },
+  {
+    "name": "Tiefling",
+    "traits": [
+      {
+        "name": "Resistenza Infernale",
+        "description": "Hai resistenza ai danni da fuoco."
+      },
+      {
+        "name": "Retaggio Infernale",
+        "description": "Conosci il trucchetto Taumaturgia e altri incantesimi a livelli superiori."
+      }
+    ]
+  },
+  {
+    "name": "Gnomo (Delle Foreste)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Astuzia Gnomesca",
+        "description": "Hai vantaggio ai TS contro magia che ti fa essere stordito, paralizzato o addormentato."
+      },
+      {
+        "name": "Parlare con Piccole Creature",
+        "description": "Puoi comunicare semplicemente con piccoli mammiferi."
+      }
+    ]
+  },
+  {
+    "name": "Gnomo (Delle Rocce)",
+    "traits": [
+      {
+        "name": "Scurovisione",
+        "description": "Puoi vedere al buio fino a 18 metri."
+      },
+      {
+        "name": "Astuzia Gnomesca",
+        "description": "Hai vantaggio ai TS contro magia che ti fa essere stordito, paralizzato o addormentato."
+      },
+      {
+        "name": "Conoscenza Artigianale",
+        "description": "Competenze con attrezzi da artigiano a scelta."
+      }
+    ]
+  },
+  {
+    "name": "Goblin",
+    "traits": [
+      {
+        "name": "Fuga Agile",
+        "description": "Puoi usare l'azione Disimpegno o Nascondersi come azione bonus."
+      },
+      {
+        "name": "Furia dei Goblin",
+        "description": "Una volta per riposo breve, puoi infliggere danni extra quando riduci un nemico a 0 pf."
+      }
+    ]
+  },
+  {
+    "name": "Hobgoblin",
+    "traits": [
+      {
+        "name": "Disciplina Marziale",
+        "description": "Ottieni competenza in due armi a scelta."
+      }
+    ]
+  },
+  {
+    "name": "Bugbear",
+    "traits": [
+      {
+        "name": "Attacco Furtivo",
+        "description": "Hai vantaggio agli attacchi contro creature che non ti hanno ancora agito."
+      },
+      {
+        "name": "Braccia Lunghe",
+        "description": "La tua portata con armi da mischia aumenta di 1,5 metri."
+      }
+    ]
+  },
+  {
+    "name": "Goliath",
+    "traits": [
+      {
+        "name": "Resistenza Montanara",
+        "description": "Puoi ignorare danni da caduta non magica minori."
+      },
+      {
+        "name": "Potere Gigantesco",
+        "description": "Considerato una taglia superiore per le capacità di trasporto e spinta."
+      }
+    ]
+  },
+  {
+    "name": "Lizardfolk",
+    "traits": [
+      {
+        "name": "Morsi",
+        "description": "Attacco naturale di morso."
+      },
+      {
+        "name": "Costruttore di Rifugi",
+        "description": "Competenza negli attrezzi da artigiano."
+      }
+    ]
+  },
+  {
+    "name": "Tabaxi",
+    "traits": [
+      {
+        "name": "Fuga Felina",
+        "description": "Puoi raddoppiare la velocità di movimento per un turno."
+      },
+      {
+        "name": "Artigli",
+        "description": "Attacco naturale di artigli."
+      }
+    ]
+  },
+  {
+    "name": "Tritone",
+    "traits": [
+      {
+        "name": "Anfibi",
+        "description": "Puoi respirare aria e acqua."
+      },
+      {
+        "name": "Controllo Elementale",
+        "description": "Conosci alcuni incantesimi legati all'acqua."
+      }
+    ]
+  },
+  {
+    "name": "Leonin",
+    "traits": [
+      {
+        "name": "Ruggito",
+        "description": "Puoi emettere un potente ruggito che spaventa i nemici."
+      }
+    ]
+  },
+  {
+    "name": "Minotauro",
+    "traits": [
+      {
+        "name": "Carica del Cornuto",
+        "description": "Quando corri verso un nemico puoi infliggere danni extra."
+      }
+    ]
+  },
+  {
+    "name": "Satiro",
+    "traits": [
+      {
+        "name": "Resistenza Magica",
+        "description": "Hai vantaggio ai TS contro incantesimi."
+      }
+    ]
+  },
+  {
+    "name": "Warforged",
+    "traits": [
+      {
+        "name": "Costituzione Inossidabile",
+        "description": "Hai vantaggio ai TS contro veleno, malattie e non hai bisogno di mangiare, bere o respirare."
+      }
+    ]
+  },
+  {
+    "name": "Firbolg",
+    "traits": [
+      {
+        "name": "Magia Firbolg",
+        "description": "Conosci alcuni incantesimi di illusione e guarigione."
+      }
+    ]
+  },
+  {
+    "name": "Kenku",
+    "traits": [
+      {
+        "name": "Mimetismo",
+        "description": "Puoi imitare qualsiasi suono o voce che hai sentito."
+      }
+    ]
+  },
+  {
+    "name": "Koboldo",
+    "traits": [
+      {
+        "name": "Codardia",
+        "description": "Hai vantaggio agli attacchi se sei vicino a un alleato."
+      }
+    ]
+  },
+  {
+    "name": "Orco",
+    "traits": [
+      {
+        "name": "Tenacia Implacabile",
+        "description": "Quando vieni portato a 0 pf, puoi rimanere a 1 pf una volta per riposo lungo."
+      }
+    ]
+  },
+  {
+    "name": "Shifter",
+    "traits": [
+      {
+        "name": "Trasformazione",
+        "description": "Puoi trasformarti parzialmente per ottenere benefici temporanei."
+      }
+    ]
+  },
+  {
+    "name": "Yuan-ti",
+    "traits": [
+      {
+        "name": "Immunità ai veleni",
+        "description": "Immune al veleno e ai danni da veleno."
+      },
+      {
+        "name": "Magia Innata",
+        "description": "Conosci alcuni incantesimi da incantatore."
+      }
+    ]
+  },
+  {
+    "name": "Vedalken",
+    "traits": [
+      {
+        "name": "Pensiero Parallelo",
+        "description": "Hai vantaggio alle prove di Intelligenza, Saggezza e Carisma contro incantesimi."
+      }
+    ]
+  },
+  {
+    "name": "Loxodon",
+    "traits": [
+      {
+        "name": "Pelle Corazzata",
+        "description": "Classe armatura naturale 12 + modificatore Costituzione."
+      }
+    ]
+  },
+  {
+    "name": "Simic Hybrid",
+    "traits": [
+      {
+        "name": "Mutazioni Biologiche",
+        "description": "Puoi scegliere mutazioni come braccia supplementari, branchie, ecc."
+      }
+    ]
+  },
+  {
+    "name": "Genasi (Acqua)",
+    "traits": [
+      {
+        "name": "Anfibi",
+        "description": "Puoi respirare aria e acqua."
+      }
+    ]
+  },
+  {
+    "name": "Genasi (Aria)",
+    "traits": [
+      {
+        "name": "Leggerezza Aerea",
+        "description": "Non subisci danni da caduta minori."
+      }
+    ]
+  },
+  {
+    "name": "Genasi (Fuoco)",
+    "traits": [
+      {
+        "name": "Resistenza al Fuoco",
+        "description": "Hai resistenza ai danni da fuoco."
+      }
+    ]
+  },
+  {
+    "name": "Genasi (Terra)",
+    "traits": [
+      {
+        "name": "Passaggio Terreno",
+        "description": "Puoi muoverti attraverso terreno difficile non magico senza spendere movimento extra."
+      }
+    ]
+  },
+  {
+    "name": "Cangiante",
+    "traits": [
+      {
+        "name": "Mutamento Fisico",
+        "description": "Puoi alterare leggermente il tuo aspetto a volontà."
+      }
+    ]
+  },
+  {
+    "name": "Centauro",
+    "traits": [
+      {
+        "name": "Carica Potente",
+        "description": "Puoi attaccare dopo esserti mosso almeno di 9 metri in linea retta."
+      }
+    ]
+  },
+  {
+    "name": "Aasimar (Protettore)",
+    "traits": [
+      {
+        "name": "Luce Radiante",
+        "description": "Puoi emanare luce radiante e volare temporaneamente."
+      }
+    ]
+  },
+  {
+    "name": "Aasimar (Flagello)",
+    "traits": [
+      {
+        "name": "Aura Distruttiva",
+        "description": "Infliggi danni radiante extra quando attivi la tua aura."
+      }
+    ]
+  },
+  {
+    "name": "Aasimar (Caduto)",
+    "traits": [
+      {
+        "name": "Aura della Paura",
+        "description": "Puoi spaventare i nemici con la tua aura."
+      }
+    ]
+  },
+  {
+    "name": "Kalashtar",
+    "traits": [
+      {
+        "name": "Mente Doppia",
+        "description": "Hai vantaggio ai TS contro effetti che influenzano la mente."
+      }
+    ]
+  }
+]
