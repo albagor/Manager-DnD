@@ -334,7 +334,8 @@
             const rollResult = Math.floor(Math.random() * sides) + 1;
             const total = rollResult + modifier;
             const rollData = { id: crypto.randomUUID(), playerName: currentPlayer.name, rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`, result: total, details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`, timestamp: Date.now() };
-            try { await updateDoc(doc(db, 'publicAdventures', playerViewId), { diceRolls: arrayUnion(rollData) }); } catch (error) { console.error("Errore nel salvataggio del tiro:", error); }
+            
+            await addAndTrimDiceRoll(playerViewId, rollData);
         });
 
         function loadPlayerView(adventureId, token) {
@@ -1293,11 +1294,32 @@
             }
         }
 
+        async function addAndTrimDiceRoll(adventureId, rollData) {
+            if (!adventureId) {
+                console.error("ID Avventura non trovato per il tiro.");
+                return;
+            }
+            const adventureRef = doc(db, 'publicAdventures', adventureId);
+            try {
+                const adventureSnap = await getDoc(adventureRef);
+                if (adventureSnap.exists()) {
+                    let diceRolls = adventureSnap.data().diceRolls || [];
+                    diceRolls.push(rollData);
+                    if (diceRolls.length > 10) {
+                        // Mantiene solo gli ultimi 10 tiri
+                        diceRolls = diceRolls.slice(-10);
+                    }
+                    await updateDoc(adventureRef, { diceRolls: diceRolls });
+                }
+            } catch (error) {
+                console.error("Errore nell'invio del tiro al log:", error);
+            }
+        }
+
         async function addRollToLog(rollData) {
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
             const adventureId = isPlayerView ? playerViewId : currentAdventureId;
-            if (!adventureId) return;
-            try { await updateDoc(doc(db, 'publicAdventures', adventureId), { diceRolls: arrayUnion(rollData) }); } catch (error) { console.error("Errore nell'invio del tiro al log:", error); }
+            await addAndTrimDiceRoll(adventureId, rollData);
         }
 
         function parseAndRollDamage(damageString) { const parts = damageString.toLowerCase().replace(/\s/g, '').split('+'); let diceTotal = 0; const rolls = []; let flatBonus = 0; for (const part of parts) { if (part.includes('d')) { const [numDiceStr, diceSidesStr] = part.split('d'); const numDice = parseInt(numDiceStr) || 1; const diceSides = parseInt(diceSidesStr); if (!isNaN(numDice) && !isNaN(diceSides)) { for (let i = 0; i < numDice; i++) { const roll = Math.floor(Math.random() * sides) + 1; rolls.push(roll); diceTotal += roll; } } } else { const bonus = parseInt(part); if (!isNaN(bonus)) flatBonus += bonus; } } return { diceTotal, rolls, flatBonus }; }
