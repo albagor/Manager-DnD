@@ -303,22 +303,47 @@
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
         const playerToken = urlParams.get('token');
+        let playerViewInitialized = false;
 
-        if (playerViewId && playerToken) {
-            (async () => {
-                try {
-                    await signInAnonymously(auth);
-                    document.getElementById('initial-loader').style.display = 'none';
-                    document.getElementById('auth-container').style.display = 'none';
-                    document.getElementById('app-container').style.display = 'none';
-                    document.getElementById('player-view-container').classList.add('active');
-                    loadPlayerView(playerViewId, playerToken);
-                } catch (error) {
-                    console.error("Anonymous sign-in failed:", error);
-                    document.getElementById('initial-loader').innerHTML = '<p class="text-red-500 text-center">Impossibile connettersi. Riprova più tardi.</p>';
-                }
-            })();
-        }
+        onAuthStateChanged(auth, user => {
+            document.getElementById('initial-loader').style.display = 'none';
+
+            if (playerViewId && playerToken) {
+                if (playerViewInitialized) return;
+                playerViewInitialized = true;
+
+                (async () => {
+                    try {
+                        if (!auth.currentUser) {
+                            await signInAnonymously(auth);
+                        }
+                        document.getElementById('auth-container').style.display = 'none';
+                        document.getElementById('app-container').style.display = 'none';
+                        document.getElementById('player-view-container').classList.add('active');
+                        loadPlayerView(playerViewId, playerToken);
+                    } catch (error) {
+                        console.error("Anonymous sign-in failed:", error);
+                        const container = document.getElementById('player-view-container');
+                        container.innerHTML = '<p class="text-red-500 text-center text-2xl p-8">Impossibile connettersi. Riprova più tardi.</p>';
+                        container.classList.add('active');
+                        document.getElementById('auth-container').style.display = 'none';
+                        document.getElementById('app-container').style.display = 'none';
+                    }
+                })();
+            } else if (user) { 
+                document.getElementById('auth-container').classList.remove('active');
+                document.getElementById('app-container').classList.add('active');
+                document.getElementById('player-view-container').style.display = 'none';
+                document.getElementById('user-email').textContent = user.email;
+                currentUserId = user.uid;
+                loadAdventures(user.uid);
+            } else {
+                document.getElementById('app-container').classList.remove('active');
+                document.getElementById('player-view-container').style.display = 'none';
+                document.getElementById('auth-container').classList.add('active');
+                currentUserId = null;
+            }
+        });
 
         function renderDiceLog(containerEl, rolls = []) {
             if (!containerEl) return;
@@ -379,22 +404,6 @@
             });
         }
         
-        onAuthStateChanged(auth, user => { 
-            if (playerViewId && playerToken) return;
-            document.getElementById('initial-loader').style.display = 'none';
-            if (user) { 
-                document.getElementById('auth-container').classList.remove('active');
-                document.getElementById('app-container').classList.add('active'); 
-                document.getElementById('user-email').textContent = user.email; 
-                currentUserId = user.uid; 
-                loadAdventures(user.uid); 
-            } else {
-                document.getElementById('app-container').classList.remove('active'); 
-                document.getElementById('auth-container').classList.add('active');
-                currentUserId = null; 
-            } 
-        });
-
         document.getElementById('show-register').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('login-form').style.display = 'none'; document.getElementById('register-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
         document.getElementById('show-login').addEventListener('click', (e) => { e.preventDefault(); document.getElementById('register-form').style.display = 'none'; document.getElementById('login-form').style.display = 'block'; document.getElementById('auth-error').textContent = ''; });
         document.getElementById('register-form').addEventListener('submit', (e) => { e.preventDefault(); const email = document.getElementById('register-email').value; const password = document.getElementById('register-password').value; createUserWithEmailAndPassword(auth, email, password).catch(error => { document.getElementById('auth-error').textContent = error.message; }); });
@@ -1487,4 +1496,3 @@
     </script>
 </body>
 </html>
-
