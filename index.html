@@ -1766,6 +1766,92 @@ csModalContent.addEventListener('input', (e) => {
 
         document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
 
+
+        let racesData = null;
+let classesData = null;
+
+// Carica i JSON una sola volta (alla prima chiamata)
+async function loadData() {
+    if (!racesData) {
+        const resp = await fetch('races.json');
+        racesData = await resp.json();
+    }
+    if (!classesData) {
+        const resp = await fetch('classes.json');
+        classesData = await resp.json();
+    }
+}
+
+// Funzione principale per aggiornare la sezione automatica
+async function updateAutoFeatures(razza, sottorazza, classe, sottoclasse, livello) {
+    await loadData();
+    // Esempio: cerca la razza
+    let tratti = [];
+    let privilegi = [];
+
+    // Trova la razza e i tratti razziali
+    const race = racesData.find(r => r.name === razza);
+    if (race) {
+        if (race.traits) tratti = [...tratti, ...race.traits];
+        // Sottorazza
+        if (sottorazza) {
+            const subrace = race.subraces?.find(sr => sr.name === sottorazza);
+            if (subrace && subrace.traits) tratti = [...tratti, ...subrace.traits];
+        }
+    }
+    // Trova la classe e i privilegi di classe
+    const cls = classesData.find(c => c.name === classe);
+    if (cls) {
+        // Privilegi di classe per livello
+        cls.features?.forEach(f => {
+            if (f.level <= livello) privilegi.push(f.name);
+        });
+        // Sottoclasse
+        if (sottoclasse) {
+            const subclass = cls.subclasses?.find(sc => sc.name === sottoclasse);
+            if (subclass) {
+                subclass.features?.forEach(f => {
+                    if (f.level <= livello) privilegi.push(f.name);
+                });
+            }
+        }
+    }
+
+    // Elimina duplicati
+    tratti = [...new Set(tratti)];
+    privilegi = [...new Set(privilegi)];
+
+    // Rendering nella sezione automatica
+    const autoDiv = document.getElementById('cs-class-features-auto');
+    autoDiv.innerHTML = `
+        <h5>Tratti razziali</h5>
+        <ul>${tratti.map(t => `<li>${t}</li>`).join('')}</ul>
+        <h5>Privilegi di classe/sottoclasse</h5>
+        <ul>${privilegi.map(p => `<li>${p}</li>`).join('')}</ul>
+    `;
+}
+
+// Esempio di collegamento agli eventi (modifica secondo la tua UI)
+document.getElementById('cs-race').addEventListener('change', aggiornaAutoFeaturesDaForm);
+document.getElementById('cs-subrace').addEventListener('change', aggiornaAutoFeaturesDaForm);
+document.getElementById('cs-class').addEventListener('change', aggiornaAutoFeaturesDaForm);
+document.getElementById('cs-subclass').addEventListener('change', aggiornaAutoFeaturesDaForm);
+document.getElementById('cs-level').addEventListener('change', aggiornaAutoFeaturesDaForm);
+
+function aggiornaAutoFeaturesDaForm() {
+    const razza = document.getElementById('cs-race').value;
+    const sottorazza = document.getElementById('cs-subrace').value;
+    const classe = document.getElementById('cs-class').value;
+    const sottoclasse = document.getElementById('cs-subclass').value;
+    const livello = parseInt(document.getElementById('cs-level').value, 10);
+    updateAutoFeatures(razza, sottorazza, classe, sottoclasse, livello);
+}
+
+// Chiama anche all’apertura/modifica della scheda
+document.addEventListener('DOMContentLoaded', aggiornaAutoFeaturesDaForm);
+
+        
+
     </script>
 </body>
 </html>
