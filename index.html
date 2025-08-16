@@ -1147,7 +1147,10 @@ function updateSpeedField(sheetData) {
               <table class="w-full text-xs md:text-sm mb-2">
                 <thead>
                   <tr class="bg-gray-300 text-black">
-                    <th class="p-1">Nome</th><th class="p-1">Proprietà</th><th class="p-1">TxC</th><th class="p-1">Danni</th><th class="p-1">Tipo</th><th></th>
+                    <th class="p-1">Nome</th>
+                    <th class="p-1">TxC</th>
+                    <th class="p-1">Danno</th>
+                    <th class="p-1"></th>
                   </tr>
                 </thead>
                 <tbody>
@@ -1155,11 +1158,17 @@ function updateSpeedField(sheetData) {
                     const globalIndex = sheetData.weapons.indexOf(w);
                     return `
                     <tr class="border-b border-gray-200 text-center">
-                      <td class="p-1">${w.name}</td>
-                      <td class="p-1">${w.properties}</td>
-                      <td class="p-1">${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</td>
-                      <td class="p-1">${calcDamageString(w, sheetData.stats)}</td>
-                      <td class="p-1">${w.damageType}</td>
+                      <td class="p-1 text-left">${w.name} <em class="text-gray-500 text-xs">(${w.properties})</em></td>
+                      <td class="p-1">
+                        <button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
+                            ${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}
+                        </button>
+                      </td>
+                      <td class="p-1">
+                        <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
+                           ${w.damage} (${w.damageType})
+                        </button>
+                      </td>
                       <td class="p-1">
                         <button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button>
                         <button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button>
@@ -1500,6 +1509,14 @@ csModalContent.addEventListener('input', (e) => {
                     saveCharacterSheet(token, sheetData);
                 }
             }
+            const rollAttackBtn = e.target.closest('.roll-attack-btn');
+            if (rollAttackBtn) {
+                handleWeaponRoll('attack', rollAttackBtn.dataset.idx);
+            }
+            const rollDamageBtn = e.target.closest('.roll-damage-btn');
+            if (rollDamageBtn) {
+                handleWeaponRoll('damage', rollDamageBtn.dataset.idx);
+            }
         });
 
        function readSheetFromDOM() {
@@ -1552,6 +1569,7 @@ csModalContent.addEventListener('input', (e) => {
 }
 
         async function saveCharacterSheet(token, sheetData) {
+            window.currentSheetData = sheetData; // Update local cache immediately
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
             const adventureId = isPlayerView ? playerViewId : currentAdventureId;
             const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
@@ -1576,8 +1594,98 @@ csModalContent.addEventListener('input', (e) => {
             }
         }
 
+        async function addRollToLog(rollData) {
+            const isPlayerView = csModal.dataset.isPlayerView === 'true';
+            const adventureId = isPlayerView ? playerViewId : currentAdventureId;
+            if (!adventureId) {
+                console.error("ID Avventura non trovato per il tiro.");
+                return;
+            }
+            try {
+                const adventureRef = doc(db, 'publicAdventures', adventureId);
+                await updateDoc(adventureRef, {
+                    diceRolls: arrayUnion(rollData)
+                });
+            } catch (error) {
+                console.error("Errore nell'invio del tiro al log:", error);
+            }
+        }
+
+        function parseAndRollDamage(damageString) {
+            const parts = damageString.toLowerCase().replace(/\s/g, '').split('+');
+            let diceTotal = 0;
+            const rolls = [];
+            let flatBonus = 0;
+
+            for (const part of parts) {
+                if (part.includes('d')) {
+                    const [numDiceStr, diceSidesStr] = part.split('d');
+                    const numDice = parseInt(numDiceStr) || 1;
+                    const diceSides = parseInt(diceSidesStr);
+                    if (!isNaN(numDice) && !isNaN(diceSides)) {
+                         for (let i = 0; i < numDice; i++) {
+                            const roll = Math.floor(Math.random() * diceSides) + 1;
+                            rolls.push(roll);
+                            diceTotal += roll;
+                        }
+                    }
+                } else {
+                    const bonus = parseInt(part);
+                    if (!isNaN(bonus)) flatBonus += bonus;
+                }
+            }
+            return { diceTotal, rolls, flatBonus };
+        }
+
+        async function handleWeaponRoll(type, weaponIndex) {
+            const token = csModal.dataset.currentToken;
+            const player = currentAdventureData.players.find(p => p.token === token);
+            if (!player) return;
+
+            const sheetData = player.characterSheet;
+            const weapon = sheetData.weapons[parseInt(weaponIndex)];
+            if (!weapon) return;
+
+            let rollData;
+
+            if (type === 'attack') {
+                const d20Roll = Math.floor(Math.random() * 20) + 1;
+                const attackBonusString = calcAttackBonus(weapon, sheetData.stats, sheetData.proficiencyBonus.replace('+', ''));
+                const bonus = parseInt(attackBonusString);
+                const total = d20Roll + bonus;
+                rollData = {
+                    id: crypto.randomUUID(),
+                    playerName: player.name,
+                    rollNotation: `Attacco con ${weapon.name}`,
+                    result: total,
+                    details: `Tiro d20: [${d20Roll}] Bonus: ${formatModifier(bonus)}`,
+                    timestamp: Date.now()
+                };
+            } else if (type === 'damage') {
+                const { diceTotal, rolls, flatBonus } = parseAndRollDamage(weapon.damage);
+                const statForDamage = getAttackStat(weapon, sheetData.stats);
+                const abilityMod = getStatMod(statForDamage, sheetData.stats);
+                const customBonus = parseInt(weapon.damageBonus) || 0;
+                const totalModifier = abilityMod + customBonus + flatBonus;
+                const totalDamage = diceTotal + totalModifier;
+
+                rollData = {
+                    id: crypto.randomUUID(),
+                    playerName: player.name,
+                    rollNotation: `Danno con ${weapon.name}`,
+                    result: totalDamage,
+                    details: `Tiro: [${rolls.join(', ')}] Modificatori: ${formatModifier(totalModifier)}`,
+                    timestamp: Date.now()
+                };
+            }
+
+            if (rollData) {
+                await addRollToLog(rollData);
+            }
+        }
+
         document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
 
     </script>
 </body>
-</html>
+</html>" is selected in the edit
