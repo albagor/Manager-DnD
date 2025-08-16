@@ -188,6 +188,23 @@
                             <div class="cs-box"><label class="cs-label">Velocità</label><div class="flex gap-2 items-center"><input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly><input type="text" data-field="speedModifier" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus"></div><small class="text-xs text-gray-500 font-sans">Velocità base calcolata da razza/classe.</small></div>
                             <div class="cs-box"><label class="cs-label">Punti Ferita</label><div class="grid grid-cols-2 gap-2"><div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div><div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div></div></div>
                             <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
+                            <div class="cs-box" id="cs-death-saves">
+                                <label class="cs-label">Tiri Salvezza contro Morte</label>
+                                <div class="flex justify-around items-center mt-1">
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm">Successi</span>
+                                        <input type="checkbox" data-death-save-success="0" class="w-5 h-5">
+                                        <input type="checkbox" data-death-save-success="1" class="w-5 h-5">
+                                        <input type="checkbox" data-death-save-success="2" class="w-5 h-5">
+                                    </div>
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-sm">Fallimenti</span>
+                                        <input type="checkbox" data-death-save-failure="0" class="w-5 h-5">
+                                        <input type="checkbox" data-death-save-failure="1" class="w-5 h-5">
+                                        <input type="checkbox" data-death-save-failure="2" class="w-5 h-5">
+                                    </div>
+                                </div>
+                            </div>
                             <div class="cs-box"><label class="cs-label mb-2">Difese</label><div id="cs-defenses-list" class="space-y-1"></div><button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button></div>
                         </div>
                     </div>
@@ -200,7 +217,7 @@
                 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
-                    <div class="mt-2 pt-2 border-t  border-gray-400"><div class="cs-box h-[32rem]"><textarea class="cs-textarea mt-2 pt-2 border-t" data-field="featuresTraits"></textarea></div></div>
+                    <div class="mt-2 pt-2 border-t border-gray-400"><div class="cs-box h-[32rem]"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div></div>
                 </details>
 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
@@ -686,6 +703,7 @@
                 stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
                 proficiencyBonus: "+2", initiativeBonus: 0, speedModifier: "",
                 hp: { max: 10, current: 10 }, hitDice: "",
+                deathSaves: { successes: [false, false, false], failures: [false, false, false] },
                 personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
                 proficiencies: { saves: [], skills: [] },
                 defenses: [], weapons: [], equipment: [],
@@ -769,6 +787,7 @@
                 hp: { ...emptySheet.hp, ...(playerSheet.hp || {}) },
                 treasure: { ...emptySheet.treasure, ...(playerSheet.treasure || {}) },
                 proficiencies: { ...emptySheet.proficiencies, ...(playerSheet.proficiencies || {}) },
+                deathSaves: { ...emptySheet.deathSaves, ...(playerSheet.deathSaves || {}) },
                 spellcasting: {
                     ...emptySheet.spellcasting,
                     ...(playerSheet.spellcasting || {}),
@@ -796,6 +815,11 @@
             renderRace(sheetData.race || '');
             renderEquipment(sheetData.equipment || []);
             renderSpells(sheetData.spellcasting || createEmptyCharacterSheet().spellcasting);
+            
+            const deathSaves = sheetData.deathSaves || { successes: [false, false, false], failures: [false, false, false] };
+            csModalContent.querySelectorAll('[data-death-save-success]').forEach((el, index) => { el.checked = deathSaves.successes[index] || false; });
+            csModalContent.querySelectorAll('[data-death-save-failure]').forEach((el, index) => { el.checked = deathSaves.failures[index] || false; });
+
             updateTotalLevel(sheetData);
             updateAC(sheetData);
             updateInitiative(sheetData);
@@ -1073,6 +1097,10 @@
             sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({ id: itemEl.dataset.id, name: itemEl.querySelector('.cs-defense-name').value, value: itemEl.querySelector('.cs-defense-value').value, type: itemEl.querySelector('.cs-defense-type').value, worn: itemEl.querySelector('.cs-defense-worn').checked }));
             sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => { const classSelect = itemEl.querySelector('.cs-class-name'); let className = classSelect.value === 'Altro...' ? itemEl.querySelector('.cs-class-name-custom').value : classSelect.value; return { id: itemEl.dataset.id, name: className, level: itemEl.querySelector('.cs-class-level').value } });
             
+            sheetData.deathSaves = { successes: [], failures: [] };
+            csModalContent.querySelectorAll('[data-death-save-success]').forEach(el => { sheetData.deathSaves.successes.push(el.checked); });
+            csModalContent.querySelectorAll('[data-death-save-failure]').forEach(el => { sheetData.deathSaves.failures.push(el.checked); });
+
             // Leggi dati da cache per non perdere dati non visibili
             sheetData.equipment = window.currentSheetData.equipment || [];
             sheetData.weapons = window.currentSheetData.weapons || [];
@@ -1142,6 +1170,4 @@
 
     </script>
 </body>
-</html>
-"
-I would like to incorporate a music player into the application. The music player should have play, pause, and stop buttons. Additionally, there should be a button to switch between different music tracks. The music player should be displayed below the "D&D Adventure Manager" title and above the ta
+</ht
