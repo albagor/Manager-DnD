@@ -750,10 +750,30 @@
         function openCharacterSheetModal(playerToken, isPlayerView = false) {
             const player = currentAdventureData.players.find(p => p.token === playerToken);
             if (!player) return;
+            
             document.getElementById('cs-modal-title').textContent = `Scheda di ${player.name}`;
             csModal.dataset.currentToken = playerToken;
             csModal.dataset.isPlayerView = isPlayerView;
-            populateCharacterSheet(player.characterSheet || createEmptyCharacterSheet());
+
+            // Deep merge with defaults to prevent errors with old data structures from Firestore
+            const emptySheet = createEmptyCharacterSheet();
+            const playerSheet = player.characterSheet || {};
+            const sheetData = {
+                ...emptySheet,
+                ...playerSheet,
+                stats: { ...emptySheet.stats, ...(playerSheet.stats || {}) },
+                hp: { ...emptySheet.hp, ...(playerSheet.hp || {}) },
+                treasure: { ...emptySheet.treasure, ...(playerSheet.treasure || {}) },
+                proficiencies: { ...emptySheet.proficiencies, ...(playerSheet.proficiencies || {}) },
+                spellcasting: {
+                    ...emptySheet.spellcasting,
+                    ...(playerSheet.spellcasting || {}),
+                    slots: { ...emptySheet.spellcasting.slots, ...(playerSheet.spellcasting?.slots || {}) },
+                    spells: { ...emptySheet.spellcasting.spells, ...(playerSheet.spellcasting?.spells || {}) },
+                }
+            };
+
+            populateCharacterSheet(sheetData);
             csModal.classList.remove('hidden');
         }
 
