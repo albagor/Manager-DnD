@@ -292,21 +292,26 @@
                 </details>
 
                 <!-- === INIZIO BLOCCO ARMI & ATTACCHI === -->
-<details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-  <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
-  <div class="mt-2 pt-2 border-t border-gray-400">
-    <div id="weapons-list-container" class="space-y-2"></div>
-    <button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button>
-  </div>
-</details>
-<!-- === FINE BLOCCO ARMI & ATTACCHI === -->
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
+                  <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
+                  <div class="mt-2 pt-2 border-t border-gray-400">
+                    <div id="weapons-list-container" class="space-y-2"></div>
+                    <button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button>
+                  </div>
+                </details>
+                <!-- === FINE BLOCCO ARMI & ATTACCHI === -->
                 
-                <!-- Resto della Scheda -->
-                <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
-                     <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
-                     <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
-                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
-                </div>
+                <!-- === INIZIO BLOCCO PRIVILEGI, TRATTI & EQUIPAGGIAMENTO === -->
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
+                    <summary class="text-2xl text-red-800 font-bold">Privilegi, Tratti & Equipaggiamento</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-2">
+                        <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                        <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
+                        <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
+                    </div>
+                </details>
+                <!-- === FINE BLOCCO PRIVILEGI, TRATTI & EQUIPAGGIAMENTO === -->
+
             </div>
         </div>
     </div>
@@ -1780,4 +1785,4 @@ csModalContent.addEventListener('input', (e) => {
 
     </script>
 </body>
-</ht
+</html>
