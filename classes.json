@@ -1,0 +1,183 @@
+[
+  {
+    "className": "Barbaro",
+    "featuresByLevel": {
+      "1": ["Rabbia", "Difesa senza armatura"],
+      "2": ["Attacco imprudente", "Senso del pericolo"],
+      "3": ["Sentiero del barbaro"],
+      "4": ["Incremento di caratteristica"],
+      "5": ["Attacco extra", "Movimento veloce"],
+      "6": ["Capacità del sentiero"],
+      "7": ["Istinto ferino"],
+      "8": ["Incremento di caratteristica"],
+      "9": ["Colpo brutale"],
+      "10": ["Capacità del sentiero"],
+      "11": ["Rabbia implacabile"],
+      "12": ["Incremento di caratteristica"],
+      "13": ["Colpo brutale (2 dadi)"],
+      "14": ["Capacità del sentiero"],
+      "15": ["Persistenza della rabbia"],
+      "16": ["Incremento di caratteristica"],
+      "17": ["Colpo brutale (3 dadi)"],
+      "18": ["Indomito"],
+      "19": ["Incremento di caratteristica"],
+      "20": ["Campione primordiale"]
+    },
+    "subclasses": [
+      {
+        "subclassName": "Berserker",
+        "featuresByLevel": {
+          "3": ["Frenesia"],
+          "6": ["Resistenza alla fatica"],
+          "10": ["Presenza intimidatoria"],
+          "14": ["Rappresaglia"]
+        }
+      },
+      {
+        "subclassName": "Guerriero Totemico",
+        "featuresByLevel": {
+          "3": ["Spirito del totem"],
+          "6": ["Aspetto della bestia"],
+          "10": ["Spirito del totem superiore"],
+          "14": ["Totem incarnato"]
+        }
+      }
+    ]
+  },
+  {
+    "className": "Bardo",
+    "featuresByLevel": {
+      "1": ["Ispirazione bardica (d6)", "Incantatore"],
+      "2": ["Canzone del riposo", "Magia bardica"],
+      "3": ["Collegio bardico", "Esperienza"],
+      "4": ["Incremento di caratteristica"],
+      "5": ["Ispirazione bardica (d8)", "Fonte di ispirazione"],
+      "6": ["Capacità del collegio"],
+      "7": ["Canzone del riposo (d8)"],
+      "8": ["Incremento di caratteristica"],
+      "9": ["Ispirazione bardica (d10)"],
+      "10": ["Competenza esperta", "Magia segreta"],
+      "11": ["Canzone del riposo (d10)"],
+      "12": ["Incremento di caratteristica"],
+      "13": ["Ispirazione bardica (d12)"],
+      "14": ["Capacità del collegio"],
+      "15": ["Canzone del riposo (d12)"],
+      "16": ["Incremento di caratteristica"],
+      "17": ["Fonte di ispirazione superiore"],
+      "18": ["Magia segreta superiore"],
+      "19": ["Incremento di caratteristica"],
+      "20": ["Ispirazione infinita"]
+    },
+    "subclasses": [
+      {
+        "subclassName": "Collegio della Conoscenza",
+        "featuresByLevel": {
+          "3": ["Competenze aggiuntive", "Parole taglienti"],
+          "6": ["Segreti magici"],
+          "14": ["Abilità infallibile"]
+        }
+      },
+      {
+        "subclassName": "Collegio del Valore",
+        "featuresByLevel": {
+          "3": ["Ispirazione da combattimento"],
+          "6": ["Attacco extra"],
+          "14": ["Ispirazione superiore"]
+        }
+      }
+    ]
+  },
+  {
+    "className": "Chierico",
+    "featuresByLevel": {
+      "1": ["Dominio divino", "Incantesimi da chierico", "Canale Divino (1/rest)"],
+      "2": ["Canale Divino: Potere del Dominio"],
+      "3": [],
+      "4": ["Incremento di caratteristica"],
+      "5": ["Scacciare non morti", "Canale Divino (2/rest)"],
+      "6": ["Capacità del Dominio"],
+      "7": [],
+      "8": ["Incremento di caratteristica", "Colpo divino"],
+      "9": [],
+      "10": ["Canale Divino (3/rest)", "Intervento divino"],
+      "11": ["Capacità del Dominio"],
+      "12": ["Incremento di caratteristica"],
+      "13": [],
+      "14": [],
+      "15": [],
+      "16": ["Incremento di caratteristica"],
+      "17": ["Capacità del Dominio", "Canale Divino (4/rest)"],
+      "18": [],
+      "19": ["Incremento di caratteristica"],
+      "20": ["Intervento divino migliorato"]
+    },
+    "subclasses": [
+      {
+        "subclassName": "Dominio della Vita",
+        "featuresByLevel": {
+          "1": ["Discepolo della Vita"],
+          "2": ["Canale Divino: Preservare la vita"],
+          "6": ["Guaritore benedetto"],
+          "8": ["Colpo divino (da vita)"],
+          "17": ["Guarigione suprema"]
+        }
+      },
+      {
+        "subclassName": "Dominio della Guerra",
+        "featuresByLevel": {
+          "1": ["Discepolo della guerra"],
+          "2": ["Canale Divino: Guida della guerra"],
+          "6": ["Colpo da guerra"],
+          "8": ["Colpo divino (da guerra)"],
+          "17": ["Avatar della battaglia"]
+        }
+      }
+    ]
+  },
+  {
+    "className": "Druido",
+    "featuresByLevel": {
+      "1": ["Incantesimi da druido", "Lingua druidica"],
+      "2": ["Forma selvatica", "Circolo druidico"],
+      "3": [],
+      "4": ["Incremento di caratteristica"],
+      "5": [],
+      "6": ["Capacità del circolo"],
+      "7": [],
+      "8": ["Incremento di caratteristica", "Forma selvatica migliorata"],
+      "9": [],
+      "10": ["Capacità del circolo"],
+      "11": [],
+      "12": ["Incremento di caratteristica"],
+      "13": [],
+      "14": ["Forma selvatica bestiale"],
+      "15": [],
+      "16": ["Incremento di caratteristica"],
+      "17": [],
+      "18": ["Magia senza limiti"],
+      "19": ["Incremento di caratteristica"],
+      "20": ["Arcidruido"]
+    },
+    "subclasses": [
+      {
+        "subclassName": "Circolo della Terra",
+        "featuresByLevel": {
+          "2": ["Recupero naturale"],
+          "3": ["Cerchie della Terra"],
+          "6": ["Immunità ai veleni"],
+          "10": ["Camminare senza lasciare tracce"],
+          "14": ["Forma selvatica elementale"]
+        }
+      },
+      {
+        "subclassName": "Circolo della Luna",
+        "featuresByLevel": {
+          "2": ["Forma selvatica da combattimento"],
+          "6": ["Forma selvatica migliorata"],
+          "10": ["Forma selvatica elementale"],
+          "14": ["Metamorfosi illimitata"]
+        }
+      }
+    ]
+  }
+]
