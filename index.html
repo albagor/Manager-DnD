@@ -241,7 +241,11 @@
                                         <div class="text-center"><label class="cs-label">MP</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
                                     </div>
                                 </div>
-                                <div class="cs-box flex-grow h-[384px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
+                                <div class="cs-box flex-grow h-[384px] flex flex-col">
+                                    <label class="cs-label">Altri Tesori</label>
+                                    <div id="cs-other-treasures-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div>
+                                    <button id="cs-add-treasure-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Tesoro</button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -269,6 +273,7 @@
     <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
     <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-40"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
     <div id="feature-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="feature-modal-title">Privilegio / Tratto</h3><form id="feature-form" class="space-y-3"><input type="hidden" id="feature-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="feature-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="feature-type" class="cs-select"><option value="Razziale">Razziale</option><option value="Classe">Classe</option><option value="Background">Background</option><option value="Privilegio">Privilegio</option><option value="Altro">Altro</option></select></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="feature-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="feature-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="treasure-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="treasure-modal-title">Tesoro</h3><form id="treasure-form" class="space-y-3"><input type="hidden" id="treasure-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="treasure-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Valore (es. 100 MO)</label><input type="text" id="treasure-value" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="treasure-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="treasure-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
 
 
     <script type="module">
@@ -715,7 +720,7 @@
                 personalityTraits: "", ideals: "", bonds: "", flaws: "",
                 proficiencies: { saves: [], skills: [] },
                 defenses: [], weapons: [], equipment: [],
-                treasure: { cp: 0, sp: 0, gp: 0, pp: 0, other: "" },
+                treasure: { cp: 0, sp: 0, gp: 0, pp: 0, other: [] },
                 spellcasting: {
                     class: "", ability: "intelligence", saveDC: 0, attackBonus: "+0",
                     slots: { 1: {total:0, used:0}, 2: {total:0, used:0}, 3: {total:0, used:0}, 4: {total:0, used:0}, 5: {total:0, used:0}, 6: {total:0, used:0}, 7: {total:0, used:0}, 8: {total:0, used:0}, 9: {total:0, used:0} },
@@ -798,6 +803,16 @@
                 }];
                 delete playerSheet.featuresTraits;
             }
+            // Migration for old treasure.other string
+            if (typeof playerSheet.treasure?.other === 'string') {
+                playerSheet.treasure.other = [{
+                    id: crypto.randomUUID(),
+                    name: "Vecchio Tesoro",
+                    value: "",
+                    description: playerSheet.treasure.other
+                }];
+            }
+
 
             const sheetData = {
                 ...emptySheet,
@@ -836,6 +851,7 @@
             renderEquipment(sheetData.equipment || []);
             renderSpells(sheetData.spellcasting || createEmptyCharacterSheet().spellcasting);
             renderFeatures(sheetData.features || []);
+            renderOtherTreasures(sheetData.treasure.other || []);
             
             const deathSaves = sheetData.deathSaves || { successes: [false, false, false], failures: [false, false, false] };
             csModalContent.querySelectorAll('[data-death-save-success]').forEach((el, index) => { el.checked = deathSaves.successes[index] || false; });
@@ -1229,6 +1245,84 @@
             featureModal.classList.add('hidden');
         });
 
+        // --- LOGICA ALTRI TESORI ---
+        const treasureModal = document.getElementById('treasure-modal');
+
+        function renderOtherTreasures(treasures = []) {
+            const container = document.getElementById('cs-other-treasures-list');
+            container.innerHTML = treasures.map(item => `
+                <div class="p-1 border-b border-gray-300">
+                    <details>
+                        <summary class="flex justify-between items-center cursor-pointer">
+                            <span>${item.name} <em class="text-gray-500 text-xs">(${item.value || 'N/A'})</em></span>
+                            <div class="flex-shrink-0">
+                                <button class="edit-treasure-btn text-blue-600 p-1" data-id="${item.id}">✎</button>
+                                <button class="delete-treasure-btn text-red-600 p-1" data-id="${item.id}">&times;</button>
+                            </div>
+                        </summary>
+                        <p class="text-sm p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">${(item.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p>
+                    </details>
+                </div>
+            `).join('');
+        }
+
+        document.getElementById('cs-add-treasure-btn').addEventListener('click', () => openTreasureModal());
+
+        csModalContent.addEventListener('click', e => {
+            if (e.target.classList.contains('edit-treasure-btn')) {
+                const id = e.target.dataset.id;
+                const item = window.currentSheetData.treasure.other.find(i => i.id === id);
+                if (item) openTreasureModal(item);
+            }
+            if (e.target.classList.contains('delete-treasure-btn')) {
+                const id = e.target.dataset.id;
+                const token = csModal.dataset.currentToken;
+                if (!token) return;
+                let sheetData = readSheetFromDOM();
+                sheetData.treasure.other = sheetData.treasure.other.filter(i => i.id !== id);
+                saveCharacterSheet(token, sheetData);
+                populateCharacterSheet(sheetData);
+            }
+        });
+
+        function openTreasureModal(item = null) {
+            treasureModal.classList.remove('hidden');
+            document.getElementById('treasure-form').reset();
+            if (item) {
+                document.getElementById('treasure-modal-title').textContent = "Modifica Tesoro";
+                document.getElementById('treasure-id').value = item.id;
+                document.getElementById('treasure-name').value = item.name;
+                document.getElementById('treasure-value').value = item.value;
+                document.getElementById('treasure-description').value = item.description;
+            } else {
+                document.getElementById('treasure-modal-title').textContent = "Aggiungi Tesoro";
+                document.getElementById('treasure-id').value = '';
+            }
+        }
+        document.getElementById('treasure-cancel-btn').addEventListener('click', () => treasureModal.classList.add('hidden'));
+        document.getElementById('treasure-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const token = csModal.dataset.currentToken;
+            if (!token) return;
+            const id = document.getElementById('treasure-id').value;
+            const newItem = {
+                id: id || crypto.randomUUID(),
+                name: document.getElementById('treasure-name').value,
+                value: document.getElementById('treasure-value').value,
+                description: document.getElementById('treasure-description').value
+            };
+            let sheetData = readSheetFromDOM();
+            if (id) {
+                sheetData.treasure.other = sheetData.treasure.other.map(i => i.id === id ? newItem : i);
+            } else {
+                sheetData.treasure.other.push(newItem);
+            }
+            saveCharacterSheet(token, sheetData);
+            populateCharacterSheet(sheetData);
+            treasureModal.classList.add('hidden');
+        });
+
+
 
        function readSheetFromDOM() {
             const sheetData = createEmptyCharacterSheet();
@@ -1254,6 +1348,7 @@
             sheetData.equipment = window.currentSheetData.equipment || [];
             sheetData.weapons = window.currentSheetData.weapons || [];
             sheetData.features = window.currentSheetData.features || [];
+            sheetData.treasure.other = window.currentSheetData.treasure.other || [];
             sheetData.spellcasting = window.currentSheetData.spellcasting || createEmptyCharacterSheet().spellcasting;
             
             // Sovrascrivi con i dati visibili nel DOM
@@ -1342,4 +1437,3 @@
     </script>
 </body>
 </html>
-"
