@@ -174,13 +174,6 @@
                     </div>
                 </details>
 
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Tratti e Privilegi di Classe (Automatici)</summary>
-                    <div id="cs-class-features-auto" class="mt-2 pt-2 border-t border-gray-400 space-y-4 text-sm">
-                        <!-- Content will be generated here by JavaScript -->
-                    </div>
-                </details>
-
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
                     <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
@@ -304,7 +297,7 @@
                 <div class="grid grid-cols-1 lg:grid-cols-2 gap-2">
                      <div class="cs-box h-64"><label class="cs-label">Attacchi & Incantesimi</label><textarea class="cs-textarea" data-field="attacksSpellcasting"></textarea></div>
                      <div class="cs-box h-64"><label class="cs-label">Equipaggiamento</label><textarea class="cs-textarea" data-field="equipment"></textarea></div>
-                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti (Manuali)</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
+                     <div class="cs-box h-64 lg:col-span-2"><label class="cs-label">Privilegi & Tratti</label><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
                 </div>
             </div>
         </div>
@@ -1102,7 +1095,6 @@ function updateSpeedField(sheetData) {
             updateInitiative(sheetData);
             updateSpeedField(sheetData);
             renderWeaponsList(sheetData);
-            renderClassFeatures(sheetData); // Aggiunta chiamata
             window.currentSheetData = sheetData; // Cache for immediate UI updates
         }
         
@@ -1447,7 +1439,6 @@ csModalContent.addEventListener('input', (e) => {
     if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
         updateTotalLevel(sheetDataForUI);
         updateSpeedField(sheetDataForUI); 
-        renderClassFeatures(sheetDataForUI);
     }
     if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
         updateSpeedField(sheetDataForUI);
@@ -1505,7 +1496,6 @@ csModalContent.addEventListener('input', (e) => {
                 sheetData.classes.push(newClass);
                 renderClasses(sheetData.classes);
                 updateTotalLevel(sheetData);
-                renderClassFeatures(sheetData);
                 saveCharacterSheet(token, sheetData);
             }
             if (e.target.classList.contains('cs-delete-class-btn')) {
@@ -1516,7 +1506,6 @@ csModalContent.addEventListener('input', (e) => {
                     sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
                     renderClasses(sheetData.classes);
                     updateTotalLevel(sheetData);
-                    renderClassFeatures(sheetData);
                     saveCharacterSheet(token, sheetData);
                 }
             }
@@ -1635,7 +1624,7 @@ csModalContent.addEventListener('input', (e) => {
                     const diceSides = parseInt(diceSidesStr);
                     if (!isNaN(numDice) && !isNaN(diceSides)) {
                          for (let i = 0; i < numDice; i++) {
-                            const roll = Math.floor(Math.random() * sides) + 1;
+                            const roll = Math.floor(Math.random() * diceSides) + 1;
                             rolls.push(roll);
                             diceTotal += roll;
                         }
@@ -1695,267 +1684,7 @@ csModalContent.addEventListener('input', (e) => {
             }
         }
 
-        const DND_CLASS_FEATURES = {
-            "Guerriero": {
-                1: [{ name: "Stile di Combattimento", description: "Adotti uno stile di combattimento particolare come tua specialità. Scegli una delle opzioni disponibili." }, { name: "Recuperare Energie", description: "Puoi usare un'azione bonus per recuperare un numero di punti ferita pari a 1d10 + il tuo livello da guerriero." }],
-                2: [{ name: "Azione Impetuosa", description: "Puoi spingerti oltre i tuoi limiti normali per un istante. Nel tuo turno, puoi effettuare un'azione aggiuntiva." }],
-                3: [{ name: "Archetipo Marziale", description: "Scegli un archetipo che definisce il tuo approccio al combattimento." }],
-                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
-                5: [{ name: "Attacco Extra", description: "Puoi attaccare due volte, invece di una, ogni volta che effettui l'azione di Attacco nel tuo turno." }]
-            },
-            "Ladro": {
-                1: [{ name: "Maestria", description: "Scegli due delle tue abilità competenti. Il tuo bonus di competenza è raddoppiato per qualsiasi prova di abilità che fai che usa una delle competenze scelte." }, { name: "Attacco Furtivo", description: "Una volta per turno, puoi infliggere 1d6 danni extra a una creatura che colpisci con un attacco se hai vantaggio sul tiro per colpire." }, { name: "Gergo Ladresco", description: "Conosci il gergo ladresco, un misto di dialetto, gergo e codice segreto che ti permette di passare messaggi nascosti." }],
-                2: [{ name: "Azione Scaltra", description: "La tua rapidità di pensiero e agilità ti permettono di muoverti e agire rapidamente. Puoi usare un'azione bonus nel tuo turno per effettuare l'azione di Scatto, Disimpegno o Nascondersi." }],
-                3: [{ name: "Archetipo Ladresco", description: "Scegli un archetipo che riflette il tuo stile preferito di furfanteria." }],
-                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
-                5: [{ name: "Schivata Prodigiosa", description: "Quando un attaccante che puoi vedere ti colpisce con un attacco, puoi usare la tua reazione per dimezzare il danno dell'attacco contro di te." }]
-            },
-             "Mago": {
-                1: [{ name: "Incantesimi", description: "Come studente di magia arcana, possiedi un libro degli incantesimi che contiene gli incantesimi che conosci." }, { name: "Recupero Arcano", description: "Una volta al giorno, quando finisci un riposo breve, puoi scegliere di recuperare slot incantesimo spesi." }],
-                2: [{ name: "Tradizione Arcana", description: "Scegli una tradizione arcana, che modella la tua pratica della magia." }],
-                3: [{ name: "Incantesimi di 2° Livello", description: "Puoi preparare e lanciare incantesimi di 2° livello." }],
-                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
-                5: [{ name: "Incantesimi di 3° Livello", description: "Puoi preparare e lanciare incantesimi di 3° livello." }]
-            },
-            "Chierico": {
-                1: [{ name: "Incantesimi", description: "Come condotto del potere divino, puoi lanciare incantesimi da chierico." }, { name: "Dominio Divino", description: "Scegli un dominio legato alla tua divinità. Il tuo dominio ti concede incantesimi di dominio e altri privilegi." }],
-                2: [{ name: "Incanalare Divinità", description: "Ottieni la capacità di incanalare l'energia divina direttamente dalla tua divinità, usando quell'energia per alimentare effetti magici." }],
-                4: [{ name: "Aumento dei Punteggi di Caratteristica", description: "Aumenti un punteggio di caratteristica a tua scelta di 2, o due punteggi di caratteristica a tua scelta di 1." }],
-                5: [{ name: "Distruggere Non Morti (GS 1/2)", description: "Quando un non morto fallisce il suo tiro salvezza contro il tuo Scacciare Non Morti, la creatura viene istantaneamente distrutta se il suo grado di sfida è pari o inferiore a 1/2." }]
-            }
-        };
-
-        function renderClassFeatures(sheetData) {
-            const container = document.getElementById('cs-class-features-auto');
-            container.innerHTML = '';
-            if (!sheetData || !sheetData.classes || sheetData.classes.length === 0) {
-                container.innerHTML = '<p class="text-gray-500">Nessuna classe selezionata.</p>';
-                return;
-            }
-
-            sheetData.classes.forEach(c => {
-                const className = c.name;
-                const classLevel = parseInt(c.level) || 0;
-                const classFeatures = DND_CLASS_FEATURES[className];
-
-                if (!classFeatures) return;
-
-                const classContainer = document.createElement('div');
-                classContainer.className = 'mb-3';
-                
-                const classTitle = document.createElement('h4');
-                classTitle.className = 'text-lg font-bold text-red-700';
-                classTitle.textContent = `${className} (Livello ${classLevel})`;
-                classContainer.appendChild(classTitle);
-
-                for (let level = 1; level <= classLevel; level++) {
-                    if (classFeatures[level]) {
-                        const levelFeatures = classFeatures[level];
-                        levelFeatures.forEach(feature => {
-                            const featureEl = document.createElement('div');
-                            featureEl.className = 'ml-2 mt-1 p-1 border-l-2 border-gray-300';
-                            featureEl.innerHTML = `<p><strong class="font-bold text-black">${feature.name} (Liv. ${level}):</strong> ${feature.description}</p>`;
-                            classContainer.appendChild(featureEl);
-                        });
-                    }
-                }
-                container.appendChild(classContainer);
-            });
-        }
-
-
         document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
-
-
-        let racesData = null;
-let classesData = null;
-
-// Carica i JSON una sola volta (alla prima chiamata)
-async function loadData() {
-    if (!racesData) {
-        const resp = await fetch('races.json');
-        racesData = await resp.json();
-    }
-    if (!classesData) {
-        const resp = await fetch('classes.json');
-        classesData = await resp.json();
-    }
-}
-
-// Funzione principale per aggiornare la sezione automatica
-async function updateAutoFeatures(razza, sottorazza, classe, sottoclasse, livello) {
-    await loadData();
-    // Esempio: cerca la razza
-    let tratti = [];
-    let privilegi = [];
-
-    // Trova la razza e i tratti razziali
-    const race = racesData.find(r => r.name === razza);
-    if (race) {
-        if (race.traits) tratti = [...tratti, ...race.traits];
-        // Sottorazza
-        if (sottorazza) {
-            const subrace = race.subraces?.find(sr => sr.name === sottorazza);
-            if (subrace && subrace.traits) tratti = [...tratti, ...subrace.traits];
-        }
-    }
-    // Trova la classe e i privilegi di classe
-    const cls = classesData.find(c => c.name === classe);
-    if (cls) {
-        // Privilegi di classe per livello
-        cls.features?.forEach(f => {
-            if (f.level <= livello) privilegi.push(f.name);
-        });
-        // Sottoclasse
-        if (sottoclasse) {
-            const subclass = cls.subclasses?.find(sc => sc.name === sottoclasse);
-            if (subclass) {
-                subclass.features?.forEach(f => {
-                    if (f.level <= livello) privilegi.push(f.name);
-                });
-            }
-        }
-    }
-
-    // Elimina duplicati
-    tratti = [...new Set(tratti)];
-    privilegi = [...new Set(privilegi)];
-
-    // Rendering nella sezione automatica
-    const autoDiv = document.getElementById('cs-class-features-auto');
-    autoDiv.innerHTML = `
-        <h5>Tratti razziali</h5>
-        <ul>${tratti.map(t => `<li>${t}</li>`).join('')}</ul>
-        <h5>Privilegi di classe/sottoclasse</h5>
-        <ul>${privilegi.map(p => `<li>${p}</li>`).join('')}</ul>
-    `;
-}
-
-// Esempio di collegamento agli eventi (modifica secondo la tua UI)
-document.getElementById('cs-race').addEventListener('change', aggiornaAutoFeaturesDaForm);
-document.getElementById('cs-subrace').addEventListener('change', aggiornaAutoFeaturesDaForm);
-document.getElementById('cs-class').addEventListener('change', aggiornaAutoFeaturesDaForm);
-document.getElementById('cs-subclass').addEventListener('change', aggiornaAutoFeaturesDaForm);
-document.getElementById('cs-level').addEventListener('change', aggiornaAutoFeaturesDaForm);
-
-function aggiornaAutoFeaturesDaForm() {
-    const razza = document.getElementById('cs-race').value;
-    const sottorazza = document.getElementById('cs-subrace').value;
-    const classe = document.getElementById('cs-class').value;
-    const sottoclasse = document.getElementById('cs-subclass').value;
-    const livello = parseInt(document.getElementById('cs-level').value, 10);
-    updateAutoFeatures(razza, sottorazza, classe, sottoclasse, livello);
-}
-
-// Chiama anche all’apertura/modifica della scheda
-document.addEventListener('DOMContentLoaded', aggiornaAutoFeaturesDaForm);
-let racesData = null;
-let classesData = null;
-
-/** Carica i JSON solo la prima volta */
-async function loadData() {
-    if (!racesData) {
-        const resp = await fetch('races.json');
-        racesData = await resp.json();
-    }
-    if (!classesData) {
-        const resp = await fetch('classes.json');
-        classesData = await resp.json();
-    }
-}
-
-/** Funzione principale per aggiornare la sezione automatica */
-async function updateAutoFeatures(sheetData) {
-    await loadData();
-    let tratti = [];
-    let privilegi = [];
-    // Estrai dati da sheetData (che puoi già avere in memoria)
-    const razza = sheetData.race;
-    const sottorazza = sheetData.subrace || "";
-    // Supporto multi-classe (prendiamo la classe con livello più alto)
-    const mainClassObj = (sheetData.classes || []).sort((a, b) => b.level - a.level)[0] || {};
-    const classe = mainClassObj.name || "";
-    const livello = parseInt(mainClassObj.level, 10) || 1;
-    const sottoclasse = mainClassObj.subclass || "";
-
-    // Trova la razza e i tratti razziali
-    const race = racesData.find(r => r.name === razza);
-    if (race) {
-        if (race.traits) tratti = tratti.concat(race.traits);
-        if (sottorazza && race.subraces) {
-            const subrace = race.subraces.find(sr => sr.name === sottorazza);
-            if (subrace && subrace.traits) tratti = tratti.concat(subrace.traits);
-        }
-    }
-    // Trova la classe e i privilegi di classe
-    const cls = classesData.find(c => c.name === classe);
-    if (cls) {
-        // Privilegi di classe per livello
-        cls.features && cls.features.forEach(f => {
-            if (f.level <= livello) privilegi.push(f.name);
-        });
-        // Sottoclasse
-        if (sottoclasse && cls.subclasses) {
-            const subclass = cls.subclasses.find(sc => sc.name === sottoclasse);
-            if (subclass && subclass.features) {
-                subclass.features.forEach(f => {
-                    if (f.level <= livello) privilegi.push(f.name);
-                });
-            }
-        }
-    }
-
-    // Elimina duplicati
-    tratti = [...new Set(tratti)];
-    privilegi = [...new Set(privilegi)];
-
-    // Rendering nella sezione automatica
-    const autoDiv = document.getElementById('cs-class-features-auto');
-    autoDiv.innerHTML = `
-        <h5 class="font-bold text-red-800">Tratti razziali</h5>
-        <ul class="list-disc ml-5">${tratti.map(t => `<li>${t}</li>`).join('')}</ul>
-        <h5 class="font-bold text-red-800 mt-2">Privilegi di classe/sottoclasse</h5>
-        <ul class="list-disc ml-5">${privilegi.map(p => `<li>${p}</li>`).join('')}</ul>
-    `;
-}
-
-// Associa updateAutoFeatures ai cambiamenti di razza/classe/sottorazza/sottoclasse/livello
-function setupAutoFeaturesEvents() {
-    // Adatta questi ID ai tuoi input reali
-    const relevantInputs = [
-        '[data-field="race"]',
-        '[data-field="subrace"]',
-        '[data-field="classes"]',
-        '[data-field="level"]',
-        '[data-field="subclass"]'
-    ];
-    relevantInputs.forEach(sel => {
-        document.querySelectorAll(sel).forEach(el => {
-            el.addEventListener('change', aggiornaAutoFeaturesDaForm);
-        });
-    });
-}
-
-function aggiornaAutoFeaturesDaForm() {
-    // Qui estrai i dati correnti della scheda (adatta a come salvi la scheda)
-    // Questo è un esempio: sostituisci con il tuo modello dati!
-    const race = document.querySelector('[data-field="race"]')?.value || "";
-    const subrace = document.querySelector('[data-field="subrace"]')?.value || "";
-    // Se hai gestione multiclassi, recupera anche quelle
-    const classes = [{ 
-        name: document.querySelector('[data-field="classes"]')?.value || "",
-        level: document.querySelector('[data-field="level"]')?.value || 1,
-        subclass: document.querySelector('[data-field="subclass"]')?.value || ""
-    }];
-    updateAutoFeatures({ race, subrace, classes });
-}
-
-// Esegui all’avvio
-document.addEventListener('DOMContentLoaded', () => {
-    setupAutoFeaturesEvents();
-    aggiornaAutoFeaturesDaForm();
-});
-        
 
     </script>
 </body>
