@@ -228,6 +228,14 @@
         <label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label>
         <input type="text" id="weapon-damage" class="cs-input" required>
       </div>
+      <div class="flex items-center gap-2 mt-1">
+          <input type="checkbox" id="weapon-versatile-checkbox">
+          <label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label>
+      </div>
+      <div id="weapon-versatile-container" class="hidden">
+          <label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label>
+          <input type="text" id="weapon-versatile-damage" class="cs-input">
+      </div>
       <div>
         <label class="block text-xs font-bold mb-1">Tipo Danno</label>
         <input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente...">
@@ -1183,73 +1191,102 @@ function updateSpeedField(sheetData) {
         }
 
         function renderWeaponsList(sheetData) {
-          const container = document.getElementById('weapons-list-container');
-          container.innerHTML = '';
-          if (!sheetData.weapons || sheetData.weapons.length === 0) {
-            container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
-            return;
-          }
-          const types = ['mischia', 'distanza', 'magica', 'altro'];
-          types.forEach(type => {
-            const weapons = sheetData.weapons.filter(w => w.type === type);
-            if (weapons.length === 0) return;
-            const groupDiv = document.createElement('div');
-            groupDiv.className = 'mb-2';
-            groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
-              <table class="w-full text-xs md:text-sm mb-2">
-                <thead>
-                  <tr class="bg-gray-300 text-black">
-                    <th class="p-1">Nome</th>
-                    <th class="p-1">TxC</th>
-                    <th class="p-1">Danno</th>
-                    <th class="p-1"></th>
-                  </tr>
-                </thead>
-                <tbody>
-                  ${weapons.map(w => {
-                    const globalIndex = sheetData.weapons.indexOf(w);
-                    return `
-                    <tr class="border-b border-gray-200 text-center">
-                      <td class="p-1 text-left">${w.name} <em class="text-gray-500 text-xs">(${w.properties})</em></td>
-                      <td class="p-1">
-                        <button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
-                            ${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}
-                        </button>
-                      </td>
-                      <td class="p-1">
-                        <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
-                           ${w.damage} (${w.damageType})
-                        </button>
-                      </td>
-                      <td class="p-1">
-                        <button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button>
-                        <button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button>
-                      </td>
+            const container = document.getElementById('weapons-list-container');
+            container.innerHTML = '';
+            if (!sheetData.weapons || sheetData.weapons.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
+                return;
+            }
+            const types = ['mischia', 'distanza', 'magica', 'altro'];
+            types.forEach(type => {
+                const weapons = sheetData.weapons.filter(w => w.type === type);
+                if (weapons.length === 0) return;
+                const groupDiv = document.createElement('div');
+                groupDiv.className = 'mb-2';
+                groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
+                <table class="w-full text-xs md:text-sm mb-2">
+                    <thead>
+                    <tr class="bg-gray-300 text-black">
+                        <th class="p-1 text-left">Nome</th>
+                        <th class="p-1">TxC</th>
+                        <th class="p-1">Danno</th>
+                        <th class="p-1"></th>
                     </tr>
-                  `}).join('')}
-                </tbody>
-              </table>`;
-            container.appendChild(groupDiv);
-          });
+                    </thead>
+                    <tbody>
+                    ${weapons.map(w => {
+                        const globalIndex = sheetData.weapons.indexOf(w);
+                        let damageButtonsHtml = '';
+                        if (w.versatileDamage) {
+                            damageButtonsHtml = `
+                                <div class="flex gap-1 justify-center">
+                                    <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">
+                                        ${w.damage}
+                                    </button>
+                                    <button class="roll-damage-btn bg-orange-500 hover:bg-orange-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="true">
+                                        ${w.versatileDamage} (V)
+                                    </button>
+                                </div>`;
+                        } else {
+                            damageButtonsHtml = `
+                                <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">
+                                ${w.damage}
+                                </button>`;
+                        }
+
+                        return `
+                        <tr class="border-b border-gray-200 text-center">
+                        <td class="p-1 text-left">${w.name} <em class="text-gray-500 text-xs">(${w.properties})</em></td>
+                        <td class="p-1">
+                            <button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
+                                ${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}
+                            </button>
+                        </td>
+                        <td class="p-1">${damageButtonsHtml}</td>
+                        <td class="p-1">
+                            <button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button>
+                            <button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button>
+                        </td>
+                        </tr>
+                    `}).join('')}
+                    </tbody>
+                </table>`;
+                container.appendChild(groupDiv);
+            });
         }
 
         document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
 
         function openWeaponModal(weapon = null, idx = null) {
-          document.getElementById('weapon-modal').classList.remove('hidden');
-          document.getElementById('weapon-form').reset();
-          document.getElementById('weapon-index').value = idx !== null ? idx : '';
-          if (weapon) {
-            document.getElementById('weapon-name').value = weapon.name;
-            document.getElementById('weapon-type').value = weapon.type;
-            document.getElementById('weapon-damage').value = weapon.damage;
-            document.getElementById('weapon-damage-type').value = weapon.damageType;
-            document.getElementById('weapon-properties').value = weapon.properties;
-            document.getElementById('weapon-proficient').checked = weapon.proficient;
-            document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
-            document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
-          }
+            document.getElementById('weapon-modal').classList.remove('hidden');
+            document.getElementById('weapon-form').reset();
+            document.getElementById('weapon-index').value = idx !== null ? idx : '';
+            
+            const versatileContainer = document.getElementById('weapon-versatile-container');
+            const versatileCheckbox = document.getElementById('weapon-versatile-checkbox');
+            const versatileDamageInput = document.getElementById('weapon-versatile-damage');
+
+            if (weapon) {
+                document.getElementById('weapon-name').value = weapon.name || '';
+                document.getElementById('weapon-type').value = weapon.type || 'mischia';
+                document.getElementById('weapon-damage').value = weapon.damage || '';
+                document.getElementById('weapon-damage-type').value = weapon.damageType || '';
+                document.getElementById('weapon-properties').value = weapon.properties || '';
+                document.getElementById('weapon-proficient').checked = weapon.proficient || false;
+                document.getElementById('weapon-attack-bonus').value = weapon.attackBonus || 0;
+                document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
+                versatileCheckbox.checked = !!weapon.versatileDamage;
+                versatileDamageInput.value = weapon.versatileDamage || '';
+            } else {
+                versatileCheckbox.checked = false;
+                versatileDamageInput.value = '';
+            }
+            versatileContainer.classList.toggle('hidden', !versatileCheckbox.checked);
         }
+        
+        document.getElementById('weapon-versatile-checkbox').addEventListener('change', (e) => {
+            document.getElementById('weapon-versatile-container').classList.toggle('hidden', !e.target.checked);
+        });
 
         document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
           document.getElementById('weapon-modal').classList.add('hidden');
@@ -1265,6 +1302,7 @@ function updateSpeedField(sheetData) {
             name: document.getElementById('weapon-name').value,
             type: document.getElementById('weapon-type').value,
             damage: document.getElementById('weapon-damage').value,
+            versatileDamage: document.getElementById('weapon-versatile-checkbox').checked ? document.getElementById('weapon-versatile-damage').value : null,
             damageType: document.getElementById('weapon-damage-type').value,
             properties: document.getElementById('weapon-properties').value,
             proficient: document.getElementById('weapon-proficient').checked,
@@ -1567,7 +1605,8 @@ csModalContent.addEventListener('input', (e) => {
             }
             const rollDamageBtn = e.target.closest('.roll-damage-btn');
             if (rollDamageBtn) {
-                handleWeaponRoll('damage', rollDamageBtn.dataset.idx);
+                const isVersatile = rollDamageBtn.dataset.versatile === 'true';
+                handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile);
             }
         });
 
@@ -1689,7 +1728,7 @@ csModalContent.addEventListener('input', (e) => {
             return { diceTotal, rolls, flatBonus };
         }
 
-        async function handleWeaponRoll(type, weaponIndex) {
+        async function handleWeaponRoll(type, weaponIndex, isVersatile = false) {
             const token = csModal.dataset.currentToken;
             const player = currentAdventureData.players.find(p => p.token === token);
             if (!player) return;
@@ -1714,7 +1753,8 @@ csModalContent.addEventListener('input', (e) => {
                     timestamp: Date.now()
                 };
             } else if (type === 'damage') {
-                const { diceTotal, rolls, flatBonus } = parseAndRollDamage(weapon.damage);
+                const damageString = isVersatile ? weapon.versatileDamage : weapon.damage;
+                const { diceTotal, rolls, flatBonus } = parseAndRollDamage(damageString);
                 const statForDamage = getAttackStat(weapon, sheetData.stats);
                 const abilityMod = getStatMod(statForDamage, sheetData.stats);
                 const customBonus = parseInt(weapon.damageBonus) || 0;
@@ -1724,7 +1764,7 @@ csModalContent.addEventListener('input', (e) => {
                 rollData = {
                     id: crypto.randomUUID(),
                     playerName: player.name,
-                    rollNotation: `Danno con ${weapon.name}`,
+                    rollNotation: `Danno con ${weapon.name}${isVersatile ? ' (V)' : ''}`,
                     result: totalDamage,
                     details: `Tiro: [${rolls.join(', ')}] Modificatori: ${formatModifier(totalModifier)}`,
                     timestamp: Date.now()
@@ -1740,4 +1780,4 @@ csModalContent.addEventListener('input', (e) => {
 
     </script>
 </body>
-</html>
+</ht
