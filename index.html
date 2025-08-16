@@ -150,21 +150,13 @@
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
                     <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400">
-                        <!-- Blocco Anagrafico -->
                         <div class="grid grid-cols-1 md:grid-cols-10 gap-2 mb-2">
                             <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
                             <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
                             <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-<div class="cs-box md:col-span-2 text-center">
-    <label class="cs-label">Livello Totale</label>
-    <input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
-</div>                        </div>
-                        <div class="cs-box mb-2">
-                            <label class="cs-label">Classi & Livelli</label>
-                            <div id="cs-classes-list" class="space-y-1 mt-1"></div>
-                            <button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button>
+                            <div class="cs-box md:col-span-2 text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly></div>
                         </div>
-                         <!-- Colonna Background -->
+                        <div class="cs-box mb-2"><label class="cs-label">Classi & Livelli</label><div id="cs-classes-list" class="space-y-1 mt-1"></div><button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button></div>
                         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
                             <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
                             <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
@@ -177,7 +169,6 @@
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
                     <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <!-- Colonna Sinistra: Statistiche e Abilità -->
                         <div class="space-y-2">
                             <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
                                 <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
@@ -187,172 +178,71 @@
                                 <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
                                 <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
                             </div>
-                            <div class="cs-box">
-                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div>
-                                <div class="cs-box mt-2" id="saving-throws-list"></div>
-                                <div class="cs-box mt-2" id="skills-list"></div>
-                            </div>
+                            <div class="cs-box"><div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div><div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div></div>
                         </div>
-                        <!-- Colonna Destra: Combattimento -->
                         <div class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
                                 <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center max-w-[90px]" data-field="armorClass" readonly></div>
-                               <div class="cs-box text-center">
-    <label class="cs-label">Iniziativa</label>
-    <div class="flex items-center justify-center">
-        <input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly>
-        <input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus">
-    </div>
-</div>
+                               <div class="cs-box text-center"><label class="cs-label">Iniziativa</label><div class="flex items-center justify-center"><input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly><input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus"></div></div>
                             </div>
-                            <!-- === INIZIO MODALE ARMA === -->
-<div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50">
-  <div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full">
-    <h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3>
-    <form id="weapon-form" class="space-y-2">
-      <input type="hidden" id="weapon-index" value="">
-      <div>
-        <label class="block text-xs font-bold mb-1">Nome Arma</label>
-        <input type="text" id="weapon-name" class="cs-input" required>
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Tipo</label>
-        <select id="weapon-type" class="cs-select">
-          <option value="mischia">Mischia</option>
-          <option value="distanza">Distanza</option>
-          <option value="magica">Magica</option>
-          <option value="altro">Altro</option>
-        </select>
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label>
-        <input type="text" id="weapon-damage" class="cs-input" required>
-      </div>
-      <div class="flex items-center gap-2 mt-1">
-          <input type="checkbox" id="weapon-versatile-checkbox">
-          <label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label>
-      </div>
-      <div id="weapon-versatile-container" class="hidden">
-          <label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label>
-          <input type="text" id="weapon-versatile-damage" class="cs-input">
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Tipo Danno</label>
-        <input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente...">
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Proprietà</label>
-        <input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse...">
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Competenza?</label>
-        <input type="checkbox" id="weapon-proficient">
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label>
-        <input type="number" id="weapon-attack-bonus" class="cs-input" value="0">
-      </div>
-      <div>
-        <label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label>
-        <input type="number" id="weapon-damage-bonus" class="cs-input" value="0">
-      </div>
-      <div class="flex gap-2 mt-2">
-        <button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button>
-        <button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button>
-      </div>
-    </form>
-  </div>
-</div>
-<!-- === FINE MODALE ARMA === -->
-
-    <!-- PATCH VELOCITÀ: nuovo blocco -->
-    <div class="cs-box">
-        <label class="cs-label">Velocità</label>
-        <div class="flex gap-2 items-center">
-            <input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly>
-            <input type="text" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus manuale">
-        </div>
-        <small class="text-xs text-gray-500 font-sans">La velocità è calcolata automaticamente (razza, classi, livelli). Modifica il campo a destra per bonus/malus temporanei.</small>
-    </div>
-    <!-- FINE PATCH VELOCITÀ -->                            <div class="cs-box">
-                                <label class="cs-label">Punti Ferita</label>
-                                <div class="grid grid-cols-2 gap-2">
-                                    <div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div>
-                                    <div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div>
-                                </div>
-                            </div>
+                            <div class="cs-box"><label class="cs-label">Velocità</label><div class="flex gap-2 items-center"><input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly><input type="text" data-field="speedModifier" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus"></div><small class="text-xs text-gray-500 font-sans">Velocità base calcolata da razza/classe.</small></div>
+                            <div class="cs-box"><label class="cs-label">Punti Ferita</label><div class="grid grid-cols-2 gap-2"><div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div><div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div></div></div>
                             <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
-                            <div class="cs-box">
-                                <label class="cs-label mb-2">Difese</label>
-                                <div id="cs-defenses-list" class="space-y-1"></div>
-                                <button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button>
-                            </div>
+                            <div class="cs-box"><label class="cs-label mb-2">Difese</label><div id="cs-defenses-list" class="space-y-1"></div><button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button></div>
                         </div>
                     </div>
                 </details>
 
-                <!-- === INIZIO BLOCCO ARMI & ATTACCHI === -->
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
                   <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
-                  <div class="mt-2 pt-2 border-t border-gray-400">
-                    <div id="weapons-list-container" class="space-y-2"></div>
-                    <button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button>
-                  </div>
+                  <div class="mt-2 pt-2 border-t border-gray-400"><div id="weapons-list-container" class="space-y-2"></div><button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button></div>
                 </details>
-                <!-- === FINE BLOCCO ARMI & ATTACCHI === -->
                 
-                <!-- === INIZIO BLOCCO PRIVILEGI & TRATTI === -->
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <div class="cs-box h-96"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div>
-                    </div>
+                    <div class="mt-2 pt-2 border-t border-gray-400"><div class="cs-box h-96"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div></div>
                 </details>
-                <!-- === FINE BLOCCO PRIVILEGI & TRATTI === -->
 
-                <!-- === INIZIO BLOCCO EQUIPAGGIAMENTO & TESORO === -->
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Equipaggiamento & Tesoro</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 md:grid-cols-2 gap-4">
                         <div>
-                            <div class="cs-box h-96 flex flex-col">
-                                <label class="cs-label">Equipaggiamento</label>
-                                <div id="cs-equipment-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div>
-                                <button id="cs-add-equipment-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">+</button>
-                            </div>
+                            <div class="cs-box h-96 flex flex-col"><label class="cs-label">Equipaggiamento</label><div id="cs-equipment-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div><button id="cs-add-equipment-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Oggetto</button></div>
                         </div>
                         <div>
-                            <div class="cs-box grid grid-cols-3 gap-2 mb-2">
+                            <div class="cs-box grid grid-cols-2 lg:grid-cols-4 gap-2 mb-2">
                                 <div class="text-center"><label class="cs-label">Rame</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
                                 <div class="text-center"><label class="cs-label">Argento</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
                                 <div class="text-center"><label class="cs-label">Oro</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
+                                <div class="text-center"><label class="cs-label">Platino</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
                             </div>
                             <div class="cs-box h-[320px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
                         </div>
                     </div>
                 </details>
-                <!-- === FINE BLOCCO EQUIPAGGIAMENTO & TESORO === -->
 
-                <!-- === INIZIO BLOCCO INCANTESIMI === -->
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Incantesimi</summary>
                     <div class="mt-2 pt-2 border-t border-gray-400">
                         <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
                             <div class="cs-box"><label class="cs-label">Classe da Incantatore</label><input type="text" class="cs-input" data-field="spellcasting.class"></div>
-                            <div class="cs-box"><label class="cs-label">Caratteristica</label><input type="text" class="cs-input" data-field="spellcasting.ability"></div>
-                            <div class="cs-box"><label class="cs-label">CD Tiro Salvezza</label><input type="number" class="cs-input text-center" data-field="spellcasting.saveDC"></div>
-                            <div class="cs-box"><label class="cs-label">Bonus Attacco Inc.</label><input type="text" class="cs-input text-center" data-field="spellcasting.attackBonus"></div>
+                            <div class="cs-box"><label class="cs-label">Caratteristica</label><select class="cs-select" data-field="spellcasting.ability"><option value="strength">Forza</option><option value="dexterity">Destrezza</option><option value="constitution">Costituzione</option><option value="intelligence">Intelligenza</option><option value="wisdom">Saggezza</option><option value="charisma">Carisma</option></select></div>
+                            <div class="cs-box"><label class="cs-label">CD Tiro Salvezza</label><input type="number" class="cs-input text-center" data-field="spellcasting.saveDC" readonly></div>
+                            <div class="cs-box"><label class="cs-label">Bonus Attacco Inc.</label><input type="text" class="cs-input text-center" data-field="spellcasting.attackBonus" readonly></div>
                         </div>
-                        <div id="cs-spell-levels-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2">
-                            <!-- Spell levels will be generated here by JS -->
-                        </div>
+                        <div id="cs-spell-levels-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
                     </div>
                 </details>
-                <!-- === FINE BLOCCO INCANTESIMI === -->
 
             </div>
         </div>
     </div>
+    
+    <!-- === MODALI SCHEDA PERSONAGGIO === -->
+    <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3><form id="weapon-form" class="space-y-2"><input type="hidden" id="weapon-index" value=""><div><label class="block text-xs font-bold mb-1">Nome Arma</label><input type="text" id="weapon-name" class="cs-input" required></div><div><label class="block text-xs font-bold mb-1">Tipo</label><select id="weapon-type" class="cs-select"><option value="mischia">Mischia</option><option value="distanza">Distanza</option><option value="magica">Magica</option><option value="altro">Altro</option></select></div><div><label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label><input type="text" id="weapon-damage" class="cs-input" required></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="weapon-versatile-checkbox"><label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label></div><div id="weapon-versatile-container" class="hidden"><label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label><input type="text" id="weapon-versatile-damage" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Tipo Danno</label><input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente..."></div><div><label class="block text-xs font-bold mb-1">Proprietà</label><input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse..."></div><div><label class="block text-xs font-bold mb-1">Competenza?</label><input type="checkbox" id="weapon-proficient"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label><input type="number" id="weapon-attack-bonus" class="cs-input" value="0"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label><input type="number" id="weapon-damage-bonus" class="cs-input" value="0"></div><div class="flex gap-2 mt-2"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button><button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-40"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
@@ -397,131 +287,54 @@
                 containerEl.innerHTML = `<span class="text-gray-500">Nessun tiro ancora effettuato.</span>`;
                 return;
             }
-            // Sort descending by timestamp (newest first)
             const sortedRolls = [...rolls].sort((a, b) => b.timestamp - a.timestamp);
             sortedRolls.forEach(roll => {
                 const rollEl = document.createElement('div');
                 rollEl.className = 'p-2 border-b border-gray-700';
-                rollEl.innerHTML = `
-                    <p class="text-lg">
-                        <span class="font-bold text-red-400">${roll.playerName}</span> ha tirato ${roll.rollNotation}: 
-                        <span class="font-bold text-2xl text-white">${roll.result}</span>
-                    </p>
-                    <p class="text-sm text-gray-400">${roll.details}</p>
-                `;
+                rollEl.innerHTML = `<p class="text-lg"><span class="font-bold text-red-400">${roll.playerName}</span> ha tirato ${roll.rollNotation}: <span class="font-bold text-2xl text-white">${roll.result}</span></p><p class="text-sm text-gray-400">${roll.details}</p>`;
                 containerEl.appendChild(rollEl); 
             });
         }
         
         document.getElementById('player-view-container').addEventListener('click', async (e) => {
             if (!e.target.classList.contains('player-dice-btn')) return;
-
-            if (!playerViewId || !playerToken || !currentAdventureData.players) {
-                console.error("Dati dell'avventura o del giocatore non ancora caricati.");
-                return;
-            }
-
+            if (!playerViewId || !playerToken || !currentAdventureData.players) return;
             const btn = e.target;
             const currentPlayer = currentAdventureData.players.find(p => p.token === playerToken);
-            if (!currentPlayer) {
-                console.error("Impossibile trovare il giocatore corrente.");
-                return;
-            }
-
+            if (!currentPlayer) return;
             const sides = parseInt(btn.dataset.sides);
             const modifier = parseInt(document.getElementById('player-dice-modifier').value) || 0;
-            
             const rollResult = Math.floor(Math.random() * sides) + 1;
             const total = rollResult + modifier;
-
-            const rollData = {
-                id: crypto.randomUUID(),
-                playerName: currentPlayer.name,
-                rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`,
-                result: total,
-                details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`,
-                timestamp: Date.now()
-            };
-
-            try {
-                const adventureRef = doc(db, 'publicAdventures', playerViewId);
-                await updateDoc(adventureRef, {
-                    diceRolls: arrayUnion(rollData)
-                });
-            } catch (error) {
-                console.error("Errore nel salvataggio del tiro:", error);
-                const diceLogContainer = document.getElementById('player-dice-log');
-                diceLogContainer.innerHTML = `<p class="text-red-500">Errore nel tiro del dado.</p>` + diceLogContainer.innerHTML;
-            }
+            const rollData = { id: crypto.randomUUID(), playerName: currentPlayer.name, rollNotation: `1d${sides}${modifier !== 0 ? (modifier > 0 ? `+${modifier}` : modifier) : ''}`, result: total, details: `[${rollResult}]${modifier !== 0 ? (modifier > 0 ? ` + ${modifier}` : ` - ${Math.abs(modifier)}`) : ''}`, timestamp: Date.now() };
+            try { await updateDoc(doc(db, 'publicAdventures', playerViewId), { diceRolls: arrayUnion(rollData) }); } catch (error) { console.error("Errore nel salvataggio del tiro:", error); }
         });
 
         function loadPlayerView(adventureId, token) {
-            let lastKnownDiceRolls = '[]'; // Cache for dice rolls to prevent re-renders
+            let lastKnownDiceRolls = '[]';
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-            
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
                     const data = doc.data();
                     currentAdventureData = data; 
                     const players = data.players || [];
                     const currentPlayer = players.find(p => p.token === token);
-                    if (!currentPlayer) {
-                        document.getElementById('player-adventure-title').textContent = "Accesso Negato";
-                        document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>';
-                        return;
-                    }
-
+                    if (!currentPlayer) { document.getElementById('player-adventure-title').textContent = "Accesso Negato"; document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>'; return; }
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
-                    document.getElementById('player-open-sheet-btn').addEventListener('click', () => {
-                        openCharacterSheetModal(token, true);
-                    });
-
-                    // FIX: Only render dice log if it has changed
+                    document.getElementById('player-open-sheet-btn').addEventListener('click', () => { openCharacterSheetModal(token, true); });
                     const diceLogContainer = document.getElementById('player-dice-log');
                     const currentDiceRollsStr = JSON.stringify(data.diceRolls || []);
-                    if (currentDiceRollsStr !== lastKnownDiceRolls) {
-                        renderDiceLog(diceLogContainer, data.diceRolls);
-                        lastKnownDiceRolls = currentDiceRollsStr;
-                    }
-
+                    if (currentDiceRollsStr !== lastKnownDiceRolls) { renderDiceLog(diceLogContainer, data.diceRolls); lastKnownDiceRolls = currentDiceRollsStr; }
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
-                    
                     const allSharedItems = data.sharedItems || [];
                     const visibleItems = allSharedItems.filter(item => item.sharedWith && (item.sharedWith.includes(token) || item.sharedWith.includes('all')));
-                    
                     const sharedChapters = visibleItems.filter(item => item.isChapter).sort((a, b) => a.order - b.order);
                     const otherItems = visibleItems.filter(item => !item.isChapter);
-
-                    if (sharedChapters.length > 0) {
-                        sharedChapters.forEach(chapter => {
-                            const chapterEl = document.createElement('div');
-                            chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                            chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                            container.appendChild(chapterEl);
-                        });
-                    }
-                    
-                    if (otherItems.length > 0) {
-                        const otherItemsContainer = document.createElement('div');
-                        otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8';
-                        otherItems.forEach(item => {
-                            const itemEl = document.createElement('div');
-                            itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6';
-                            const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : '';
-                            itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`;
-                            otherItemsContainer.appendChild(itemEl);
-                        });
-                        container.appendChild(otherItemsContainer);
-                    }
-
-                    if (visibleItems.length === 0) {
-                         container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>';
-                    }
-                } else {
-                    document.getElementById('player-adventure-title').textContent = "Avventura non trovata";
-                    document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>';
-                }
+                    if (sharedChapters.length > 0) { sharedChapters.forEach(chapter => { const chapterEl = document.createElement('div'); chapterEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; chapterEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-4">${chapter.title}</h3><p class="text-gray-300 font-sans leading-relaxed">${(chapter.publicContent || '').replace(/\n/g, '<br>')}</p>`; container.appendChild(chapterEl); }); }
+                    if (otherItems.length > 0) { const otherItemsContainer = document.createElement('div'); otherItemsContainer.className = 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8'; otherItems.forEach(item => { const itemEl = document.createElement('div'); itemEl.className = 'bg-gray-800 rounded-lg shadow-lg p-6'; const imageHtml = item.imageUrl ? `<img src="${item.imageUrl}" class="mb-4 rounded-lg w-full h-auto object-cover" onerror="this.style.display='none'"/>` : ''; itemEl.innerHTML = `<h3 class="text-2xl font-bold text-red-400 mb-2">${item.title}</h3>${imageHtml}<p class="text-gray-300 font-sans">${(item.publicContent || '').replace(/\n/g, '<br>')}</p>`; otherItemsContainer.appendChild(itemEl); }); container.appendChild(otherItemsContainer); }
+                    if (visibleItems.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center col-span-full">Il Master non ha ancora condiviso nulla con te.</p>'; }
+                } else { document.getElementById('player-adventure-title').textContent = "Avventura non trovata"; document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido.</p>'; }
             });
         }
         
@@ -655,19 +468,15 @@
                 } else { backToListBtn.click(); }
             });
 
-            let lastKnownMasterDiceRolls = '[]'; // Cache for dice rolls
+            let lastKnownMasterDiceRolls = '[]';
             onSnapshot(publicAdventureRef, (publicDoc) => {
                 if(publicDoc.exists()){
                     currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
                     const masterDiceLogContainer = document.getElementById('master-dice-log-container');
                     masterDiceLogContainer.style.display = 'block';
-                    
                     const masterDiceLog = document.getElementById('master-dice-log');
                     const currentMasterDiceRollsStr = JSON.stringify(publicDoc.data().diceRolls || []);
-                    if (currentMasterDiceRollsStr !== lastKnownMasterDiceRolls) {
-                        renderDiceLog(masterDiceLog, publicDoc.data().diceRolls);
-                        lastKnownMasterDiceRolls = currentMasterDiceRollsStr;
-                    }
+                    if (currentMasterDiceRollsStr !== lastKnownMasterDiceRolls) { renderDiceLog(masterDiceLog, publicDoc.data().diceRolls); lastKnownMasterDiceRolls = currentMasterDiceRollsStr; }
                 }
             });
         }
@@ -687,35 +496,16 @@
                     const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
                     const imageHtml = node.imageUrl ? `<img src="${node.imageUrl}" class="my-2 rounded-lg max-w-full h-auto" onerror="this.style.display='none'"/>` : '';
                     const masterNotesHtml = node.masterContent ? `<div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${(node.masterContent).replace(/\n/g, '<br>')}</div></div>` : '';
-                    return `
-                    <div class="p-2 border-t border-gray-600 node-container" data-node-id="${node.title}" data-node-type="${type}">
-                        <div class="node-view-mode">
-                             <details><summary class="cursor-pointer text-base flex justify-between items-center"><span>${node.title}</span><div class="flex-shrink-0"><button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button><button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button></div></summary>
-                                <div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${imageHtml}<div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>${masterNotesHtml}<button class="open-share-modal-btn w-full mt-2 p-1 rounded-lg text-sm bg-blue-600 hover:bg-blue-700">${shareStatus}</button></div>
-                            </details>
-                        </div>
-                        <div class="node-edit-mode hidden p-2 space-y-2">
-                            <input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)">
-                            <div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div>
-                            <div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div>
-                            <div class="flex gap-2 mt-2"><button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div>
-                        </div>
-                    </div>`;
+                    return `<div class="p-2 border-t border-gray-600 node-container" data-node-id="${node.title}" data-node-type="${type}"><div class="node-view-mode"><details><summary class="cursor-pointer text-base flex justify-between items-center"><span>${node.title}</span><div class="flex-shrink-0"><button class="edit-node-btn text-gray-400 hover:text-green-500 font-bold px-1">✎</button><button class="delete-node-btn text-gray-400 hover:text-red-500 font-bold px-1">&times;</button></div></summary><div class="node-content-view p-2 mt-2 border-t border-gray-500 font-sans text-sm">${imageHtml}<div>${(node.publicContent || '').replace(/\n/g, '<br>')}</div>${masterNotesHtml}<button class="open-share-modal-btn w-full mt-2 p-1 rounded-lg text-sm bg-blue-600 hover:bg-blue-700">${shareStatus}</button></div></details></div><div class="node-edit-mode hidden p-2 space-y-2"><input type="text" class="node-image-url-edit w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" value="${node.imageUrl || ''}" placeholder="URL Immagine (opzionale)"><div><label class="font-bold text-xs text-gray-400">Descrizione Pubblica</label><textarea class="node-public-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.publicContent || ''}</textarea></div><div><label class="font-bold text-xs text-yellow-400">Note Master (Private)</label><textarea class="node-master-content-edit w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans">${node.masterContent || ''}</textarea></div><div class="flex gap-2 mt-2"><button class="save-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-edit-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div></div>`;
                 }).join('');
-                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg flex justify-between items-center">
-                    <span>${groupName}</span>
-                    ${groupName !== 'Senza Gruppo' ? `<button class="delete-group-btn text-gray-500 hover:text-red-500 font-bold text-xl px-2" data-group-name="${groupName}" data-node-type="${type}">&times;</button>` : ''}
-                </summary>${nodesHtml}`;
+                groupDetails.innerHTML = `<summary class="p-2 cursor-pointer text-lg flex justify-between items-center"><span>${groupName}</span>${groupName !== 'Senza Gruppo' ? `<button class="delete-group-btn text-gray-500 hover:text-red-500 font-bold text-xl px-2" data-group-name="${groupName}" data-node-type="${type}">&times;</button>` : ''}</summary>${nodesHtml}`;
                 listEl.appendChild(groupDetails);
             }
         }
         
         function renderTextWithLinks(text) {
             const allNodes = [...(currentAdventureData.environments || []), ...(currentAdventureData.pngs || []), ...(currentAdventureData.maps || []), ...(currentAdventureData.treasures || []), ...(currentAdventureData.monsters || [])];
-            return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => {
-                const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase());
-                return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`;
-            }).replace(/\n/g, '<br>');
+            return (text || '').replace(/\[\[(.*?)\]\]/g, (match, nodeName) => { const nodeExists = allNodes.some(node => node.title.toLowerCase() === nodeName.toLowerCase()); return nodeExists ? `<a href="#" class="node-link" data-node-name="${nodeName}">${nodeName}</a>` : `[[${nodeName}]]`; }).replace(/\n/g, '<br>');
         }
 
         const nodeModal = document.getElementById('node-modal');
@@ -756,48 +546,21 @@
                 const type = e.target.dataset.type;
                 const typeNameMap = { pngs: 'PNG', maps: 'Mappa', environments: 'Ambiente', treasures: 'Tesoro', monsters: 'Mostro' };
                 const typeName = typeNameMap[type];
-
                 if (document.querySelector('.new-node-form-container')) return;
-
                 const listEl = document.getElementById(`${type}-list`);
                 const formContainer = document.createElement('div');
                 formContainer.className = 'p-2 mb-2 new-node-form-container';
-
-                let formHtml = `
-                    <div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500">
-                        <h4 class="text-lg text-green-400">Nuovo ${typeName}</h4>
-                        <input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo" required>
-                        <input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (opzionale)" value="Senza Gruppo">
-                        <div class="flex gap-2 mt-2">
-                            <button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button>
-                            <button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button>
-                        </div>
-                    </div>`;
-
-                if (type === 'maps') {
-                    formHtml = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione pubblica..."></textarea><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Note master..."></textarea><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
-                }
-
+                let formHtml = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuovo ${typeName}</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo" required><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (opzionale)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`;
+                if (type === 'maps') { formHtml = `<div class="p-3 space-y-2 bg-gray-700 rounded-lg border border-green-500"><h4 class="text-lg text-green-400">Nuova Mappa</h4><input type="text" class="new-node-title w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Titolo Mappa" required><input type="text" class="new-node-image-url w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="URL Immagine Mappa"><textarea class="new-node-public-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Descrizione pubblica..."></textarea><textarea class="new-node-master-content w-full h-24 bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Note master..."></textarea><input type="text" class="new-node-group w-full bg-gray-600 rounded-lg p-2 text-sm font-sans" placeholder="Gruppo (es. Dungeon Livello 1)" value="Senza Gruppo"><div class="flex gap-2 mt-2"><button class="save-new-node-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base">Salva Mappa</button><button class="cancel-new-node-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-1 text-base">Annulla</button></div></div>`; }
                 formContainer.innerHTML = formHtml;
                 listEl.prepend(formContainer);
-
                 formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
                 formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
                     const title = formContainer.querySelector('.new-node-title').value.trim();
                     if (!title) { alert('Il titolo è obbligatorio.'); return; }
-
                     let newNode = { title, group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo", publicContent: "", masterContent: "", imageUrl: "" };
-
-                    if (type === 'maps') {
-                        newNode.imageUrl = formContainer.querySelector('.new-node-image-url')?.value.trim() || "";
-                        newNode.publicContent = formContainer.querySelector('.new-node-public-content')?.value.trim() || "";
-                        newNode.masterContent = formContainer.querySelector('.new-node-master-content')?.value.trim() || "";
-                    }
-
-                    try {
-                        await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) });
-                        formContainer.remove();
-                    } catch (error) { console.error(`Errore aggiunta ${typeName}:`, error); }
+                    if (type === 'maps') { newNode.imageUrl = formContainer.querySelector('.new-node-image-url')?.value.trim() || ""; newNode.publicContent = formContainer.querySelector('.new-node-public-content')?.value.trim() || ""; newNode.masterContent = formContainer.querySelector('.new-node-master-content')?.value.trim() || ""; }
+                    try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error(`Errore aggiunta ${typeName}:`, error); }
                 });
             }
         });
@@ -806,31 +569,23 @@
             const target = e.target;
             const container = target.closest('.node-container');
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-
             if (target.classList.contains('delete-group-btn')) {
                 const groupName = target.dataset.groupName;
                 const type = target.dataset.nodeType;
                 if (!confirm(`Sei sicuro di voler eliminare il gruppo "${groupName}" e tutti i suoi contenuti?`)) return;
-
                 const adventureSnap = await getDoc(adventureRef);
                 if (adventureSnap.exists()) {
                     const adventureData = adventureSnap.data();
                     const nodes = adventureData[type] || [];
                     const nodesToDelete = nodes.filter(n => n.group === groupName);
                     const nodesToKeep = nodes.filter(n => n.group !== groupName);
-                    
                     const titlesToDelete = nodesToDelete.map(n => n.title);
                     const sharedItemsToKeep = (adventureData.sharedItems || []).filter(item => !titlesToDelete.includes(item.id));
-
-                    await updateDoc(adventureRef, {
-                        [type]: nodesToKeep,
-                        sharedItems: sharedItemsToKeep
-                    });
+                    await updateDoc(adventureRef, { [type]: nodesToKeep, sharedItems: sharedItemsToKeep });
                 }
             } else if (container) {
                 const nodeId = container.dataset.nodeId;
                 const type = container.dataset.nodeType;
-
                 if (target.classList.contains('delete-node-btn')) {
                     e.preventDefault();
                     if (!confirm(`Sei sicuro di voler eliminare "${nodeId}"?`)) return;
@@ -863,11 +618,7 @@
                             const sharedItems = adventureSnap.data().sharedItems || [];
                             const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
                             const updatePayload = { [type]: updatedNodes };
-                            if (sharedItemIndex > -1) {
-                                const updatedSharedItems = [...sharedItems];
-                                updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData };
-                                updatePayload.sharedItems = updatedSharedItems;
-                            }
+                            if (sharedItemIndex > -1) { const updatedSharedItems = [...sharedItems]; updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData }; updatePayload.sharedItems = updatedSharedItems; }
                             await updateDoc(adventureRef, updatePayload);
                         }
                     }
@@ -885,171 +636,38 @@
                 const chapterEl = document.createElement('div');
                 chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
                 chapterEl.dataset.chapterId = chapter.id;
-                chapterEl.innerHTML = `
-                    <div class="chapter-view-mode p-4">
-                        <div class="flex justify-between items-center mb-2">
-                            <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
-                            <div class="flex items-center gap-2">
-                                <button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button>
-                                <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
-                                <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
-                            </div>
-                        </div>
-                        <div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.publicContent)}</div>
-                        <div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div></div>
-                    </div>
-                    <div class="chapter-edit-mode hidden p-4 space-y-2">
-                        <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
-                        <label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea>
-                        <label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea>
-                        <div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div>
-                    </div>`;
+                chapterEl.innerHTML = `<div class="chapter-view-mode p-4"><div class="flex justify-between items-center mb-2"><h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4><div class="flex items-center gap-2"><button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button><button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button><button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button></div></div><div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.publicContent)}</div><div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div></div></div><div class="chapter-edit-mode hidden p-4 space-y-2"><label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}"><label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea><label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea><div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div></div>`;
                 container.appendChild(chapterEl);
             });
         }
 
-        document.getElementById('add-chapter-btn').addEventListener('click', async () => {
-            if (!currentAdventureId) return;
-            const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo");
-            if (!title) return;
-            const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) };
-            await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) });
-        });
+        document.getElementById('add-chapter-btn').addEventListener('click', async () => { if (!currentAdventureId) return; const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo"); if (!title) return; const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) }; await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) }); });
 
         document.getElementById('chapters-container').addEventListener('click', async e => {
             const container = e.target.closest('.chapter-container');
             if (!container) return;
             const chapterId = container.dataset.chapterId;
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
-            if (e.target.classList.contains('edit-chapter-btn')) {
-                container.querySelector('.chapter-view-mode').classList.add('hidden');
-                container.querySelector('.chapter-edit-mode').classList.remove('hidden');
-            } else if (e.target.classList.contains('cancel-edit-chapter-btn')) {
-                container.querySelector('.chapter-view-mode').classList.remove('hidden');
-                container.querySelector('.chapter-edit-mode').classList.add('hidden');
-            } else if (e.target.classList.contains('delete-chapter-btn')) {
-                if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return;
-                const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId);
-                const sharedItemToDelete = currentAdventureData.sharedItems.find(item => item.id === chapterId);
-                const updatePayload = { background: arrayRemove(chapterToDelete) };
-                if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete);
-                await updateDoc(adventureRef, updatePayload);
-            } else if (e.target.classList.contains('save-chapter-btn')) {
-                const newTitle = container.querySelector('.chapter-title-edit').value;
-                const newPublicContent = container.querySelector('.chapter-public-content-edit').value;
-                const newMasterContent = container.querySelector('.chapter-master-content-edit').value;
-                const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, publicContent: newPublicContent, masterContent: newMasterContent } : c);
-                const updatedSharedItems = currentAdventureData.sharedItems.map(item => item.id === chapterId ? { ...item, title: newTitle, publicContent: newPublicContent } : item);
-                await updateDoc(adventureRef, { background: updatedChapters, sharedItems: updatedSharedItems });
-            }
+            if (e.target.classList.contains('edit-chapter-btn')) { container.querySelector('.chapter-view-mode').classList.add('hidden'); container.querySelector('.chapter-edit-mode').classList.remove('hidden'); } 
+            else if (e.target.classList.contains('cancel-edit-chapter-btn')) { container.querySelector('.chapter-view-mode').classList.remove('hidden'); container.querySelector('.chapter-edit-mode').classList.add('hidden'); } 
+            else if (e.target.classList.contains('delete-chapter-btn')) { if (!confirm("Sei sicuro di voler eliminare questo capitolo?")) return; const chapterToDelete = currentAdventureData.background.find(c => c.id === chapterId); const sharedItemToDelete = currentAdventureData.sharedItems.find(item => item.id === chapterId); const updatePayload = { background: arrayRemove(chapterToDelete) }; if (sharedItemToDelete) updatePayload.sharedItems = arrayRemove(sharedItemToDelete); await updateDoc(adventureRef, updatePayload); } 
+            else if (e.target.classList.contains('save-chapter-btn')) { const newTitle = container.querySelector('.chapter-title-edit').value; const newPublicContent = container.querySelector('.chapter-public-content-edit').value; const newMasterContent = container.querySelector('.chapter-master-content-edit').value; const updatedChapters = currentAdventureData.background.map(c => c.id === chapterId ? { ...c, title: newTitle, publicContent: newPublicContent, masterContent: newMasterContent } : c); const updatedSharedItems = currentAdventureData.sharedItems.map(item => item.id === chapterId ? { ...item, title: newTitle, publicContent: newPublicContent } : item); await updateDoc(adventureRef, { background: updatedChapters, sharedItems: updatedSharedItems }); }
         });
 
         function renderPlayerManagementUI(adventureId, players = []) {
             const shareContainer = document.getElementById('player-share-content');
             const baseUrl = window.location.href.split('?')[0];
-            let playerListHtml = players.map(player => `
-                <div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg">
-                    <span class="font-sans font-medium text-gray-200">${player.name}</span>
-                    <div class="flex items-center gap-2">
-                        <button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button>
-                        <input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly>
-                        <button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button>
-                        <button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button>
-                    </div>
-                </div>`).join('');
+            let playerListHtml = players.map(player => `<div class="flex items-center justify-between bg-gray-700 p-2 rounded-lg"><span class="font-sans font-medium text-gray-200">${player.name}</span><div class="flex items-center gap-2"><button class="view-sheet-btn bg-purple-600 hover:bg-purple-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-token="${player.token}">Vedi Scheda</button><input type="text" value="${baseUrl}?player_view=${adventureId}&token=${player.token}" class="bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm w-40 md:w-56 font-sans" readonly><button class="copy-player-link-btn bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-link="${baseUrl}?player_view=${adventureId}&token=${player.token}">Copia</button><button class="delete-player-btn text-red-400 hover:text-red-300 font-bold text-xl" data-token="${player.token}">&times;</button></div></div>`).join('');
             shareContainer.innerHTML = `<h3 class="text-2xl font-bold mb-4 text-gray-300">Gestisci Giocatori</h3><form id="add-player-form" class="flex gap-2 mb-4"><input type="text" id="player-name-input" placeholder="Nome del giocatore" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Aggiungi</button></form><div id="player-links-list" class="space-y-2">${playerListHtml || '<p class="text-gray-500 font-sans">Nessun giocatore aggiunto.</p>'}</div>`;
             document.getElementById('add-player-form').addEventListener('submit', handleAddPlayer);
-            shareContainer.addEventListener('click', (e) => { 
-                if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); 
-                if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e);
-                if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token);
-            });
+            shareContainer.addEventListener('click', (e) => { if (e.target.classList.contains('copy-player-link-btn')) handleCopyLink(e); if (e.target.classList.contains('delete-player-btn')) handleDeletePlayer(e); if (e.target.classList.contains('view-sheet-btn')) openCharacterSheetModal(e.target.dataset.token); });
         }
 
-// PATCH VELOCITÀ: costanti e funzioni per velocità D&D
-const DND_RACE_SPEEDS = {
-    "Umano": 9,
-    "Umano (Variant)": 9,
-    "Nano (Delle Colline)": 7.5,
-    "Nano (Delle Montagne)": 7.5,
-    "Nano (Duergar)": 7.5,
-    "Elfo (Alto)": 9,
-    "Elfo (Dei Boschi)": 10.5,
-    "Elfo (Drow)": 9,
-    "Elfo (Shadar-kai)": 9,
-    "Mezzelfo": 9,
-    "Mezzorco": 9,
-    "Halfling (Piedelesto)": 7.5,
-    "Halfling (Tozzo)": 7.5,
-    "Dragonide": 9,
-    "Tiefling": 9,
-    "Gnomo (Delle Foreste)": 7.5,
-    "Gnomo (Delle Rocce)": 7.5,
-    "Goblin": 9,
-    "Hobgoblin": 9,
-    "Bugbear": 9,
-    "Goliath": 9,
-    "Lizardfolk": 9,
-    "Tabaxi": 12,
-    "Tritone": 9,
-    "Leonin": 12,
-    "Minotauro": 9,
-    "Satiro": 10.5,
-    "Warforged": 9,
-    "Firbolg": 9,
-    "Kenku": 9,
-    "Koboldo": 9,
-    "Orco": 9,
-    "Shifter": 9,
-    "Yuan-ti": 9,
-    "Vedalken": 9,
-    "Loxodon": 9,
-    "Simic Hybrid": 9,
-    "Genasi (Acqua)": 9,
-    "Genasi (Aria)": 9,
-    "Genasi (Fuoco)": 9,
-    "Genasi (Terra)": 9,
-    "Cangiante": 9,
-    "Centauro": 12,
-    "Aasimar (Protettore)": 9,
-    "Aasimar (Flagello)": 9,
-    "Aasimar (Caduto)": 9,
-    "Kalashtar": 9,
-    "default": 9
-};
-function getMonkBonusSpeed(level) {
-    if (level >= 18) return 15;
-    if (level >= 14) return 12;
-    if (level >= 10) return 9;
-    if (level >= 6) return 6;
-    if (level >= 2) return 3;
-    return 0;
-}
-function getBarbarianBonusSpeed(level, heavyArmor) {
-    if (level >= 5 && !heavyArmor) return 3;
-    return 0;
-}
-function calcBaseSpeed(race, classes, heavyArmor = false) {
-    let speed = DND_RACE_SPEEDS[race] || DND_RACE_SPEEDS["default"];
-    const monkClass = classes.find(c => c.name === "Monaco");
-    if (monkClass) speed += getMonkBonusSpeed(parseInt(monkClass.level));
-    const barbarianClass = classes.find(c => c.name === "Barbaro");
-    if (barbarianClass) speed += getBarbarianBonusSpeed(parseInt(barbarianClass.level), heavyArmor);
-    return speed;
-}
-function updateSpeedField(sheetData) {
-    const race = sheetData.race || "Umano";
-    const classes = sheetData.classes || [];
-    // PATCH: se vuoi automatizzare la rilevazione dell'armatura pesante, qui puoi mettere true se necessario
-    const heavyArmor = false;
-    const baseSpeed = calcBaseSpeed(race, classes, heavyArmor);
-    const speedMod = sheetData.speedModifier || '';
-    let display = `${baseSpeed} m`;
-    // Se c'è un bonus/malus scritto, mostralo accanto
-    document.getElementById('cs-speed-auto').value = display;
-    document.getElementById('cs-speed-modifier').value = speedMod;
-}
-// FINE PATCH VELOCITÀ
+        const DND_RACE_SPEEDS = { "Umano": 9, "Umano (Variant)": 9, "Nano (Delle Colline)": 7.5, "Nano (Delle Montagne)": 7.5, "Nano (Duergar)": 7.5, "Elfo (Alto)": 9, "Elfo (Dei Boschi)": 10.5, "Elfo (Drow)": 9, "Elfo (Shadar-kai)": 9, "Mezzelfo": 9, "Mezzorco": 9, "Halfling (Piedelesto)": 7.5, "Halfling (Tozzo)": 7.5, "Dragonide": 9, "Tiefling": 9, "Gnomo (Delle Foreste)": 7.5, "Gnomo (Delle Rocce)": 7.5, "Goblin": 9, "Hobgoblin": 9, "Bugbear": 9, "Goliath": 9, "Lizardfolk": 9, "Tabaxi": 12, "Tritone": 9, "Leonin": 12, "Minotauro": 9, "Satiro": 10.5, "Warforged": 9, "Firbolg": 9, "Kenku": 9, "Koboldo": 9, "Orco": 9, "Shifter": 9, "Yuan-ti": 9, "Vedalken": 9, "Loxodon": 9, "Simic Hybrid": 9, "Genasi (Acqua)": 9, "Genasi (Aria)": 9, "Genasi (Fuoco)": 9, "Genasi (Terra)": 9, "Cangiante": 9, "Centauro": 12, "Aasimar (Protettore)": 9, "Aasimar (Flagello)": 9, "Aasimar (Caduto)": 9, "Kalashtar": 9, "default": 9 };
+        function getMonkBonusSpeed(level) { if (level >= 18) return 15; if (level >= 14) return 12; if (level >= 10) return 9; if (level >= 6) return 6; if (level >= 2) return 3; return 0; }
+        function getBarbarianBonusSpeed(level, heavyArmor) { if (level >= 5 && !heavyArmor) return 3; return 0; }
+        function calcBaseSpeed(race, classes, heavyArmor = false) { let speed = DND_RACE_SPEEDS[race] || DND_RACE_SPEEDS["default"]; const monkClass = classes.find(c => c.name === "Monaco"); if (monkClass) speed += getMonkBonusSpeed(parseInt(monkClass.level)); const barbarianClass = classes.find(c => c.name === "Barbaro"); if (barbarianClass) speed += getBarbarianBonusSpeed(parseInt(barbarianClass.level), heavyArmor); return speed; }
+        function updateSpeedField(sheetData) { const race = sheetData.race || "Umano"; const classes = sheetData.classes || []; const heavyArmor = false; const baseSpeed = calcBaseSpeed(race, classes, heavyArmor); document.getElementById('cs-speed-auto').value = `${baseSpeed} m`; document.getElementById('cs-speed-modifier').value = sheetData.speedModifier || ''; }
         
         const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
         const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
@@ -1057,22 +675,23 @@ function updateSpeedField(sheetData) {
         const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
         function createEmptyCharacterSheet() {
-            const sheet = {
+            return {
                 characterName: "",
                 classes: [{ id: crypto.randomUUID(), name: "Guerriero", level: 1 }],
                 background: "", race: "Umano",
                 stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
-                proficiencyBonus: "+2",
-                initiativeBonus: 0, 
-                speed: "9m",
+                proficiencyBonus: "+2", initiativeBonus: 0, speedModifier: "",
                 hp: { max: 10, current: 10 }, hitDice: "",
-                attacksSpellcasting: "", equipment: "",
                 personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
                 proficiencies: { saves: [], skills: [] },
-                defenses: [],
-                weapons: [] 
+                defenses: [], weapons: [], equipment: [],
+                treasure: { cp: 0, sp: 0, gp: 0, pp: 0, other: "" },
+                spellcasting: {
+                    class: "", ability: "intelligence", saveDC: 0, attackBonus: "+0",
+                    slots: { 1: {total:0, used:0}, 2: {total:0, used:0}, 3: {total:0, used:0}, 4: {total:0, used:0}, 5: {total:0, used:0}, 6: {total:0, used:0}, 7: {total:0, used:0}, 8: {total:0, used:0}, 9: {total:0, used:0} },
+                    spells: { 0: [], 1: [], 2: [], 3: [], 4: [], 5: [], 6: [], 7: [], 8: [], 9: [] }
+                }
             };
-            return sheet;
         }
 
         async function handleAddPlayer(e) { e.preventDefault(); if (!currentAdventureId || !currentUserId) return; const nameInput = document.getElementById('player-name-input'); const playerName = nameInput.value.trim(); if (!playerName) return; const newPlayer = { name: playerName, token: crypto.randomUUID(), characterSheet: createEmptyCharacterSheet() }; const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId); const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId); try { await updateDoc(adventureRef, { players: arrayUnion(newPlayer) }); await updateDoc(publicAdventureRef, { players: arrayUnion(newPlayer) }); nameInput.value = ''; } catch (error) { console.error("Errore aggiunta giocatore:", error); } }
@@ -1088,13 +707,8 @@ function updateSpeedField(sheetData) {
             if (e.target.classList.contains('open-share-modal-btn')) {
                 const chapterContainer = e.target.closest('.chapter-container');
                 const nodeContainer = e.target.closest('.node-container');
-                if (chapterContainer) {
-                    currentSharingItem.id = chapterContainer.dataset.chapterId;
-                    currentSharingItem.type = 'chapter';
-                } else if (nodeContainer) {
-                    currentSharingItem.id = nodeContainer.dataset.nodeId;
-                    currentSharingItem.type = 'node';
-                }
+                if (chapterContainer) { currentSharingItem.id = chapterContainer.dataset.chapterId; currentSharingItem.type = 'chapter'; } 
+                else if (nodeContainer) { currentSharingItem.id = nodeContainer.dataset.nodeId; currentSharingItem.type = 'node'; }
                 openShareModal();
             }
         });
@@ -1102,18 +716,10 @@ function updateSpeedField(sheetData) {
         function openShareModal() {
             const players = currentAdventureData.players || [];
             if (players.length === 0) { alert("Aggiungi almeno un giocatore prima di poter condividere."); return; }
-            
             const sharedItem = currentAdventureData.sharedItems?.find(item => item.id === currentSharingItem.id);
             const sharedWith = sharedItem?.sharedWith || [];
-
             shareModalTitle.textContent = `Condividi "${currentSharingItem.id}"`;
-            sharePlayerList.innerHTML = `
-                <div class="flex items-center"><input type="checkbox" id="share-all-players" class="w-4 h-4" ${sharedWith.includes('all') ? 'checked' : ''}><label for="share-all-players" class="ml-2">Tutti i giocatori</label></div>
-                <hr class="border-gray-600 my-2">
-                ${players.map(p => `
-                    <div class="flex items-center"><input type="checkbox" id="share-${p.token}" data-token="${p.token}" class="w-4 h-4 player-checkbox" ${sharedWith.includes(p.token) ? 'checked' : ''}><label for="share-${p.token}" class="ml-2">${p.name}</label></div>
-                `).join('')}`;
-            
+            sharePlayerList.innerHTML = `<div class="flex items-center"><input type="checkbox" id="share-all-players" class="w-4 h-4" ${sharedWith.includes('all') ? 'checked' : ''}><label for="share-all-players" class="ml-2">Tutti i giocatori</label></div><hr class="border-gray-600 my-2">${players.map(p => `<div class="flex items-center"><input type="checkbox" id="share-${p.token}" data-token="${p.token}" class="w-4 h-4 player-checkbox" ${sharedWith.includes(p.token) ? 'checked' : ''}><label for="share-${p.token}" class="ml-2">${p.name}</label></div>`).join('')}`;
             const allPlayersCheckbox = document.getElementById('share-all-players');
             const playerCheckboxes = sharePlayerList.querySelectorAll('.player-checkbox');
             allPlayersCheckbox.addEventListener('change', () => { playerCheckboxes.forEach(cb => { cb.checked = allPlayersCheckbox.checked; cb.disabled = allPlayersCheckbox.checked; }); });
@@ -1125,44 +731,16 @@ function updateSpeedField(sheetData) {
         document.getElementById('share-modal-save').addEventListener('click', async () => {
             const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
             const publicAdventureRef = doc(db, 'publicAdventures', currentAdventureId);
-            
             let sharedWith = [];
-            if (document.getElementById('share-all-players').checked) {
-                sharedWith.push('all');
-            } else {
-                sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token));
-            }
-
+            if (document.getElementById('share-all-players').checked) { sharedWith.push('all'); } else { sharePlayerList.querySelectorAll('.player-checkbox:checked').forEach(cb => sharedWith.push(cb.dataset.token)); }
             let sharedItems = [...(currentAdventureData.sharedItems || [])];
             let itemIndex = sharedItems.findIndex(item => item.id === currentSharingItem.id);
-
             if (sharedWith.length > 0) {
-                if (itemIndex > -1) {
-                    sharedItems[itemIndex].sharedWith = sharedWith;
-                } else {
-                    let sourceItem;
-                    if (currentSharingItem.type === 'chapter') {
-                        sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id);
-                        if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith });
-                    } else {
-                        const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps, ...currentAdventureData.treasures, ...currentAdventureData.monsters];
-                        sourceItem = allNodes.find(n => n.title === currentSharingItem.id);
-                        if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith });
-                    }
-                }
-            } else {
-                if (itemIndex > -1) sharedItems.splice(itemIndex, 1);
-            }
-            
-            try {
-                await updateDoc(adventureRef, { sharedItems });
-                const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; });
-                await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems });
-                shareModal.classList.add('hidden');
-            } catch (error) {
-                console.error("Errore durante la condivisione:", error);
-                alert("Si è verificato un errore.");
-            }
+                if (itemIndex > -1) { sharedItems[itemIndex].sharedWith = sharedWith; } 
+                else { let sourceItem; if (currentSharingItem.type === 'chapter') { sourceItem = currentAdventureData.background.find(c => c.id === currentSharingItem.id); if (sourceItem) sharedItems.push({ ...sourceItem, isChapter: true, sharedWith }); } else { const allNodes = [...currentAdventureData.environments, ...currentAdventureData.pngs, ...currentAdventureData.maps, ...currentAdventureData.treasures, ...currentAdventureData.monsters]; sourceItem = allNodes.find(n => n.title === currentSharingItem.id); if (sourceItem) sharedItems.push({ ...sourceItem, id: sourceItem.title, isChapter: false, sharedWith }); } }
+            } else { if (itemIndex > -1) sharedItems.splice(itemIndex, 1); }
+            try { await updateDoc(adventureRef, { sharedItems }); const publicSharedItems = sharedItems.map(item => { const { masterContent, ...publicItem } = item; return publicItem; }); await updateDoc(publicAdventureRef, { sharedItems: publicSharedItems }); shareModal.classList.add('hidden'); } 
+            catch (error) { console.error("Errore durante la condivisione:", error); alert("Si è verificato un errore."); }
         });
         
         // --- LOGICA SCHEDA PERSONAGGIO ---
@@ -1172,143 +750,63 @@ function updateSpeedField(sheetData) {
         function openCharacterSheetModal(playerToken, isPlayerView = false) {
             const player = currentAdventureData.players.find(p => p.token === playerToken);
             if (!player) return;
-            
             document.getElementById('cs-modal-title').textContent = `Scheda di ${player.name}`;
             csModal.dataset.currentToken = playerToken;
             csModal.dataset.isPlayerView = isPlayerView;
-
             populateCharacterSheet(player.characterSheet || createEmptyCharacterSheet());
             csModal.classList.remove('hidden');
         }
 
         function populateCharacterSheet(sheetData) {
+            window.currentSheetData = sheetData; // Cache for immediate UI updates
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
                 if (['armorClass', 'race', 'initiative'].includes(el.dataset.field)) return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
-                el.value = value;
+                if (el.tagName === 'SELECT') { el.value = value || el.options[0].value; } else { el.value = value; }
             });
             updateAllModifiers(sheetData);
             renderSkillsAndSaves(sheetData);
             renderDefenses(sheetData.defenses || []);
             renderClasses(sheetData.classes || [{ id: crypto.randomUUID(), name: '', level: 1 }]);
             renderRace(sheetData.race || '');
+            renderEquipment(sheetData.equipment || []);
+            renderSpells(sheetData.spellcasting || createEmptyCharacterSheet().spellcasting);
             updateTotalLevel(sheetData);
             updateAC(sheetData);
             updateInitiative(sheetData);
             updateSpeedField(sheetData);
             renderWeaponsList(sheetData);
-            window.currentSheetData = sheetData; // Cache for immediate UI updates
+            updateSpellcastingCalculatedFields(sheetData);
         }
         
-        // === INIZIO LOGICA ARMI & ATTACCHI ===
-        function getStatMod(stat, stats) {
-          return Math.floor(((stats[stat] || 10) - 10) / 2);
-        }
-
-        function getAttackStat(weapon, stats) {
-          if ((weapon.properties || '').toLowerCase().includes('finesse')) {
-            return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength';
-          }
-          if (weapon.type === 'distanza') return 'dexterity';
-          if (weapon.type === 'magica') return weapon.spellStat || 'intelligence';
-          return 'strength';
-        }
-
-        function calcAttackBonus(weapon, stats, proficiencyBonus) {
-          const stat = getAttackStat(weapon, stats);
-          const mod = getStatMod(stat, stats);
-          let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0);
-          return bonus >= 0 ? `+${bonus}` : `${bonus}`;
-        }
-
-        function calcDamageString(weapon, stats) {
-          const stat = getAttackStat(weapon, stats);
-          const mod = getStatMod(stat, stats);
-          let str = weapon.damage;
-          let total = mod + (parseInt(weapon.damageBonus) || 0);
-          if (!isNaN(total) && total !== 0) {
-            str += total > 0 ? ` + ${total}` : ` ${total}`;
-          }
-          return str;
-        }
-
+        function getStatMod(stat, stats) { return Math.floor(((stats[stat] || 10) - 10) / 2); }
+        function getAttackStat(weapon, stats) { if ((weapon.properties || '').toLowerCase().includes('finesse')) { return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength'; } if (weapon.type === 'distanza') return 'dexterity'; if (weapon.type === 'magica') return weapon.spellStat || 'intelligence'; return 'strength'; }
+        function calcAttackBonus(weapon, stats, proficiencyBonus) { const stat = getAttackStat(weapon, stats); const mod = getStatMod(stat, stats); let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0); return bonus >= 0 ? `+${bonus}` : `${bonus}`; }
+        
         function renderWeaponsList(sheetData) {
             const container = document.getElementById('weapons-list-container');
             container.innerHTML = '';
-            if (!sheetData.weapons || sheetData.weapons.length === 0) {
-                container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>';
-                return;
-            }
+            if (!sheetData.weapons || sheetData.weapons.length === 0) { container.innerHTML = '<p class="text-gray-500 font-sans">Nessuna arma inserita.</p>'; return; }
             const types = ['mischia', 'distanza', 'magica', 'altro'];
             types.forEach(type => {
                 const weapons = sheetData.weapons.filter(w => w.type === type);
                 if (weapons.length === 0) return;
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-2';
-                groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4>
-                <table class="w-full text-xs md:text-sm mb-2">
-                    <thead>
-                    <tr class="bg-gray-300 text-black">
-                        <th class="p-1 text-left">Nome</th>
-                        <th class="p-1">TxC</th>
-                        <th class="p-1">Danno</th>
-                        <th class="p-1"></th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                    ${weapons.map(w => {
-                        const globalIndex = sheetData.weapons.indexOf(w);
-                        let damageButtonsHtml = '';
-                        if (w.versatileDamage) {
-                            damageButtonsHtml = `
-                                <div class="flex gap-1 justify-center">
-                                    <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">
-                                        ${w.damage}
-                                    </button>
-                                    <button class="roll-damage-btn bg-orange-500 hover:bg-orange-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="true">
-                                        ${w.versatileDamage} (V)
-                                    </button>
-                                </div>`;
-                        } else {
-                            damageButtonsHtml = `
-                                <button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">
-                                ${w.damage}
-                                </button>`;
-                        }
-
-                        return `
-                        <tr class="border-b border-gray-200 text-center">
-                        <td class="p-1 text-left">${w.name} <em class="text-gray-500 text-xs">(${w.properties})</em></td>
-                        <td class="p-1">
-                            <button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">
-                                ${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}
-                            </button>
-                        </td>
-                        <td class="p-1">${damageButtonsHtml}</td>
-                        <td class="p-1">
-                            <button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button>
-                            <button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button>
-                        </td>
-                        </tr>
-                    `}).join('')}
-                    </tbody>
-                </table>`;
+                groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4><table class="w-full text-xs md:text-sm mb-2"><thead><tr class="bg-gray-300 text-black"><th class="p-1 text-left">Nome</th><th class="p-1">TxC</th><th class="p-1">Danno</th><th class="p-1"></th></tr></thead><tbody>${weapons.map(w => { const globalIndex = sheetData.weapons.indexOf(w); let damageButtonsHtml = ''; if (w.versatileDamage) { damageButtonsHtml = `<div class="flex gap-1 justify-center"><button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button><button class="roll-damage-btn bg-orange-500 hover:bg-orange-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="true">${w.versatileDamage} (V)</button></div>`; } else { damageButtonsHtml = `<button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button>`; } return `<tr class="border-b border-gray-200 text-center"><td class="p-1 text-left">${w.name} <em class="text-gray-500 text-xs">(${w.properties})</em></td><td class="p-1"><button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</button></td><td class="p-1">${damageButtonsHtml}</td><td class="p-1"><button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button><button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button></td></tr>`}).join('')}</tbody></table>`;
                 container.appendChild(groupDiv);
             });
         }
 
         document.getElementById('add-weapon-btn').addEventListener('click', () => openWeaponModal());
-
         function openWeaponModal(weapon = null, idx = null) {
             document.getElementById('weapon-modal').classList.remove('hidden');
             document.getElementById('weapon-form').reset();
             document.getElementById('weapon-index').value = idx !== null ? idx : '';
-            
             const versatileContainer = document.getElementById('weapon-versatile-container');
             const versatileCheckbox = document.getElementById('weapon-versatile-checkbox');
             const versatileDamageInput = document.getElementById('weapon-versatile-damage');
-
             if (weapon) {
                 document.getElementById('weapon-name').value = weapon.name || '';
                 document.getElementById('weapon-type').value = weapon.type || 'mischia';
@@ -1320,410 +818,276 @@ function updateSpeedField(sheetData) {
                 document.getElementById('weapon-damage-bonus').value = weapon.damageBonus || 0;
                 versatileCheckbox.checked = !!weapon.versatileDamage;
                 versatileDamageInput.value = weapon.versatileDamage || '';
-            } else {
-                versatileCheckbox.checked = false;
-                versatileDamageInput.value = '';
-            }
+            } else { versatileCheckbox.checked = false; versatileDamageInput.value = ''; }
             versatileContainer.classList.toggle('hidden', !versatileCheckbox.checked);
         }
-        
-        document.getElementById('weapon-versatile-checkbox').addEventListener('change', (e) => {
-            document.getElementById('weapon-versatile-container').classList.toggle('hidden', !e.target.checked);
-        });
-
-        document.getElementById('weapon-cancel-btn').addEventListener('click', () => {
-          document.getElementById('weapon-modal').classList.add('hidden');
-        });
+        document.getElementById('weapon-versatile-checkbox').addEventListener('change', (e) => { document.getElementById('weapon-versatile-container').classList.toggle('hidden', !e.target.checked); });
+        document.getElementById('weapon-cancel-btn').addEventListener('click', () => { document.getElementById('weapon-modal').classList.add('hidden'); });
 
         document.getElementById('weapon-form').addEventListener('submit', e => {
           e.preventDefault();
-          const token = csModal.dataset.currentToken;
-          if (!token) return;
-
+          const token = csModal.dataset.currentToken; if (!token) return;
           const idx = document.getElementById('weapon-index').value;
-          const newWeapon = {
-            name: document.getElementById('weapon-name').value,
-            type: document.getElementById('weapon-type').value,
-            damage: document.getElementById('weapon-damage').value,
-            versatileDamage: document.getElementById('weapon-versatile-checkbox').checked ? document.getElementById('weapon-versatile-damage').value : null,
-            damageType: document.getElementById('weapon-damage-type').value,
-            properties: document.getElementById('weapon-properties').value,
-            proficient: document.getElementById('weapon-proficient').checked,
-            attackBonus: document.getElementById('weapon-attack-bonus').value,
-            damageBonus: document.getElementById('weapon-damage-bonus').value
-          };
-
+          const newWeapon = { name: document.getElementById('weapon-name').value, type: document.getElementById('weapon-type').value, damage: document.getElementById('weapon-damage').value, versatileDamage: document.getElementById('weapon-versatile-checkbox').checked ? document.getElementById('weapon-versatile-damage').value : null, damageType: document.getElementById('weapon-damage-type').value, properties: document.getElementById('weapon-properties').value, proficient: document.getElementById('weapon-proficient').checked, attackBonus: document.getElementById('weapon-attack-bonus').value, damageBonus: document.getElementById('weapon-damage-bonus').value };
           let sheetData = readSheetFromDOM();
           if (!sheetData.weapons) sheetData.weapons = [];
-
-          if (idx !== '') {
-            sheetData.weapons[parseInt(idx)] = newWeapon;
-          } else {
-            sheetData.weapons.push(newWeapon);
-          }
-
+          if (idx !== '') { sheetData.weapons[parseInt(idx)] = newWeapon; } else { sheetData.weapons.push(newWeapon); }
           saveCharacterSheet(token, sheetData);
           populateCharacterSheet(sheetData);
           document.getElementById('weapon-modal').classList.add('hidden');
         });
 
         document.getElementById('weapons-list-container').addEventListener('click', e => {
-          const token = csModal.dataset.currentToken;
-          if (!token) return;
-          
-          const btn = e.target.closest('.edit-weapon-btn, .delete-weapon-btn');
-          if (!btn) return;
-
-          const idx = btn.dataset.idx ? parseInt(btn.dataset.idx) : null;
-          if (idx === null) return;
-
+          const token = csModal.dataset.currentToken; if (!token) return;
+          const btn = e.target.closest('.edit-weapon-btn, .delete-weapon-btn'); if (!btn) return;
+          const idx = btn.dataset.idx ? parseInt(btn.dataset.idx) : null; if (idx === null) return;
           let sheetData = readSheetFromDOM();
-
-          if (btn.classList.contains('edit-weapon-btn')) {
-            openWeaponModal(sheetData.weapons[idx], idx);
-          } else if (btn.classList.contains('delete-weapon-btn')) {
-            sheetData.weapons.splice(idx, 1);
-            saveCharacterSheet(token, sheetData);
-            populateCharacterSheet(sheetData);
-          }
+          if (btn.classList.contains('edit-weapon-btn')) { openWeaponModal(sheetData.weapons[idx], idx); } 
+          else if (btn.classList.contains('delete-weapon-btn')) { sheetData.weapons.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
-        // === FINE LOGICA ARMI & ATTACCHI ===
         
-
-        function getModifier(score) {
-            const mod = Math.floor((parseInt(score || 10) - 10) / 2);
-            return mod; // Ritorna il numero
-        }
-
-        function formatModifier(mod) {
-             return mod >= 0 ? `+${mod}` : mod.toString();
-        }
-
-        function updateAllModifiers(sheetData) {
-            const stats = sheetData.stats || {};
-            for (const statName in stats) {
-                const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`);
-                if (modEl) modEl.textContent = formatModifier(getModifier(stats[statName]));
-            }
-        }
+        function getModifier(score) { return Math.floor((parseInt(score || 10) - 10) / 2); }
+        function formatModifier(mod) { return mod >= 0 ? `+${mod}` : mod.toString(); }
+        function updateAllModifiers(sheetData) { const stats = sheetData.stats || {}; for (const statName in stats) { const modEl = csModalContent.querySelector(`[data-mod="${statName}"]`); if (modEl) modEl.textContent = formatModifier(getModifier(stats[statName])); } }
         
         function renderSkillsAndSaves(sheetData) {
             const savesContainer = document.getElementById('saving-throws-list');
             const skillsContainer = document.getElementById('skills-list');
             const profs = sheetData.proficiencies || { saves: [], skills: [] };
-            
-            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `
-                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>
-            `).join('');
-
-            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `
-                <div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>
-            `).join('');
-            
+            savesContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mb-1">Tiri Salvezza</h4>` + Object.entries(DND_SAVES).map(([name, stat]) => `<div class="flex items-center gap-2 text-sm"><input type="checkbox" data-save-prof="${name}" ${profs.saves.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name}</span></div>`).join('');
+            skillsContainer.innerHTML = `<h4 class="text-lg font-bold text-red-800 mt-2 mb-1">Abilità</h4>` + Object.entries(DND_SKILLS).map(([name, stat]) => `<div class="flex items-center gap-2 text-sm"><input type="checkbox" data-skill-prof="${name}" ${profs.skills.includes(name) ? 'checked' : ''}><span class="w-8 text-center border-b border-gray-500">+0</span><span>${name} (${stat.substring(0,3)})</span></div>`).join('');
             updateSkillAndSaveBonuses(sheetData);
         }
         
         function updateSkillAndSaveBonuses(sheetData) {
             const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
             const stats = sheetData.stats || {};
-            
-            csModalContent.querySelectorAll('[data-save-prof]').forEach(el => {
-                const saveName = el.dataset.saveProf;
-                const statName = DND_SAVES[saveName];
-                const statMod = getModifier(stats[statName]);
-                const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = formatModifier(bonus);
-            });
-
-            csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => {
-                const skillName = el.dataset.skillProf;
-                const statName = DND_SKILLS[skillName];
-                const statMod = getModifier(stats[statName]);
-                const bonus = statMod + (el.checked ? profBonus : 0);
-                el.nextElementSibling.textContent = formatModifier(bonus);
-            });
+            csModalContent.querySelectorAll('[data-save-prof]').forEach(el => { const saveName = el.dataset.saveProf; const statName = DND_SAVES[saveName]; const statMod = getModifier(stats[statName]); const bonus = statMod + (el.checked ? profBonus : 0); el.nextElementSibling.textContent = formatModifier(bonus); });
+            csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => { const skillName = el.dataset.skillProf; const statName = DND_SKILLS[skillName]; const statMod = getModifier(stats[statName]); const bonus = statMod + (el.checked ? profBonus : 0); el.nextElementSibling.textContent = formatModifier(bonus); });
         }
         
         function renderRace(raceName) {
             const container = document.getElementById('cs-race-container');
             const isCustom = !DND_RACES.includes(raceName) && raceName;
-            
             let optionsHtml = DND_RACES.map(r => `<option value="${r}" ${r === raceName ? 'selected' : ''}>${r}</option>`).join('');
-            
-            container.innerHTML = `
-                <label class="cs-label">Razza</label>
-                <select class="cs-select" id="cs-race-select">
-                    ${optionsHtml}
-                    <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
-                </select>
-                <input type="text" id="cs-race-custom" class="cs-input mt-1 ${isCustom ? '' : 'hidden'}" value="${isCustom ? raceName : ''}" placeholder="Razza personalizzata">
-            `;
+            container.innerHTML = `<label class="cs-label">Razza</label><select class="cs-select" id="cs-race-select">${optionsHtml}<option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option></select><input type="text" id="cs-race-custom" class="cs-input mt-1 ${isCustom ? '' : 'hidden'}" value="${isCustom ? raceName : ''}" placeholder="Razza personalizzata">`;
         }
 
         function renderDefenses(defenses = []) {
             const container = document.getElementById('cs-defenses-list');
-            container.innerHTML = defenses.map(item => `
-                <div class="flex items-center gap-2 defense-item" data-id="${item.id}">
-                    <input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}>
-                    <input type="text" class="cs-defense-name cs-input text-sm flex-grow" value="${item.name}" placeholder="Nome (es. Scudo)">
-                    <input type="number" class="cs-defense-value cs-input text-sm w-20" value="${item.value}" placeholder="Valore">
-                    <select class="cs-defense-type cs-select text-sm w-32">
-                        <option value="other" ${item.type === 'other' ? 'selected' : ''}>Altro</option>
-                        <option value="light" ${item.type === 'light' ? 'selected' : ''}>Leggera</option>
-                        <option value="medium" ${item.type === 'medium' ? 'selected' : ''}>Media</option>
-                        <option value="heavy" ${item.type === 'heavy' ? 'selected' : ''}>Pesante</option>
-                        <option value="shield" ${item.type === 'shield' ? 'selected' : ''}>Scudo</option>
-                    </select>
-                    <button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button>
-                </div>
-            `).join('');
+            container.innerHTML = defenses.map(item => `<div class="flex items-center gap-2 defense-item" data-id="${item.id}"><input type="checkbox" class="cs-defense-worn w-4 h-4" ${item.worn ? 'checked' : ''}><input type="text" class="cs-defense-name cs-input text-sm flex-grow" value="${item.name}" placeholder="Nome (es. Scudo)"><input type="number" class="cs-defense-value cs-input text-sm w-20" value="${item.value}" placeholder="Valore"><select class="cs-defense-type cs-select text-sm w-32"><option value="other" ${item.type === 'other' ? 'selected' : ''}>Altro</option><option value="light" ${item.type === 'light' ? 'selected' : ''}>Leggera</option><option value="medium" ${item.type === 'medium' ? 'selected' : ''}>Media</option><option value="heavy" ${item.type === 'heavy' ? 'selected' : ''}>Pesante</option><option value="shield" ${item.type === 'shield' ? 'selected' : ''}>Scudo</option></select><button class="cs-delete-defense-btn text-red-600 hover:text-red-800 font-bold">X</button></div>`).join('');
         }
         
         function renderClasses(classes = []) {
             const container = document.getElementById('cs-classes-list');
-            
-            container.innerHTML = classes.map(c => {
-                const isCustom = !DND_CLASSES.includes(c.name) && c.name;
-                return `
-                <div class="flex items-center gap-2 class-item" data-id="${c.id}">
-                    <select class="cs-class-name cs-select">
-                        ${DND_CLASSES.map(cn => `<option value="${cn}" ${cn === c.name ? 'selected' : ''}>${cn}</option>`).join('')}
-                        <option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option>
-                    </select>
-                    <input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata">
-                    <input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl">
-                    <button class="cs-delete-class-btn text-red-600 hover:text-red-800 font-bold">X</button>
-                </div>
-            `}).join('');
+            container.innerHTML = classes.map(c => { const isCustom = !DND_CLASSES.includes(c.name) && c.name; return `<div class="flex items-center gap-2 class-item" data-id="${c.id}"><select class="cs-class-name cs-select">${DND_CLASSES.map(cn => `<option value="${cn}" ${cn === c.name ? 'selected' : ''}>${cn}</option>`).join('')}<option value="Altro..." ${isCustom ? 'selected' : ''}>Altro...</option></select><input type="text" class="cs-class-name-custom cs-input ${isCustom ? '' : 'hidden'}" value="${isCustom ? c.name : ''}" placeholder="Classe personalizzata"><input type="number" class="cs-class-level cs-input w-24" value="${c.level || 1}" placeholder="Lvl"><button class="cs-delete-class-btn text-red-600 hover:text-red-800 font-bold">X</button></div>`}).join('');
         }
 
-        function updateTotalLevel(sheetData) {
-            const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0);
-            const totalLevelInput = document.getElementById('cs-total-level');
-            if (totalLevelInput) {
-                totalLevelInput.value = totalLevel;
-            }
-        }
+        function updateTotalLevel(sheetData) { const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0); const totalLevelInput = document.getElementById('cs-total-level'); if (totalLevelInput) { totalLevelInput.value = totalLevel; } }
+        function updateAC(sheetData) { const dexMod = getModifier(sheetData.stats.dexterity); let totalAC = 10; let armorBonus = 0; let dexBonus = dexMod; let otherBonuses = 0; const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type)); if (wornArmor) { armorBonus = parseInt(wornArmor.value || 0); if (wornArmor.type === 'medium') { dexBonus = Math.min(dexMod, 2); } else if (wornArmor.type === 'heavy') { dexBonus = 0; } } (sheetData.defenses || []).forEach(item => { if (item.worn && (item.type === 'shield' || item.type === 'other')) { otherBonuses += parseInt(item.value || 0); } }); if (wornArmor) { totalAC = armorBonus + dexBonus + otherBonuses; } else { totalAC = 10 + dexBonus + otherBonuses; } csModalContent.querySelector('[data-field="armorClass"]').value = totalAC; }
+        function updateInitiative(sheetData) { const dexMod = getModifier(sheetData.stats.dexterity); const bonus = parseInt(sheetData.initiativeBonus || 0); const total = dexMod + bonus; document.getElementById('cs-initiative-total').value = formatModifier(total); }
 
-        function updateAC(sheetData) {
-            const dexMod = getModifier(sheetData.stats.dexterity);
-            let totalAC = 10;
-            let armorBonus = 0;
-            let dexBonus = dexMod;
-            let otherBonuses = 0;
-
-            const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type));
-            
-            if (wornArmor) {
-                armorBonus = parseInt(wornArmor.value || 0);
-                if (wornArmor.type === 'medium') {
-                    dexBonus = Math.min(dexMod, 2);
-                } else if (wornArmor.type === 'heavy') {
-                    dexBonus = 0;
-                }
-            }
-            
-            (sheetData.defenses || []).forEach(item => {
-                if (item.worn && (item.type === 'shield' || item.type === 'other')) {
-                    otherBonuses += parseInt(item.value || 0);
-                }
-            });
-
-            if (wornArmor) {
-                totalAC = armorBonus + dexBonus + otherBonuses;
-            } else {
-                totalAC = 10 + dexBonus + otherBonuses;
-            }
-            
-            const acInput = csModalContent.querySelector('[data-field="armorClass"]');
-            acInput.value = totalAC;
-        }
-        
-        function updateInitiative(sheetData) {
-            const dexMod = getModifier(sheetData.stats.dexterity);
-            const bonus = parseInt(sheetData.initiativeBonus || 0);
-            const total = dexMod + bonus;
-            document.getElementById('cs-initiative-total').value = formatModifier(total);
-        }
-
-csModalContent.addEventListener('input', (e) => {
-    const token = csModal.dataset.currentToken;
-    if (!token) return;
-    const sheetDataForUI = readSheetFromDOM();
-    if (
-        e.target.dataset.field && (
-            e.target.dataset.field.startsWith('stats.') ||
-            e.target.dataset.field === 'initiativeBonus' ||
-            e.target.dataset.field === 'speed'
-        )
-    ) {
-        updateAllModifiers(sheetDataForUI);
-        updateSkillAndSaveBonuses(sheetDataForUI);
-        updateAC(sheetDataForUI);
-        updateInitiative(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); 
-    }
-    if (e.target.dataset.skillProf || e.target.dataset.saveProf) {
-        updateSkillAndSaveBonuses(sheetDataForUI);
-    }
-    if (e.target.closest('.defense-item')) {
-        updateAC(sheetDataForUI);
-    }
-    if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) {
-        updateTotalLevel(sheetDataForUI);
-        updateSpeedField(sheetDataForUI); 
-    }
-    if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') {
-        updateSpeedField(sheetDataForUI);
-    }
-    // Debounce the save to Firestore
-    clearTimeout(characterSheetUpdateTimeout);
-    characterSheetUpdateTimeout = setTimeout(() => {
-        const sheetDataToSave = readSheetFromDOM();
-        saveCharacterSheet(token, sheetDataToSave);
-    }, 500);
-});
-        
-        csModalContent.addEventListener('change', e => {
-            if (e.target.classList.contains('cs-class-name')) {
-                const customInput = e.target.nextElementSibling;
-                if (e.target.value === 'Altro...') {
-                    customInput.classList.remove('hidden');
-                } else {
-                    customInput.classList.add('hidden');
-                }
-            }
-            if (e.target.id === 'cs-race-select') {
-                const customInput = document.getElementById('cs-race-custom');
-                 if (e.target.value === 'Altro...') {
-                    customInput.classList.remove('hidden');
-                } else {
-                    customInput.classList.add('hidden');
-                }
-            }
+        csModalContent.addEventListener('input', (e) => {
+            const token = csModal.dataset.currentToken; if (!token) return;
+            const sheetDataForUI = readSheetFromDOM();
+            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'proficiencyBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
+            if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); }
+            if (e.target.closest('.defense-item')) { updateAC(sheetDataForUI); }
+            if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) { updateTotalLevel(sheetDataForUI); updateSpeedField(sheetDataForUI); }
+            if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') { updateSpeedField(sheetDataForUI); }
+            clearTimeout(characterSheetUpdateTimeout);
+            characterSheetUpdateTimeout = setTimeout(() => { const sheetDataToSave = readSheetFromDOM(); saveCharacterSheet(token, sheetDataToSave); }, 500);
         });
+        
+        csModalContent.addEventListener('change', e => { if (e.target.classList.contains('cs-class-name')) { const customInput = e.target.nextElementSibling; if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } if (e.target.id === 'cs-race-select') { const customInput = document.getElementById('cs-race-custom'); if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } });
 
         csModalContent.addEventListener('click', e => {
-            const token = csModal.dataset.currentToken;
-            if (!token) return;
-
-            if (e.target.id === 'cs-add-defense-btn') {
-                const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false };
-                const sheetData = readSheetFromDOM();
-                sheetData.defenses.push(newDefense);
-                renderDefenses(sheetData.defenses);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.classList.contains('cs-delete-defense-btn')) {
-                const itemEl = e.target.closest('.defense-item');
-                const itemId = itemEl.dataset.id;
-                let sheetData = readSheetFromDOM();
-                sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId);
-                renderDefenses(sheetData.defenses);
-                updateAC(sheetData);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.id === 'cs-add-class-btn') {
-                const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 };
-                const sheetData = readSheetFromDOM();
-                sheetData.classes.push(newClass);
-                renderClasses(sheetData.classes);
-                updateTotalLevel(sheetData);
-                saveCharacterSheet(token, sheetData);
-            }
-            if (e.target.classList.contains('cs-delete-class-btn')) {
-                const itemEl = e.target.closest('.class-item');
-                const itemId = itemEl.dataset.id;
-                let sheetData = readSheetFromDOM();
-                if (sheetData.classes.length > 1) {
-                    sheetData.classes = sheetData.classes.filter(c => c.id !== itemId);
-                    renderClasses(sheetData.classes);
-                    updateTotalLevel(sheetData);
-                    saveCharacterSheet(token, sheetData);
-                }
-            }
-            const rollAttackBtn = e.target.closest('.roll-attack-btn');
-            if (rollAttackBtn) {
-                handleWeaponRoll('attack', rollAttackBtn.dataset.idx);
-            }
-            const rollDamageBtn = e.target.closest('.roll-damage-btn');
-            if (rollDamageBtn) {
-                const isVersatile = rollDamageBtn.dataset.versatile === 'true';
-                handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile);
-            }
+            const token = csModal.dataset.currentToken; if (!token) return;
+            if (e.target.id === 'cs-add-defense-btn') { const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false }; const sheetData = readSheetFromDOM(); sheetData.defenses.push(newDefense); renderDefenses(sheetData.defenses); saveCharacterSheet(token, sheetData); }
+            if (e.target.classList.contains('cs-delete-defense-btn')) { const itemEl = e.target.closest('.defense-item'); const itemId = itemEl.dataset.id; let sheetData = readSheetFromDOM(); sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId); renderDefenses(sheetData.defenses); updateAC(sheetData); saveCharacterSheet(token, sheetData); }
+            if (e.target.id === 'cs-add-class-btn') { const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 }; const sheetData = readSheetFromDOM(); sheetData.classes.push(newClass); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); }
+            if (e.target.classList.contains('cs-delete-class-btn')) { const itemEl = e.target.closest('.class-item'); const itemId = itemEl.dataset.id; let sheetData = readSheetFromDOM(); if (sheetData.classes.length > 1) { sheetData.classes = sheetData.classes.filter(c => c.id !== itemId); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); } }
+            const rollAttackBtn = e.target.closest('.roll-attack-btn'); if (rollAttackBtn) { handleWeaponRoll('attack', rollAttackBtn.dataset.idx); }
+            const rollDamageBtn = e.target.closest('.roll-damage-btn'); if (rollDamageBtn) { const isVersatile = rollDamageBtn.dataset.versatile === 'true'; handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile); }
         });
+
+        // --- NUOVA LOGICA EQUIPAGGIAMENTO ---
+        const equipmentModal = document.getElementById('equipment-modal');
+        function renderEquipment(equipment = []) {
+            const container = document.getElementById('cs-equipment-list');
+            container.innerHTML = equipment.map(item => `
+                <div class="flex justify-between items-center p-1 border-b border-gray-300">
+                    <span>${item.quantity} x ${item.name}</span>
+                    <div>
+                        <button class="edit-equipment-btn text-blue-600 p-1" data-id="${item.id}">✎</button>
+                        <button class="delete-equipment-btn text-red-600 p-1" data-id="${item.id}">&times;</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+        document.getElementById('cs-add-equipment-btn').addEventListener('click', () => openEquipmentModal());
+        csModalContent.addEventListener('click', e => {
+            if (e.target.classList.contains('edit-equipment-btn')) { const id = e.target.dataset.id; const item = window.currentSheetData.equipment.find(i => i.id === id); if(item) openEquipmentModal(item); }
+            if (e.target.classList.contains('delete-equipment-btn')) { const id = e.target.dataset.id; const token = csModal.dataset.currentToken; if (!token) return; let sheetData = readSheetFromDOM(); sheetData.equipment = sheetData.equipment.filter(i => i.id !== id); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+        });
+        function openEquipmentModal(item = null) {
+            equipmentModal.classList.remove('hidden');
+            document.getElementById('equipment-form').reset();
+            if (item) {
+                document.getElementById('equipment-modal-title').textContent = "Modifica Oggetto";
+                document.getElementById('equipment-id').value = item.id;
+                document.getElementById('equipment-name').value = item.name;
+                document.getElementById('equipment-quantity').value = item.quantity;
+                document.getElementById('equipment-description').value = item.description;
+            } else {
+                document.getElementById('equipment-modal-title').textContent = "Aggiungi Oggetto";
+                document.getElementById('equipment-id').value = '';
+            }
+        }
+        document.getElementById('equipment-cancel-btn').addEventListener('click', () => equipmentModal.classList.add('hidden'));
+        document.getElementById('equipment-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const token = csModal.dataset.currentToken; if (!token) return;
+            const id = document.getElementById('equipment-id').value;
+            const newItem = { id: id || crypto.randomUUID(), name: document.getElementById('equipment-name').value, quantity: document.getElementById('equipment-quantity').value, description: document.getElementById('equipment-description').value };
+            let sheetData = readSheetFromDOM();
+            if (id) { sheetData.equipment = sheetData.equipment.map(i => i.id === id ? newItem : i); } 
+            else { sheetData.equipment.push(newItem); }
+            saveCharacterSheet(token, sheetData);
+            populateCharacterSheet(sheetData);
+            equipmentModal.classList.add('hidden');
+        });
+
+        // --- NUOVA LOGICA INCANTESIMI ---
+        const spellModal = document.getElementById('spell-modal');
+        function renderSpells(spellcasting) {
+            const container = document.getElementById('cs-spell-levels-container');
+            container.innerHTML = '';
+            for (let level = 0; level <= 9; level++) {
+                const levelData = spellcasting.spells[level] || [];
+                const slotsData = spellcasting.slots ? (spellcasting.slots[level] || {total: 0, used: 0}) : {total: 0, used: 0};
+                const levelEl = document.createElement('div');
+                levelEl.className = 'cs-box spell-level-container';
+                levelEl.dataset.level = level;
+                let slotsHtml = '';
+                if (level > 0) {
+                    slotsHtml = `<div class="flex items-center gap-2 mb-2"><label class="text-xs">Slot Totali</label><input type="number" class="cs-input text-sm w-16 spell-slot-total" value="${slotsData.total}"><label class="text-xs">Usati</label><input type="number" class="cs-input text-sm w-16 spell-slot-used" value="${slotsData.used}"></div>`;
+                }
+                const spellListHtml = levelData.map(spell => `
+                    <div class="flex items-center justify-between p-1 border-b border-gray-300" data-id="${spell.id}">
+                        <div class="flex items-center gap-2"><input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''}><span>${spell.name}</span></div>
+                        <div><button class="edit-spell-btn text-blue-600 p-1">✎</button><button class="delete-spell-btn text-red-600 p-1">&times;</button></div>
+                    </div>
+                `).join('');
+                levelEl.innerHTML = `
+                    <h4 class="text-lg font-bold text-red-800">${level === 0 ? 'Trucchetti' : `Livello ${level}`}</h4>
+                    ${slotsHtml}
+                    <div class="spell-list space-y-1">${spellListHtml}</div>
+                    <button class="add-spell-btn mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Incantesimo</button>
+                `;
+                container.appendChild(levelEl);
+            }
+        }
+        function openSpellModal(level, spell = null) {
+            spellModal.classList.remove('hidden');
+            document.getElementById('spell-form').reset();
+            document.getElementById('spell-level').value = level;
+            if (spell) {
+                document.getElementById('spell-modal-title').textContent = "Modifica Incantesimo";
+                document.getElementById('spell-id').value = spell.id;
+                document.getElementById('spell-name').value = spell.name;
+                document.getElementById('spell-description').value = spell.description;
+            } else {
+                document.getElementById('spell-modal-title').textContent = `Aggiungi Incantesimo (Liv. ${level})`;
+                document.getElementById('spell-id').value = '';
+            }
+        }
+        document.getElementById('spell-cancel-btn').addEventListener('click', () => spellModal.classList.add('hidden'));
+        csModalContent.addEventListener('click', e => {
+            const addBtn = e.target.closest('.add-spell-btn');
+            if (addBtn) { const level = addBtn.closest('.spell-level-container').dataset.level; openSpellModal(level); }
+            const editBtn = e.target.closest('.edit-spell-btn');
+            if (editBtn) { const level = editBtn.closest('.spell-level-container').dataset.level; const spellId = editBtn.closest('[data-id]').dataset.id; const spell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === spellId); if (spell) openSpellModal(level, spell); }
+            const deleteBtn = e.target.closest('.delete-spell-btn');
+            if (deleteBtn) { const token = csModal.dataset.currentToken; if (!token) return; const level = deleteBtn.closest('.spell-level-container').dataset.level; const spellId = deleteBtn.closest('[data-id]').dataset.id; let sheetData = readSheetFromDOM(); sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].filter(s => s.id !== spellId); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+        });
+        document.getElementById('spell-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const token = csModal.dataset.currentToken; if (!token) return;
+            const id = document.getElementById('spell-id').value;
+            const level = document.getElementById('spell-level').value;
+            const newSpell = { id: id || crypto.randomUUID(), name: document.getElementById('spell-name').value, description: document.getElementById('spell-description').value, prepared: false };
+            let sheetData = readSheetFromDOM();
+            if (id) { sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].map(s => s.id === id ? newSpell : s); }
+            else { if (!sheetData.spellcasting.spells[level]) sheetData.spellcasting.spells[level] = []; sheetData.spellcasting.spells[level].push(newSpell); }
+            saveCharacterSheet(token, sheetData);
+            populateCharacterSheet(sheetData);
+            spellModal.classList.add('hidden');
+        });
+        function updateSpellcastingCalculatedFields(sheetData) {
+            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
+            const spellAbility = sheetData.spellcasting.ability || 'intelligence';
+            const abilityMod = getModifier(sheetData.stats[spellAbility]);
+            const saveDC = 8 + profBonus + abilityMod;
+            const attackBonus = profBonus + abilityMod;
+            csModalContent.querySelector('[data-field="spellcasting.saveDC"]').value = saveDC;
+            csModalContent.querySelector('[data-field="spellcasting.attackBonus"]').value = formatModifier(attackBonus);
+        }
 
        function readSheetFromDOM() {
-    const sheetData = createEmptyCharacterSheet();
-    csModalContent.querySelectorAll('[data-field]').forEach(el => {
-        const fieldPath = el.dataset.field;
-        if (fieldPath === "speed") return; // PATCH VELOCITÀ: ignora campo speed manuale
-        const keys = fieldPath.split('.');
-        let current = sheetData;
-        keys.forEach((key, index) => {
-            if (index === keys.length - 1) {
-                current[key] = el.value;
-            } else {
-                current[key] = current[key] || {};
-                current = current[key];
-            }
-        });
-    });
-    const raceSelect = document.getElementById('cs-race-select');
-    if (raceSelect.value === 'Altro...') {
-        sheetData.race = document.getElementById('cs-race-custom').value;
-    } else {
-        sheetData.race = raceSelect.value;
-    }
-    sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
-    sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
-    sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({
-        id: itemEl.dataset.id,
-        name: itemEl.querySelector('.cs-defense-name').value,
-        value: itemEl.querySelector('.cs-defense-value').value,
-        type: itemEl.querySelector('.cs-defense-type').value,
-        worn: itemEl.querySelector('.cs-defense-worn').checked
-    }));
-    sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => {
-        const classSelect = itemEl.querySelector('.cs-class-name');
-        let className = classSelect.value;
-        if (className === 'Altro...') {
-            className = itemEl.querySelector('.cs-class-name-custom').value;
+            const sheetData = createEmptyCharacterSheet();
+            csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                const fieldPath = el.dataset.field;
+                const keys = fieldPath.split('.');
+                let current = sheetData;
+                keys.forEach((key, index) => { if (index === keys.length - 1) { current[key] = el.value; } else { current[key] = current[key] || {}; current = current[key]; } });
+            });
+            const raceSelect = document.getElementById('cs-race-select');
+            sheetData.race = raceSelect.value === 'Altro...' ? document.getElementById('cs-race-custom').value : raceSelect.value;
+            sheetData.proficiencies.saves = Array.from(csModalContent.querySelectorAll('[data-save-prof]:checked')).map(el => el.dataset.saveProf);
+            sheetData.proficiencies.skills = Array.from(csModalContent.querySelectorAll('[data-skill-prof]:checked')).map(el => el.dataset.skillProf);
+            sheetData.defenses = Array.from(document.querySelectorAll('#cs-defenses-list .defense-item')).map(itemEl => ({ id: itemEl.dataset.id, name: itemEl.querySelector('.cs-defense-name').value, value: itemEl.querySelector('.cs-defense-value').value, type: itemEl.querySelector('.cs-defense-type').value, worn: itemEl.querySelector('.cs-defense-worn').checked }));
+            sheetData.classes = Array.from(document.querySelectorAll('#cs-classes-list .class-item')).map(itemEl => { const classSelect = itemEl.querySelector('.cs-class-name'); let className = classSelect.value === 'Altro...' ? itemEl.querySelector('.cs-class-name-custom').value : classSelect.value; return { id: itemEl.dataset.id, name: className, level: itemEl.querySelector('.cs-class-level').value } });
+            
+            // Leggi dati da cache per non perdere dati non visibili
+            sheetData.equipment = window.currentSheetData.equipment || [];
+            sheetData.weapons = window.currentSheetData.weapons || [];
+            sheetData.spellcasting = window.currentSheetData.spellcasting || createEmptyCharacterSheet().spellcasting;
+            
+            // Sovrascrivi con i dati visibili nel DOM
+            sheetData.spellcasting.class = csModalContent.querySelector('[data-field="spellcasting.class"]').value;
+            sheetData.spellcasting.ability = csModalContent.querySelector('[data-field="spellcasting.ability"]').value;
+            document.querySelectorAll('.spell-level-container').forEach(container => {
+                const level = container.dataset.level;
+                if(level > 0) {
+                    sheetData.spellcasting.slots[level] = { total: container.querySelector('.spell-slot-total').value, used: container.querySelector('.spell-slot-used').value };
+                }
+                sheetData.spellcasting.spells[level] = Array.from(container.querySelectorAll('.spell-list [data-id]')).map(spellEl => {
+                    const id = spellEl.dataset.id;
+                    const existingSpell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === id);
+                    return { ...existingSpell, prepared: spellEl.querySelector('.spell-prepared-checkbox').checked };
+                });
+            });
+
+            return sheetData;
         }
-        return {
-            id: itemEl.dataset.id,
-            name: className,
-            level: itemEl.querySelector('.cs-class-level').value
-        }
-    });
-    sheetData.speedModifier = document.getElementById('cs-speed-modifier').value;
-    // Leggi le armi dal DOM se necessario, ma è meglio prenderle dalla cache
-    sheetData.weapons = window.currentSheetData.weapons || [];
-    return sheetData;
-}
 
         async function saveCharacterSheet(token, sheetData) {
-            window.currentSheetData = sheetData; // Update local cache immediately
+            window.currentSheetData = sheetData;
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
             const adventureId = isPlayerView ? playerViewId : currentAdventureId;
             const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
             if (!adventureId || !userId) return;
-
             const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-
             const adventureSnap = await getDoc(adventureRef);
             if (adventureSnap.exists()) {
                 const players = adventureSnap.data().players || [];
                 const playerIndex = players.findIndex(p => p.token === token);
                 if (playerIndex > -1) {
                     players[playerIndex].characterSheet = sheetData;
-                    try {
-                        await updateDoc(adventureRef, { players: players });
-                        await updateDoc(publicAdventureRef, { players: players });
-                    } catch (error) {
-                        console.error("Errore salvataggio scheda:", error);
-                    }
+                    try { await updateDoc(adventureRef, { players: players }); await updateDoc(publicAdventureRef, { players: players }); } 
+                    catch (error) { console.error("Errore salvataggio scheda:", error); }
                 }
             }
         }
@@ -1731,92 +1095,23 @@ csModalContent.addEventListener('input', (e) => {
         async function addRollToLog(rollData) {
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
             const adventureId = isPlayerView ? playerViewId : currentAdventureId;
-            if (!adventureId) {
-                console.error("ID Avventura non trovato per il tiro.");
-                return;
-            }
-            try {
-                const adventureRef = doc(db, 'publicAdventures', adventureId);
-                await updateDoc(adventureRef, {
-                    diceRolls: arrayUnion(rollData)
-                });
-            } catch (error) {
-                console.error("Errore nell'invio del tiro al log:", error);
-            }
+            if (!adventureId) return;
+            try { await updateDoc(doc(db, 'publicAdventures', adventureId), { diceRolls: arrayUnion(rollData) }); } catch (error) { console.error("Errore nell'invio del tiro al log:", error); }
         }
 
-        function parseAndRollDamage(damageString) {
-            const parts = damageString.toLowerCase().replace(/\s/g, '').split('+');
-            let diceTotal = 0;
-            const rolls = [];
-            let flatBonus = 0;
-
-            for (const part of parts) {
-                if (part.includes('d')) {
-                    const [numDiceStr, diceSidesStr] = part.split('d');
-                    const numDice = parseInt(numDiceStr) || 1;
-                    const diceSides = parseInt(diceSidesStr);
-                    if (!isNaN(numDice) && !isNaN(diceSides)) {
-                         for (let i = 0; i < numDice; i++) {
-                            const roll = Math.floor(Math.random() * diceSides) + 1;
-                            rolls.push(roll);
-                            diceTotal += roll;
-                        }
-                    }
-                } else {
-                    const bonus = parseInt(part);
-                    if (!isNaN(bonus)) flatBonus += bonus;
-                }
-            }
-            return { diceTotal, rolls, flatBonus };
-        }
+        function parseAndRollDamage(damageString) { const parts = damageString.toLowerCase().replace(/\s/g, '').split('+'); let diceTotal = 0; const rolls = []; let flatBonus = 0; for (const part of parts) { if (part.includes('d')) { const [numDiceStr, diceSidesStr] = part.split('d'); const numDice = parseInt(numDiceStr) || 1; const diceSides = parseInt(diceSidesStr); if (!isNaN(numDice) && !isNaN(diceSides)) { for (let i = 0; i < numDice; i++) { const roll = Math.floor(Math.random() * diceSides) + 1; rolls.push(roll); diceTotal += roll; } } } else { const bonus = parseInt(part); if (!isNaN(bonus)) flatBonus += bonus; } } return { diceTotal, rolls, flatBonus }; }
 
         async function handleWeaponRoll(type, weaponIndex, isVersatile = false) {
             const token = csModal.dataset.currentToken;
             const player = currentAdventureData.players.find(p => p.token === token);
             if (!player) return;
-
             const sheetData = player.characterSheet;
             const weapon = sheetData.weapons[parseInt(weaponIndex)];
             if (!weapon) return;
-
             let rollData;
-
-            if (type === 'attack') {
-                const d20Roll = Math.floor(Math.random() * 20) + 1;
-                const attackBonusString = calcAttackBonus(weapon, sheetData.stats, sheetData.proficiencyBonus.replace('+', ''));
-                const bonus = parseInt(attackBonusString);
-                const total = d20Roll + bonus;
-                rollData = {
-                    id: crypto.randomUUID(),
-                    playerName: player.name,
-                    rollNotation: `Attacco con ${weapon.name}`,
-                    result: total,
-                    details: `Tiro d20: [${d20Roll}] Bonus: ${formatModifier(bonus)}`,
-                    timestamp: Date.now()
-                };
-            } else if (type === 'damage') {
-                const damageString = isVersatile ? weapon.versatileDamage : weapon.damage;
-                const { diceTotal, rolls, flatBonus } = parseAndRollDamage(damageString);
-                const statForDamage = getAttackStat(weapon, sheetData.stats);
-                const abilityMod = getStatMod(statForDamage, sheetData.stats);
-                const customBonus = parseInt(weapon.damageBonus) || 0;
-                const totalModifier = abilityMod + customBonus + flatBonus;
-                const totalDamage = diceTotal + totalModifier;
-
-                rollData = {
-                    id: crypto.randomUUID(),
-                    playerName: player.name,
-                    rollNotation: `Danno con ${weapon.name}${isVersatile ? ' (V)' : ''}`,
-                    result: totalDamage,
-                    details: `Tiro: [${rolls.join(', ')}] Modificatori: ${formatModifier(totalModifier)}`,
-                    timestamp: Date.now()
-                };
-            }
-
-            if (rollData) {
-                await addRollToLog(rollData);
-            }
+            if (type === 'attack') { const d20Roll = Math.floor(Math.random() * 20) + 1; const attackBonusString = calcAttackBonus(weapon, sheetData.stats, sheetData.proficiencyBonus.replace('+', '')); const bonus = parseInt(attackBonusString); const total = d20Roll + bonus; rollData = { id: crypto.randomUUID(), playerName: player.name, rollNotation: `Attacco con ${weapon.name}`, result: total, details: `Tiro d20: [${d20Roll}] Bonus: ${formatModifier(bonus)}`, timestamp: Date.now() }; } 
+            else if (type === 'damage') { const damageString = isVersatile ? weapon.versatileDamage : weapon.damage; const { diceTotal, rolls, flatBonus } = parseAndRollDamage(damageString); const statForDamage = getAttackStat(weapon, sheetData.stats); const abilityMod = getStatMod(statForDamage, sheetData.stats); const customBonus = parseInt(weapon.damageBonus) || 0; const totalModifier = abilityMod + customBonus + flatBonus; const totalDamage = diceTotal + totalModifier; rollData = { id: crypto.randomUUID(), playerName: player.name, rollNotation: `Danno con ${weapon.name}${isVersatile ? ' (V)' : ''}`, result: totalDamage, details: `Tiro: [${rolls.join(', ')}] Modificatori: ${formatModifier(totalModifier)}`, timestamp: Date.now() }; }
+            if (rollData) { await addRollToLog(rollData); }
         }
 
         document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
