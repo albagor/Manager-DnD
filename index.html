@@ -279,7 +279,7 @@
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
         import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
@@ -305,11 +305,19 @@
         const playerToken = urlParams.get('token');
 
         if (playerViewId && playerToken) {
-            document.getElementById('initial-loader').style.display = 'none';
-            document.getElementById('auth-container').style.display = 'none';
-            document.getElementById('app-container').style.display = 'none';
-            document.getElementById('player-view-container').classList.add('active');
-            loadPlayerView(playerViewId, playerToken);
+            (async () => {
+                try {
+                    await signInAnonymously(auth);
+                    document.getElementById('initial-loader').style.display = 'none';
+                    document.getElementById('auth-container').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'none';
+                    document.getElementById('player-view-container').classList.add('active');
+                    loadPlayerView(playerViewId, playerToken);
+                } catch (error) {
+                    console.error("Anonymous sign-in failed:", error);
+                    document.getElementById('initial-loader').innerHTML = '<p class="text-red-500 text-center">Impossibile connettersi. Riprova più tardi.</p>';
+                }
+            })();
         }
 
         function renderDiceLog(containerEl, rolls = []) {
@@ -483,36 +491,51 @@
             adventureDetailView.style.display = 'block';
             currentAdventureId = docId;
             if (currentAdventureUnsubscribe) currentAdventureUnsubscribe();
-            
+
             const adventureRef = doc(db, `users/${userId}/adventures`, docId);
             const publicAdventureRef = doc(db, 'publicAdventures', docId);
 
-            currentAdventureUnsubscribe = onSnapshot(adventureRef, (doc) => {
-                if (doc.exists()) {
-                    currentAdventureData = { ...currentAdventureData, ...doc.data() };
-                    document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
-                    renderChaptersUI(currentAdventureData.background || []);
-                    renderGroupedNodes('environments', currentAdventureData.environments || []);
-                    renderGroupedNodes('pngs', currentAdventureData.pngs || []);
-                    renderGroupedNodes('maps', currentAdventureData.maps || []);
-                    renderGroupedNodes('treasures', currentAdventureData.treasures || []);
-                    renderGroupedNodes('monsters', currentAdventureData.monsters || []);
-                    renderGroupedNodes('images', currentAdventureData.images || []);
-                    renderPlayerManagementUI(doc.id, currentAdventureData.players || []);
-                } else { backToListBtn.click(); }
+            let privateDataCache = {}; // Cache to compare changes
+
+            const privateUnsubscribe = onSnapshot(adventureRef, (doc) => {
+                if (!doc.exists()) {
+                    backToListBtn.click();
+                    return;
+                }
+                privateDataCache = doc.data();
+                // Merge public data if it's already available
+                currentAdventureData = { ...privateDataCache, ...currentAdventureData };
+                document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
+                renderChaptersUI(currentAdventureData.background || []);
+                renderGroupedNodes('environments', currentAdventureData.environments || []);
+                renderGroupedNodes('pngs', currentAdventureData.pngs || []);
+                renderGroupedNodes('maps', currentAdventureData.maps || []);
+                renderGroupedNodes('treasures', currentAdventureData.treasures || []);
+                renderGroupedNodes('monsters', currentAdventureData.monsters || []);
+                renderGroupedNodes('images', currentAdventureData.images || []);
             });
 
-            let lastKnownMasterDiceRolls = '[]';
-            onSnapshot(publicAdventureRef, (publicDoc) => {
-                if(publicDoc.exists()){
-                    currentAdventureData = { ...currentAdventureData, ...publicDoc.data() };
-                    const masterDiceLogContainer = document.getElementById('master-dice-log-container');
-                    masterDiceLogContainer.style.display = 'block';
-                    const masterDiceLog = document.getElementById('master-dice-log');
-                    const currentMasterDiceRollsStr = JSON.stringify(publicDoc.data().diceRolls || []);
-                    if (currentMasterDiceRollsStr !== lastKnownMasterDiceRolls) { renderDiceLog(masterDiceLog, publicDoc.data().diceRolls); lastKnownMasterDiceRolls = currentMasterDiceRollsStr; }
+            const publicUnsubscribe = onSnapshot(publicAdventureRef, (publicDoc) => {
+                if (!publicDoc.exists()) return;
+                
+                const publicData = publicDoc.data();
+                currentAdventureData.players = publicData.players || [];
+                currentAdventureData.diceRolls = publicData.diceRolls || [];
+
+                // Sync players back to private doc if they have changed
+                if (JSON.stringify(privateDataCache.players) !== JSON.stringify(publicData.players)) {
+                    updateDoc(adventureRef, { players: publicData.players || [] }).catch(err => console.error("Failed to sync players back to master doc:", err));
                 }
+
+                renderPlayerManagementUI(docId, currentAdventureData.players);
+                document.getElementById('master-dice-log-container').style.display = 'block';
+                renderDiceLog(document.getElementById('master-dice-log'), currentAdventureData.diceRolls);
             });
+
+            currentAdventureUnsubscribe = () => {
+                privateUnsubscribe();
+                publicUnsubscribe();
+            };
         }
 
         function renderGroupedNodes(type, nodes) {
@@ -1464,3 +1487,4 @@
     </script>
 </body>
 </html>
+
