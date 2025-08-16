@@ -235,10 +235,10 @@
                             <div class="flex gap-4 h-full">
                                 <div class="cs-box w-32 flex-shrink-0">
                                     <div class="space-y-3">
-                                        <div class="text-center"><label class="cs-label">Rame</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
-                                        <div class="text-center"><label class="cs-label">Argento</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
-                                        <div class="text-center"><label class="cs-label">Oro</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
-                                        <div class="text-center"><label class="cs-label">Platino</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
+                                        <div class="text-center"><label class="cs-label">MR</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
+                                        <div class="text-center"><label class="cs-label">MA</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
+                                        <div class="text-center"><label class="cs-label">MO</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
+                                        <div class="text-center"><label class="cs-label">MP</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
                                     </div>
                                 </div>
                                 <div class="cs-box flex-grow h-[384px]"><label class="cs-label">Altri Tesori</label><textarea class="cs-textarea" data-field="treasure.other"></textarea></div>
@@ -967,7 +967,10 @@
             characterSheetUpdateTimeout = setTimeout(() => { const sheetDataToSave = readSheetFromDOM(); saveCharacterSheet(token, sheetDataToSave); }, 500);
         });
         
-        csModalContent.addEventListener('change', e => { if (e.target.classList.contains('cs-class-name')) { const customInput = e.target.nextElementSibling; if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } if (e.target.id === 'cs-race-select') { const customInput = document.getElementById('cs-race-custom'); if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } });
+        csModalContent.addEventListener('change', e => { 
+            if (e.target.classList.contains('cs-class-name')) { const customInput = e.target.nextElementSibling; if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } 
+            if (e.target.id === 'cs-race-select') { const customInput = document.getElementById('cs-race-custom'); if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } } 
+        });
 
         csModalContent.addEventListener('click', e => {
             const token = csModal.dataset.currentToken; if (!token) return;
@@ -984,12 +987,17 @@
         function renderEquipment(equipment = []) {
             const container = document.getElementById('cs-equipment-list');
             container.innerHTML = equipment.map(item => `
-                <div class="flex justify-between items-center p-1 border-b border-gray-300">
-                    <span>${item.quantity} x ${item.name}</span>
-                    <div>
-                        <button class="edit-equipment-btn text-blue-600 p-1" data-id="${item.id}">✎</button>
-                        <button class="delete-equipment-btn text-red-600 p-1" data-id="${item.id}">&times;</button>
-                    </div>
+                <div class="p-1 border-b border-gray-300">
+                    <details>
+                        <summary class="flex justify-between items-center cursor-pointer">
+                            <span>${item.quantity} x ${item.name}</span>
+                            <div class="flex-shrink-0">
+                                <button class="edit-equipment-btn text-blue-600 p-1" data-id="${item.id}">✎</button>
+                                <button class="delete-equipment-btn text-red-600 p-1" data-id="${item.id}">&times;</button>
+                            </div>
+                        </summary>
+                        <p class="text-sm p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">${(item.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p>
+                    </details>
                 </div>
             `).join('');
         }
@@ -1042,9 +1050,20 @@
                     slotsHtml = `<div class="flex items-center gap-2 mb-2"><label class="text-xs">Slot Totali</label><input type="number" class="cs-input text-sm w-16 spell-slot-total" value="${slotsData.total}"><label class="text-xs">Usati</label><input type="number" class="cs-input text-sm w-16 spell-slot-used" value="${slotsData.used}"></div>`;
                 }
                 const spellListHtml = levelData.map(spell => `
-                    <div class="flex items-center justify-between p-1 border-b border-gray-300" data-id="${spell.id}">
-                        <div class="flex items-center gap-2"><input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''}><span>${spell.name}</span></div>
-                        <div><button class="edit-spell-btn text-blue-600 p-1">✎</button><button class="delete-spell-btn text-red-600 p-1">&times;</button></div>
+                    <div class="p-1 border-b border-gray-300">
+                        <details>
+                            <summary class="flex justify-between items-center cursor-pointer">
+                                <div class="flex items-center gap-2">
+                                    <input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''} data-id="${spell.id}" data-level="${level}">
+                                    <span>${spell.name}</span>
+                                </div>
+                                <div class="flex-shrink-0">
+                                    <button class="edit-spell-btn text-blue-600 p-1" data-id="${spell.id}" data-level="${level}">✎</button>
+                                    <button class="delete-spell-btn text-red-600 p-1" data-id="${spell.id}" data-level="${level}">&times;</button>
+                                </div>
+                            </summary>
+                            <p class="text-sm p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">${(spell.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p>
+                        </details>
                     </div>
                 `).join('');
                 levelEl.innerHTML = `
@@ -1075,9 +1094,9 @@
             const addBtn = e.target.closest('.add-spell-btn');
             if (addBtn) { const level = addBtn.closest('.spell-level-container').dataset.level; openSpellModal(level); }
             const editBtn = e.target.closest('.edit-spell-btn');
-            if (editBtn) { const level = editBtn.closest('.spell-level-container').dataset.level; const spellId = editBtn.closest('[data-id]').dataset.id; const spell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === spellId); if (spell) openSpellModal(level, spell); }
+            if (editBtn) { const level = editBtn.dataset.level; const spellId = editBtn.dataset.id; const spell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === spellId); if (spell) openSpellModal(level, spell); }
             const deleteBtn = e.target.closest('.delete-spell-btn');
-            if (deleteBtn) { const token = csModal.dataset.currentToken; if (!token) return; const level = deleteBtn.closest('.spell-level-container').dataset.level; const spellId = deleteBtn.closest('[data-id]').dataset.id; let sheetData = readSheetFromDOM(); sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].filter(s => s.id !== spellId); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+            if (deleteBtn) { const token = csModal.dataset.currentToken; if (!token) return; const level = deleteBtn.dataset.level; const spellId = deleteBtn.dataset.id; let sheetData = readSheetFromDOM(); sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].filter(s => s.id !== spellId); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
         document.getElementById('spell-form').addEventListener('submit', e => {
             e.preventDefault();
@@ -1301,3 +1320,4 @@
     </script>
 </body>
 </html>
+"
