@@ -64,7 +64,7 @@
             @apply bg-gray-800 rounded-md w-12 h-8 flex items-center justify-center text-lg mx-auto;
         }
         .cs-textarea {
-            @apply bg-white w-full h-full text-black text-sm focus:outline-none p-2 rounded-md resize-none border border-gray-300;
+            @apply bg-white w-full h-full text-black text-sm focus:outline-none p-2 rounded-md border border-gray-300;
         }
         details > summary {
             cursor: pointer;
@@ -217,7 +217,12 @@
                 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
                     <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400"><div class="cs-box h-[32rem]"><textarea class="cs-textarea" data-field="featuresTraits"></textarea></div></div>
+                    <div class="mt-2 pt-2 border-t border-gray-400">
+                        <div class="cs-box h-[32rem] flex flex-col">
+                            <div id="cs-features-list" class="flex-grow overflow-y-auto pr-2 space-y-2"></div>
+                            <button id="cs-add-feature-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Privilegio / Tratto</button>
+                        </div>
+                    </div>
                 </details>
 
                 <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
@@ -260,9 +265,10 @@
     </div>
     
     <!-- === MODALI SCHEDA PERSONAGGIO === -->
-    <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3><form id="weapon-form" class="space-y-2"><input type="hidden" id="weapon-index" value=""><div><label class="block text-xs font-bold mb-1">Nome Arma</label><input type="text" id="weapon-name" class="cs-input" required></div><div><label class="block text-xs font-bold mb-1">Tipo</label><select id="weapon-type" class="cs-select"><option value="mischia">Mischia</option><option value="distanza">Distanza</option><option value="magica">Magica</option><option value="altro">Altro</option></select></div><div><label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label><input type="text" id="weapon-damage" class="cs-input" required></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="weapon-versatile-checkbox"><label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label></div><div id="weapon-versatile-container" class="hidden"><label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label><input type="text" id="weapon-versatile-damage" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Tipo Danno</label><input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente..."></div><div><label class="block text-xs font-bold mb-1">Proprietà</label><input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse..."></div><div><label class="block text-xs font-bold mb-1">Competenza?</label><input type="checkbox" id="weapon-proficient"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label><input type="number" id="weapon-attack-bonus" class="cs-input" value="0"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label><input type="number" id="weapon-damage-bonus" class="cs-input" value="0"></div><div class="flex gap-2 mt-2"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button><button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-40"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3><form id="weapon-form" class="space-y-2"><input type="hidden" id="weapon-index" value=""><div><label class="block text-xs font-bold mb-1">Nome Arma</label><input type="text" id="weapon-name" class="cs-input" required></div><div><label class="block text-xs font-bold mb-1">Tipo</label><select id="weapon-type" class="cs-select"><option value="mischia">Mischia</option><option value="distanza">Distanza</option><option value="magica">Magica</option><option value="altro">Altro</option></select></div><div><label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label><input type="text" id="weapon-damage" class="cs-input" required></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="weapon-versatile-checkbox"><label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label></div><div id="weapon-versatile-container" class="hidden"><label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label><input type="text" id="weapon-versatile-damage" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Tipo Danno</label><input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente..."></div><div><label class="block text-xs font-bold mb-1">Proprietà</label><input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, finesse..."></div><div><label class="block text-xs font-bold mb-1">Competenza?</label><input type="checkbox" id="weapon-proficient"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label><input type="number" id="weapon-attack-bonus" class="cs-input" value="0"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label><input type="number" id="weapon-damage-bonus" class="cs-input" value="0"></div><div class="flex gap-2 mt-2"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button><button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-40"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="feature-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="feature-modal-title">Privilegio / Tratto</h3><form id="feature-form" class="space-y-3"><input type="hidden" id="feature-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="feature-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="feature-type" class="cs-select"><option value="Razziale">Razziale</option><option value="Classe">Classe</option><option value="Background">Background</option><option value="Privilegio">Privilegio</option><option value="Altro">Altro</option></select></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="feature-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="feature-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
 
 
     <script type="module">
@@ -704,7 +710,8 @@
                 proficiencyBonus: "+2", initiativeBonus: 0, speedModifier: "",
                 hp: { max: 10, current: 10 }, hitDice: "",
                 deathSaves: { successes: [false, false, false], failures: [false, false, false] },
-                personalityTraits: "", ideals: "", bonds: "", flaws: "", featuresTraits: "",
+                features: [],
+                personalityTraits: "", ideals: "", bonds: "", flaws: "",
                 proficiencies: { saves: [], skills: [] },
                 defenses: [], weapons: [], equipment: [],
                 treasure: { cp: 0, sp: 0, gp: 0, pp: 0, other: "" },
@@ -777,9 +784,20 @@
             csModal.dataset.currentToken = playerToken;
             csModal.dataset.isPlayerView = isPlayerView;
 
-            // Deep merge with defaults to prevent errors with old data structures from Firestore
             const emptySheet = createEmptyCharacterSheet();
-            const playerSheet = player.characterSheet || {};
+            let playerSheet = player.characterSheet || {};
+
+            // Migration for old featuresTraits string
+            if (playerSheet.featuresTraits && !playerSheet.features) {
+                playerSheet.features = [{
+                    id: crypto.randomUUID(),
+                    name: "Vecchi Privilegi & Tratti",
+                    type: "Altro",
+                    description: playerSheet.featuresTraits
+                }];
+                delete playerSheet.featuresTraits;
+            }
+
             const sheetData = {
                 ...emptySheet,
                 ...playerSheet,
@@ -788,6 +806,7 @@
                 treasure: { ...emptySheet.treasure, ...(playerSheet.treasure || {}) },
                 proficiencies: { ...emptySheet.proficiencies, ...(playerSheet.proficiencies || {}) },
                 deathSaves: { ...emptySheet.deathSaves, ...(playerSheet.deathSaves || {}) },
+                features: playerSheet.features || [],
                 spellcasting: {
                     ...emptySheet.spellcasting,
                     ...(playerSheet.spellcasting || {}),
@@ -803,7 +822,7 @@
         function populateCharacterSheet(sheetData) {
             window.currentSheetData = sheetData; // Cache for immediate UI updates
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field)) return;
+                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field) || el.dataset.field === 'featuresTraits') return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 if (el.tagName === 'SELECT') { el.value = value || el.options[0].value; } else { el.value = value; }
@@ -815,6 +834,7 @@
             renderRace(sheetData.race || '');
             renderEquipment(sheetData.equipment || []);
             renderSpells(sheetData.spellcasting || createEmptyCharacterSheet().spellcasting);
+            renderFeatures(sheetData.features || []);
             
             const deathSaves = sheetData.deathSaves || { successes: [false, false, false], failures: [false, false, false] };
             csModalContent.querySelectorAll('[data-death-save-success]').forEach((el, index) => { el.checked = deathSaves.successes[index] || false; });
@@ -1082,9 +1102,118 @@
             csModalContent.querySelector('[data-field="spellcasting.attackBonus"]').value = formatModifier(attackBonus);
         }
 
+        // --- LOGICA PRIVILEGI & TRATTI ---
+        const featureModal = document.getElementById('feature-modal');
+
+        function renderFeatures(features = []) {
+            const container = document.getElementById('cs-features-list');
+            container.innerHTML = '';
+            if (!features || features.length === 0) {
+                container.innerHTML = '<p class="text-gray-500 text-center p-4 font-sans">Nessun privilegio o tratto aggiunto.</p>';
+                return;
+            }
+            
+            const groupedFeatures = features.reduce((acc, feature) => {
+                const type = feature.type || 'Altro';
+                if (!acc[type]) {
+                    acc[type] = [];
+                }
+                acc[type].push(feature);
+                return acc;
+            }, {});
+
+            const groupOrder = ['Razziale', 'Classe', 'Background', 'Privilegio', 'Altro'];
+
+            groupOrder.forEach(groupName => {
+                if (groupedFeatures[groupName]) {
+                    const groupEl = document.createElement('div');
+                    let featuresHtml = groupedFeatures[groupName].map(feature => `
+                        <div class="p-1 border-t border-gray-300">
+                            <details>
+                                <summary class="flex justify-between items-center cursor-pointer">
+                                    <span class="font-bold">${feature.name}</span>
+                                    <div class="flex-shrink-0">
+                                        <button class="edit-feature-btn text-blue-600 p-1" data-id="${feature.id}">✎</button>
+                                        <button class="delete-feature-btn text-red-600 p-1" data-id="${feature.id}">&times;</button>
+                                    </div>
+                                </summary>
+                                <p class="text-sm p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">${(feature.description || '').replace(/\n/g, '<br>')}</p>
+                            </details>
+                        </div>
+                    `).join('');
+
+                    groupEl.innerHTML = `
+                        <h4 class="text-red-800 font-bold mt-2">${groupName}</h4>
+                        ${featuresHtml}
+                    `;
+                    container.appendChild(groupEl);
+                }
+            });
+        }
+
+        document.getElementById('cs-add-feature-btn').addEventListener('click', () => openFeatureModal());
+
+        csModalContent.addEventListener('click', e => {
+            if (e.target.classList.contains('edit-feature-btn')) {
+                const id = e.target.dataset.id;
+                const feature = window.currentSheetData.features.find(f => f.id === id);
+                if (feature) openFeatureModal(feature);
+            }
+            if (e.target.classList.contains('delete-feature-btn')) {
+                const id = e.target.dataset.id;
+                const token = csModal.dataset.currentToken;
+                if (!token) return;
+                let sheetData = readSheetFromDOM();
+                sheetData.features = sheetData.features.filter(f => f.id !== id);
+                saveCharacterSheet(token, sheetData);
+                populateCharacterSheet(sheetData);
+            }
+        });
+
+        function openFeatureModal(feature = null) {
+            featureModal.classList.remove('hidden');
+            document.getElementById('feature-form').reset();
+            if (feature) {
+                document.getElementById('feature-modal-title').textContent = "Modifica Privilegio / Tratto";
+                document.getElementById('feature-id').value = feature.id;
+                document.getElementById('feature-name').value = feature.name;
+                document.getElementById('feature-type').value = feature.type;
+                document.getElementById('feature-description').value = feature.description;
+            } else {
+                document.getElementById('feature-modal-title').textContent = "Aggiungi Privilegio / Tratto";
+                document.getElementById('feature-id').value = '';
+            }
+        }
+
+        document.getElementById('feature-cancel-btn').addEventListener('click', () => featureModal.classList.add('hidden'));
+
+        document.getElementById('feature-form').addEventListener('submit', e => {
+            e.preventDefault();
+            const token = csModal.dataset.currentToken;
+            if (!token) return;
+            const id = document.getElementById('feature-id').value;
+            const newFeature = {
+                id: id || crypto.randomUUID(),
+                name: document.getElementById('feature-name').value,
+                type: document.getElementById('feature-type').value,
+                description: document.getElementById('feature-description').value
+            };
+            let sheetData = readSheetFromDOM();
+            if (id) {
+                sheetData.features = sheetData.features.map(f => f.id === id ? newFeature : f);
+            } else {
+                sheetData.features.push(newFeature);
+            }
+            saveCharacterSheet(token, sheetData);
+            populateCharacterSheet(sheetData);
+            featureModal.classList.add('hidden');
+        });
+
+
        function readSheetFromDOM() {
             const sheetData = createEmptyCharacterSheet();
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
+                if(el.dataset.field === 'featuresTraits') return;
                 const fieldPath = el.dataset.field;
                 const keys = fieldPath.split('.');
                 let current = sheetData;
@@ -1104,6 +1233,7 @@
             // Leggi dati da cache per non perdere dati non visibili
             sheetData.equipment = window.currentSheetData.equipment || [];
             sheetData.weapons = window.currentSheetData.weapons || [];
+            sheetData.features = window.currentSheetData.features || [];
             sheetData.spellcasting = window.currentSheetData.spellcasting || createEmptyCharacterSheet().spellcasting;
             
             // Sovrascrivi con i dati visibili nel DOM
@@ -1170,4 +1300,4 @@
 
     </script>
 </body>
-</ht
+</html>
