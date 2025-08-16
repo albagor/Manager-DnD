@@ -1374,19 +1374,45 @@
             window.currentSheetData = sheetData;
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
             const adventureId = isPlayerView ? playerViewId : currentAdventureId;
-            const userId = isPlayerView ? currentAdventureData.ownerId : currentUserId;
-            if (!adventureId || !userId) return;
-            const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
+
+            if (!adventureId) {
+                console.error("Adventure ID not found for saving sheet.");
+                return;
+            }
+
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-            const adventureSnap = await getDoc(adventureRef);
-            if (adventureSnap.exists()) {
-                const players = adventureSnap.data().players || [];
+
+            try {
+                // We always get the latest list of players from the public doc to avoid race conditions.
+                const publicAdventureSnap = await getDoc(publicAdventureRef);
+                if (!publicAdventureSnap.exists()) {
+                    console.error("Public adventure not found.");
+                    return;
+                }
+
+                let players = publicAdventureSnap.data().players || [];
                 const playerIndex = players.findIndex(p => p.token === token);
+
                 if (playerIndex > -1) {
                     players[playerIndex].characterSheet = sheetData;
-                    try { await updateDoc(adventureRef, { players: players }); await updateDoc(publicAdventureRef, { players: players }); } 
-                    catch (error) { console.error("Errore salvataggio scheda:", error); }
+
+                    // Player only updates the public document.
+                    if (isPlayerView) {
+                        await updateDoc(publicAdventureRef, { players: players });
+                    } else {
+                        // DM updates both public and private documents to keep them in sync.
+                        const userId = currentUserId;
+                        if (!userId) {
+                            console.error("DM user ID not found.");
+                            return;
+                        }
+                        const adventureRef = doc(db, `users/${userId}/adventures`, adventureId);
+                        await updateDoc(adventureRef, { players: players });
+                        await updateDoc(publicAdventureRef, { players: players });
+                    }
                 }
+            } catch (error) {
+                console.error("Errore salvataggio scheda:", error);
             }
         }
 
