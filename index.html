@@ -1849,7 +1849,112 @@ function aggiornaAutoFeaturesDaForm() {
 
 // Chiama anche all’apertura/modifica della scheda
 document.addEventListener('DOMContentLoaded', aggiornaAutoFeaturesDaForm);
+let racesData = null;
+let classesData = null;
 
+/** Carica i JSON solo la prima volta */
+async function loadData() {
+    if (!racesData) {
+        const resp = await fetch('races.json');
+        racesData = await resp.json();
+    }
+    if (!classesData) {
+        const resp = await fetch('classes.json');
+        classesData = await resp.json();
+    }
+}
+
+/** Funzione principale per aggiornare la sezione automatica */
+async function updateAutoFeatures(sheetData) {
+    await loadData();
+    let tratti = [];
+    let privilegi = [];
+    // Estrai dati da sheetData (che puoi già avere in memoria)
+    const razza = sheetData.race;
+    const sottorazza = sheetData.subrace || "";
+    // Supporto multi-classe (prendiamo la classe con livello più alto)
+    const mainClassObj = (sheetData.classes || []).sort((a, b) => b.level - a.level)[0] || {};
+    const classe = mainClassObj.name || "";
+    const livello = parseInt(mainClassObj.level, 10) || 1;
+    const sottoclasse = mainClassObj.subclass || "";
+
+    // Trova la razza e i tratti razziali
+    const race = racesData.find(r => r.name === razza);
+    if (race) {
+        if (race.traits) tratti = tratti.concat(race.traits);
+        if (sottorazza && race.subraces) {
+            const subrace = race.subraces.find(sr => sr.name === sottorazza);
+            if (subrace && subrace.traits) tratti = tratti.concat(subrace.traits);
+        }
+    }
+    // Trova la classe e i privilegi di classe
+    const cls = classesData.find(c => c.name === classe);
+    if (cls) {
+        // Privilegi di classe per livello
+        cls.features && cls.features.forEach(f => {
+            if (f.level <= livello) privilegi.push(f.name);
+        });
+        // Sottoclasse
+        if (sottoclasse && cls.subclasses) {
+            const subclass = cls.subclasses.find(sc => sc.name === sottoclasse);
+            if (subclass && subclass.features) {
+                subclass.features.forEach(f => {
+                    if (f.level <= livello) privilegi.push(f.name);
+                });
+            }
+        }
+    }
+
+    // Elimina duplicati
+    tratti = [...new Set(tratti)];
+    privilegi = [...new Set(privilegi)];
+
+    // Rendering nella sezione automatica
+    const autoDiv = document.getElementById('cs-class-features-auto');
+    autoDiv.innerHTML = `
+        <h5 class="font-bold text-red-800">Tratti razziali</h5>
+        <ul class="list-disc ml-5">${tratti.map(t => `<li>${t}</li>`).join('')}</ul>
+        <h5 class="font-bold text-red-800 mt-2">Privilegi di classe/sottoclasse</h5>
+        <ul class="list-disc ml-5">${privilegi.map(p => `<li>${p}</li>`).join('')}</ul>
+    `;
+}
+
+// Associa updateAutoFeatures ai cambiamenti di razza/classe/sottorazza/sottoclasse/livello
+function setupAutoFeaturesEvents() {
+    // Adatta questi ID ai tuoi input reali
+    const relevantInputs = [
+        '[data-field="race"]',
+        '[data-field="subrace"]',
+        '[data-field="classes"]',
+        '[data-field="level"]',
+        '[data-field="subclass"]'
+    ];
+    relevantInputs.forEach(sel => {
+        document.querySelectorAll(sel).forEach(el => {
+            el.addEventListener('change', aggiornaAutoFeaturesDaForm);
+        });
+    });
+}
+
+function aggiornaAutoFeaturesDaForm() {
+    // Qui estrai i dati correnti della scheda (adatta a come salvi la scheda)
+    // Questo è un esempio: sostituisci con il tuo modello dati!
+    const race = document.querySelector('[data-field="race"]')?.value || "";
+    const subrace = document.querySelector('[data-field="subrace"]')?.value || "";
+    // Se hai gestione multiclassi, recupera anche quelle
+    const classes = [{ 
+        name: document.querySelector('[data-field="classes"]')?.value || "",
+        level: document.querySelector('[data-field="level"]')?.value || 1,
+        subclass: document.querySelector('[data-field="subclass"]')?.value || ""
+    }];
+    updateAutoFeatures({ race, subrace, classes });
+}
+
+// Esegui all’avvio
+document.addEventListener('DOMContentLoaded', () => {
+    setupAutoFeaturesEvents();
+    aggiornaAutoFeaturesDaForm();
+});
         
 
     </script>
