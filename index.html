@@ -324,7 +324,6 @@
                     } catch (error) {
                         console.error("Anonymous sign-in failed:", error);
                         const container = document.getElementById('player-view-container');
-                        // MODIFICA: Messaggio di errore più specifico per il DM
                         container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p><p class="text-gray-400 mt-4 font-sans">Controlla la tua connessione a internet. Se il problema persiste, il DM deve assicurarsi che l'autenticazione anonima sia abilitata nelle impostazioni del progetto Firebase.</p></div>`;
                         container.classList.add('active');
                         document.getElementById('auth-container').style.display = 'none';
@@ -364,7 +363,7 @@
         
         document.getElementById('player-view-container').addEventListener('click', async (e) => {
             if (!e.target.classList.contains('player-dice-btn')) return;
-            e.preventDefault(); // CORREZIONE: Previene comportamenti di default del browser
+            e.preventDefault();
             if (!playerViewId || !playerToken || !currentAdventureData.players) return;
             const btn = e.target;
             const currentPlayer = currentAdventureData.players.find(p => p.token === playerToken);
@@ -379,7 +378,6 @@
         });
 
         function loadPlayerView(adventureId, token) {
-            let lastKnownDiceRolls = '[]';
             const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
             onSnapshot(publicAdventureRef, (doc) => {
                 if (doc.exists()) {
@@ -390,9 +388,11 @@
                     if (!currentPlayer) { document.getElementById('player-adventure-title').textContent = "Accesso Negato"; document.getElementById('player-shared-items').innerHTML = '<p class="text-red-500 text-center col-span-full">Questo link non è valido o è scaduto.</p>'; return; }
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
                     document.getElementById('player-open-sheet-btn').addEventListener('click', () => { openCharacterSheetModal(token, true); });
+                    
+                    // FIX: Rimuovere il controllo della cache per garantire che il log dei dadi si aggiorni sempre.
                     const diceLogContainer = document.getElementById('player-dice-log');
-                    const currentDiceRollsStr = JSON.stringify(data.diceRolls || []);
-                    if (currentDiceRollsStr !== lastKnownDiceRolls) { renderDiceLog(diceLogContainer, data.diceRolls); lastKnownDiceRolls = currentDiceRollsStr; }
+                    renderDiceLog(diceLogContainer, data.diceRolls);
+
                     const container = document.getElementById('player-shared-items');
                     container.innerHTML = '';
                     const allSharedItems = data.sharedItems || [];
@@ -949,7 +949,7 @@
           const token = csModal.dataset.currentToken; if (!token) return;
           const idx = document.getElementById('weapon-index').value;
           const newWeapon = { name: document.getElementById('weapon-name').value, type: document.getElementById('weapon-type').value, damage: document.getElementById('weapon-damage').value, versatileDamage: document.getElementById('weapon-versatile-checkbox').checked ? document.getElementById('weapon-versatile-damage').value : null, damageType: document.getElementById('weapon-damage-type').value, properties: document.getElementById('weapon-properties').value, proficient: document.getElementById('weapon-proficient').checked, attackBonus: document.getElementById('weapon-attack-bonus').value, damageBonus: document.getElementById('weapon-damage-bonus').value };
-          let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+          let sheetData = window.currentSheetData;
           if (!sheetData.weapons) sheetData.weapons = [];
           if (idx !== '') { sheetData.weapons[parseInt(idx)] = newWeapon; } else { sheetData.weapons.push(newWeapon); }
           saveCharacterSheet(token, sheetData);
@@ -961,7 +961,7 @@
           const token = csModal.dataset.currentToken; if (!token) return;
           const btn = e.target.closest('.edit-weapon-btn, .delete-weapon-btn'); if (!btn) return;
           const idx = btn.dataset.idx ? parseInt(btn.dataset.idx) : null; if (idx === null) return;
-          let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+          let sheetData = window.currentSheetData;
           if (btn.classList.contains('edit-weapon-btn')) { openWeaponModal(sheetData.weapons[idx], idx); } 
           else if (btn.classList.contains('delete-weapon-btn')) { sheetData.weapons.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
@@ -1010,7 +1010,7 @@
         csModalContent.addEventListener('input', (e) => {
             const token = csModal.dataset.currentToken; if (!token) return;
             const sheetDataForUI = readSheetFromDOM();
-            window.currentSheetData = sheetDataForUI; // CORREZIONE: Aggiorna la cache ad ogni input
+            window.currentSheetData = sheetDataForUI;
             
             if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'proficiencyBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
             if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); }
@@ -1020,7 +1020,7 @@
             
             clearTimeout(characterSheetUpdateTimeout);
             characterSheetUpdateTimeout = setTimeout(() => {
-                saveCharacterSheet(token, window.currentSheetData); // CORREZIONE: Salva dalla cache aggiornata
+                saveCharacterSheet(token, window.currentSheetData);
             }, 500);
         });
         
@@ -1083,7 +1083,7 @@
             const token = csModal.dataset.currentToken; if (!token) return;
             const id = document.getElementById('equipment-id').value;
             const newItem = { id: id || crypto.randomUUID(), name: document.getElementById('equipment-name').value, quantity: document.getElementById('equipment-quantity').value, description: document.getElementById('equipment-description').value };
-            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+            let sheetData = window.currentSheetData;
             if (id) { sheetData.equipment = sheetData.equipment.map(i => i.id === id ? newItem : i); } 
             else { sheetData.equipment.push(newItem); }
             saveCharacterSheet(token, sheetData);
@@ -1161,7 +1161,7 @@
             const id = document.getElementById('spell-id').value;
             const level = document.getElementById('spell-level').value;
             const newSpell = { id: id || crypto.randomUUID(), name: document.getElementById('spell-name').value, description: document.getElementById('spell-description').value, prepared: false };
-            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+            let sheetData = window.currentSheetData;
             if (id) { sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].map(s => s.id === id ? newSpell : s); }
             else { if (!sheetData.spellcasting.spells[level]) sheetData.spellcasting.spells[level] = []; sheetData.spellcasting.spells[level].push(newSpell); }
             saveCharacterSheet(token, sheetData);
@@ -1274,7 +1274,7 @@
                 type: document.getElementById('feature-type').value,
                 description: document.getElementById('feature-description').value
             };
-            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+            let sheetData = window.currentSheetData;
             if (id) {
                 sheetData.features = sheetData.features.map(f => f.id === id ? newFeature : f);
             } else {
@@ -1351,7 +1351,7 @@
                 value: document.getElementById('treasure-value').value,
                 description: document.getElementById('treasure-description').value
             };
-            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
+            let sheetData = window.currentSheetData;
             if (id) {
                 sheetData.treasure.other = sheetData.treasure.other.map(i => i.id === id ? newItem : i);
             } else {
@@ -1496,7 +1496,6 @@
                     const diceSides = parseInt(diceSidesStr);
                     if (!isNaN(numDice) && !isNaN(diceSides)) {
                         for (let i = 0; i < numDice; i++) {
-                            // CORREZIONE: Usare diceSides invece di sides
                             const roll = Math.floor(Math.random() * diceSides) + 1;
                             rolls.push(roll);
                             diceTotal += roll;
@@ -1523,7 +1522,17 @@
             if (rollData) { await addRollToLog(rollData); }
         }
 
-        document.getElementById('cs-modal-close-btn').addEventListener('click', () => csModal.classList.add('hidden'));
+        // FIX: Garantisce il salvataggio della scheda alla chiusura della modale
+        document.getElementById('cs-modal-close-btn').addEventListener('click', () => {
+            clearTimeout(characterSheetUpdateTimeout); // Annulla salvataggi in sospeso
+            const token = csModal.dataset.currentToken;
+            if (token) {
+                // Legge lo stato finale dal DOM e salva
+                const latestSheetData = readSheetFromDOM();
+                saveCharacterSheet(token, latestSheetData);
+            }
+            csModal.classList.add('hidden');
+        });
 
     </script>
 </body>
