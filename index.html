@@ -364,6 +364,7 @@
         
         document.getElementById('player-view-container').addEventListener('click', async (e) => {
             if (!e.target.classList.contains('player-dice-btn')) return;
+            e.preventDefault(); // CORREZIONE: Previene comportamenti di default del browser
             if (!playerViewId || !playerToken || !currentAdventureData.players) return;
             const btn = e.target;
             const currentPlayer = currentAdventureData.players.find(p => p.token === playerToken);
@@ -948,7 +949,7 @@
           const token = csModal.dataset.currentToken; if (!token) return;
           const idx = document.getElementById('weapon-index').value;
           const newWeapon = { name: document.getElementById('weapon-name').value, type: document.getElementById('weapon-type').value, damage: document.getElementById('weapon-damage').value, versatileDamage: document.getElementById('weapon-versatile-checkbox').checked ? document.getElementById('weapon-versatile-damage').value : null, damageType: document.getElementById('weapon-damage-type').value, properties: document.getElementById('weapon-properties').value, proficient: document.getElementById('weapon-proficient').checked, attackBonus: document.getElementById('weapon-attack-bonus').value, damageBonus: document.getElementById('weapon-damage-bonus').value };
-          let sheetData = readSheetFromDOM();
+          let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
           if (!sheetData.weapons) sheetData.weapons = [];
           if (idx !== '') { sheetData.weapons[parseInt(idx)] = newWeapon; } else { sheetData.weapons.push(newWeapon); }
           saveCharacterSheet(token, sheetData);
@@ -960,7 +961,7 @@
           const token = csModal.dataset.currentToken; if (!token) return;
           const btn = e.target.closest('.edit-weapon-btn, .delete-weapon-btn'); if (!btn) return;
           const idx = btn.dataset.idx ? parseInt(btn.dataset.idx) : null; if (idx === null) return;
-          let sheetData = readSheetFromDOM();
+          let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
           if (btn.classList.contains('edit-weapon-btn')) { openWeaponModal(sheetData.weapons[idx], idx); } 
           else if (btn.classList.contains('delete-weapon-btn')) { sheetData.weapons.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
@@ -1009,13 +1010,18 @@
         csModalContent.addEventListener('input', (e) => {
             const token = csModal.dataset.currentToken; if (!token) return;
             const sheetDataForUI = readSheetFromDOM();
+            window.currentSheetData = sheetDataForUI; // CORREZIONE: Aggiorna la cache ad ogni input
+            
             if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'proficiencyBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
             if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); }
             if (e.target.closest('.defense-item')) { updateAC(sheetDataForUI); }
             if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) { updateTotalLevel(sheetDataForUI); updateSpeedField(sheetDataForUI); }
             if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') { updateSpeedField(sheetDataForUI); }
+            
             clearTimeout(characterSheetUpdateTimeout);
-            characterSheetUpdateTimeout = setTimeout(() => { const sheetDataToSave = readSheetFromDOM(); saveCharacterSheet(token, sheetDataToSave); }, 500);
+            characterSheetUpdateTimeout = setTimeout(() => {
+                saveCharacterSheet(token, window.currentSheetData); // CORREZIONE: Salva dalla cache aggiornata
+            }, 500);
         });
         
         csModalContent.addEventListener('change', e => { 
@@ -1025,10 +1031,10 @@
 
         csModalContent.addEventListener('click', e => {
             const token = csModal.dataset.currentToken; if (!token) return;
-            if (e.target.id === 'cs-add-defense-btn') { const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false }; const sheetData = readSheetFromDOM(); sheetData.defenses.push(newDefense); renderDefenses(sheetData.defenses); saveCharacterSheet(token, sheetData); }
-            if (e.target.classList.contains('cs-delete-defense-btn')) { const itemEl = e.target.closest('.defense-item'); const itemId = itemEl.dataset.id; let sheetData = readSheetFromDOM(); sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId); renderDefenses(sheetData.defenses); updateAC(sheetData); saveCharacterSheet(token, sheetData); }
-            if (e.target.id === 'cs-add-class-btn') { const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 }; const sheetData = readSheetFromDOM(); sheetData.classes.push(newClass); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); }
-            if (e.target.classList.contains('cs-delete-class-btn')) { const itemEl = e.target.closest('.class-item'); const itemId = itemEl.dataset.id; let sheetData = readSheetFromDOM(); if (sheetData.classes.length > 1) { sheetData.classes = sheetData.classes.filter(c => c.id !== itemId); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); } }
+            if (e.target.id === 'cs-add-defense-btn') { const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false }; const sheetData = window.currentSheetData; sheetData.defenses.push(newDefense); renderDefenses(sheetData.defenses); saveCharacterSheet(token, sheetData); }
+            if (e.target.classList.contains('cs-delete-defense-btn')) { const itemEl = e.target.closest('.defense-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId); renderDefenses(sheetData.defenses); updateAC(sheetData); saveCharacterSheet(token, sheetData); }
+            if (e.target.id === 'cs-add-class-btn') { const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 }; const sheetData = window.currentSheetData; sheetData.classes.push(newClass); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); }
+            if (e.target.classList.contains('cs-delete-class-btn')) { const itemEl = e.target.closest('.class-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; if (sheetData.classes.length > 1) { sheetData.classes = sheetData.classes.filter(c => c.id !== itemId); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); } }
             const rollAttackBtn = e.target.closest('.roll-attack-btn'); if (rollAttackBtn) { handleWeaponRoll('attack', rollAttackBtn.dataset.idx); }
             const rollDamageBtn = e.target.closest('.roll-damage-btn'); if (rollDamageBtn) { const isVersatile = rollDamageBtn.dataset.versatile === 'true'; handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile); }
         });
@@ -1055,7 +1061,7 @@
         document.getElementById('cs-add-equipment-btn').addEventListener('click', () => openEquipmentModal());
         csModalContent.addEventListener('click', e => {
             if (e.target.classList.contains('edit-equipment-btn')) { const id = e.target.dataset.id; const item = window.currentSheetData.equipment.find(i => i.id === id); if(item) openEquipmentModal(item); }
-            if (e.target.classList.contains('delete-equipment-btn')) { const id = e.target.dataset.id; const token = csModal.dataset.currentToken; if (!token) return; let sheetData = readSheetFromDOM(); sheetData.equipment = sheetData.equipment.filter(i => i.id !== id); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+            if (e.target.classList.contains('delete-equipment-btn')) { const id = e.target.dataset.id; const token = csModal.dataset.currentToken; if (!token) return; let sheetData = window.currentSheetData; sheetData.equipment = sheetData.equipment.filter(i => i.id !== id); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
         function openEquipmentModal(item = null) {
             equipmentModal.classList.remove('hidden');
@@ -1077,7 +1083,7 @@
             const token = csModal.dataset.currentToken; if (!token) return;
             const id = document.getElementById('equipment-id').value;
             const newItem = { id: id || crypto.randomUUID(), name: document.getElementById('equipment-name').value, quantity: document.getElementById('equipment-quantity').value, description: document.getElementById('equipment-description').value };
-            let sheetData = readSheetFromDOM();
+            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
             if (id) { sheetData.equipment = sheetData.equipment.map(i => i.id === id ? newItem : i); } 
             else { sheetData.equipment.push(newItem); }
             saveCharacterSheet(token, sheetData);
@@ -1147,7 +1153,7 @@
             const editBtn = e.target.closest('.edit-spell-btn');
             if (editBtn) { const level = editBtn.dataset.level; const spellId = editBtn.dataset.id; const spell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === spellId); if (spell) openSpellModal(level, spell); }
             const deleteBtn = e.target.closest('.delete-spell-btn');
-            if (deleteBtn) { const token = csModal.dataset.currentToken; if (!token) return; const level = deleteBtn.dataset.level; const spellId = deleteBtn.dataset.id; let sheetData = readSheetFromDOM(); sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].filter(s => s.id !== spellId); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+            if (deleteBtn) { const token = csModal.dataset.currentToken; if (!token) return; const level = deleteBtn.dataset.level; const spellId = deleteBtn.dataset.id; let sheetData = window.currentSheetData; sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].filter(s => s.id !== spellId); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
         });
         document.getElementById('spell-form').addEventListener('submit', e => {
             e.preventDefault();
@@ -1155,7 +1161,7 @@
             const id = document.getElementById('spell-id').value;
             const level = document.getElementById('spell-level').value;
             const newSpell = { id: id || crypto.randomUUID(), name: document.getElementById('spell-name').value, description: document.getElementById('spell-description').value, prepared: false };
-            let sheetData = readSheetFromDOM();
+            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
             if (id) { sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].map(s => s.id === id ? newSpell : s); }
             else { if (!sheetData.spellcasting.spells[level]) sheetData.spellcasting.spells[level] = []; sheetData.spellcasting.spells[level].push(newSpell); }
             saveCharacterSheet(token, sheetData);
@@ -1233,7 +1239,7 @@
                 const id = e.target.dataset.id;
                 const token = csModal.dataset.currentToken;
                 if (!token) return;
-                let sheetData = readSheetFromDOM();
+                let sheetData = window.currentSheetData;
                 sheetData.features = sheetData.features.filter(f => f.id !== id);
                 saveCharacterSheet(token, sheetData);
                 populateCharacterSheet(sheetData);
@@ -1268,7 +1274,7 @@
                 type: document.getElementById('feature-type').value,
                 description: document.getElementById('feature-description').value
             };
-            let sheetData = readSheetFromDOM();
+            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
             if (id) {
                 sheetData.features = sheetData.features.map(f => f.id === id ? newFeature : f);
             } else {
@@ -1312,7 +1318,7 @@
                 const id = e.target.dataset.id;
                 const token = csModal.dataset.currentToken;
                 if (!token) return;
-                let sheetData = readSheetFromDOM();
+                let sheetData = window.currentSheetData;
                 sheetData.treasure.other = sheetData.treasure.other.filter(i => i.id !== id);
                 saveCharacterSheet(token, sheetData);
                 populateCharacterSheet(sheetData);
@@ -1345,7 +1351,7 @@
                 value: document.getElementById('treasure-value').value,
                 description: document.getElementById('treasure-description').value
             };
-            let sheetData = readSheetFromDOM();
+            let sheetData = window.currentSheetData; // CORREZIONE: Usa la cache
             if (id) {
                 sheetData.treasure.other = sheetData.treasure.other.map(i => i.id === id ? newItem : i);
             } else {
@@ -1528,4 +1534,4 @@
 
     </script>
 </body>
-</html>
+</ht
