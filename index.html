@@ -489,7 +489,26 @@
         const addAdventureForm = document.getElementById('add-adventure-form');
         const adventureTitleInput = document.getElementById('adventure-title-input');
         const adventuresList = document.getElementById('adventures-list');
-        const adventureListView = document.getElementById('adventure-list-view');
+        // const adventureListView = document.getElementById('adventure-list-view');
+
+        adventuresList.addEventListener('click', async e => {
+  const btn = e.target.closest('button[data-id]');
+  if (!btn || !btn.dataset.id || !currentUserId) return;
+  const docId = btn.dataset.id;
+  if (btn.classList.contains('adventure-link')) {
+    openAdventureDetail(currentUserId, docId);
+  } else if (btn.classList.contains('delete-btn')) {
+    if (confirm('Sei sicuro di voler eliminare questa avventura?')) {
+      try {
+        await deleteDoc(doc(db, `users/${currentUserId}/adventures`, docId));
+        await deleteDoc(doc(db, 'publicAdventures', docId));
+      } catch (error) {
+        console.error("Errore eliminazione: ", error);
+      }
+    }
+  }
+});
+        
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
         addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], treasures: [], monsters: [], images: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
