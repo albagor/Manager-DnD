@@ -178,7 +178,11 @@
                                 <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
                                 <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
                             </div>
-                            <div class="cs-box"><div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus" readonly></div><div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div></div>
+                            <div class="grid grid-cols-2 gap-2">
+                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus" readonly></div>
+                                <div class="cs-box"><label class="cs-label">Percezione Passiva</label><input type="text" class="cs-input text-center" data-field="senses.passivePerception" readonly></div>
+                            </div>
+                            <div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div>
                         </div>
                         <div class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
@@ -222,6 +226,14 @@
                             <div id="cs-features-list" class="flex-grow overflow-y-auto pr-2 space-y-2"></div>
                             <button id="cs-add-feature-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Privilegio / Tratto</button>
                         </div>
+                    </div>
+                </details>
+
+                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
+                    <summary class="text-2xl text-red-800 font-bold">Altre Competenze & Linguaggi</summary>
+                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div class="cs-box h-48"><label class="cs-label">Competenze (Armature, Armi, Strumenti)</label><textarea class="cs-textarea" data-field="otherProficiencies"></textarea></div>
+                        <div class="cs-box h-48"><label class="cs-label">Linguaggi</label><textarea class="cs-textarea" data-field="languages"></textarea></div>
                     </div>
                 </details>
 
@@ -271,7 +283,7 @@
     <!-- === MODALI SCHEDA PERSONAGGIO === -->
     <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3><form id="weapon-form" class="space-y-2"><input type="hidden" id="weapon-index" value=""><div><label class="block text-xs font-bold mb-1">Nome Arma</label><input type="text" id="weapon-name" class="cs-input" required></div><div><label class="block text-xs font-bold mb-1">Tipo</label><select id="weapon-type" class="cs-select"><option value="mischia">Mischia</option><option value="distanza">Distanza</option><option value="altro">Altro</option></select></div><div id="weapon-ammo-container" class="hidden"><label class="block text-xs font-bold mb-1">Tipo Munizione (es. Frecce)</label><input type="text" id="weapon-ammunition-type" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Caratteristica per l'Attacco (Override)</label><select id="weapon-override-stat" class="cs-select"><option value="default">Default</option><option value="strength">Forza</option><option value="dexterity">Destrezza</option><option value="constitution">Costituzione</option><option value="intelligence">Intelligenza</option><option value="wisdom">Saggezza</option><option value="charisma">Carisma</option></select></div><div><label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label><input type="text" id="weapon-damage" class="cs-input" required></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="weapon-versatile-checkbox"><label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label></div><div id="weapon-versatile-container" class="hidden"><label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label><input type="text" id="weapon-versatile-damage" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Tipo Danno</label><input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente..."></div><div><label class="block text-xs font-bold mb-1">Proprietà (es. accurata)</label><input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, accurata..."></div><div><label class="block text-xs font-bold mb-1">Competenza?</label><input type="checkbox" id="weapon-proficient"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label><input type="number" id="weapon-attack-bonus" class="cs-input" value="0"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label><input type="number" id="weapon-damage-bonus" class="cs-input" value="0"></div><div class="flex gap-2 mt-2"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button><button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button></div></form></div></div>
     <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="equipment-is-ammo"><label for="equipment-is-ammo" class="text-sm font-bold">Questo è un tipo di munizione?</label></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-40"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
+    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-lg w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">Tempo di Lancio</label><input type="text" id="spell-casting-time" class="cs-input text-sm"></div><div><label class="block text-sm font-bold mb-1">Gittata</label><input type="text" id="spell-range" class="cs-input text-sm"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">Durata</label><input type="text" id="spell-duration" class="cs-input text-sm"></div><div class="flex items-center gap-2 pt-6"><input type="checkbox" id="spell-concentration" class="w-4 h-4"><label for="spell-concentration" class="text-sm font-bold">Concentrazione?</label></div></div><div><label class="block text-sm font-bold mb-1">Componenti</label><div class="flex items-center gap-4" id="spell-components"><label><input type="checkbox" id="spell-comp-v" class="w-4 h-4"> V</label><label><input type="checkbox" id="spell-comp-s" class="w-4 h-4"> S</label><label><input type="checkbox" id="spell-comp-m" class="w-4 h-4"> M</label></div></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
     <div id="feature-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="feature-modal-title">Privilegio / Tratto</h3><form id="feature-form" class="space-y-3"><input type="hidden" id="feature-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="feature-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="feature-type" class="cs-select"><option value="Razziale">Razziale</option><option value="Classe">Classe</option><option value="Background">Background</option><option value="Privilegio">Privilegio</option><option value="Altro">Altro</option></select></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="feature-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="feature-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
     <div id="treasure-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="treasure-modal-title">Tesoro</h3><form id="treasure-form" class="space-y-3"><input type="hidden" id="treasure-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="treasure-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Valore (es. 100 MO)</label><input type="text" id="treasure-value" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="treasure-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="treasure-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
 
@@ -776,6 +788,8 @@
                 proficiencies: { saves: [], skills: [] },
                 defenses: [], weapons: [], equipment: [],
                 treasure: { cp: 0, sp: 0, gp: 0, pp: 0, other: [] },
+                otherProficiencies: "", languages: "",
+                senses: { passivePerception: 10, other: "" },
                 spellcasting: {
                     class: "", ability: "intelligence", saveDC: 0, attackBonus: "+0",
                     slots: { 1: {total:0, used:0}, 2: {total:0, used:0}, 3: {total:0, used:0}, 4: {total:0, used:0}, 5: {total:0, used:0}, 6: {total:0, used:0}, 7: {total:0, used:0}, 8: {total:0, used:0}, 9: {total:0, used:0} },
@@ -887,6 +901,7 @@
                 proficiencies: { ...emptySheet.proficiencies, ...(playerSheet.proficiencies || {}) },
                 deathSaves: { ...emptySheet.deathSaves, ...(playerSheet.deathSaves || {}) },
                 features: playerSheet.features || [],
+                senses: { ...emptySheet.senses, ...(playerSheet.senses || {}) },
                 spellcasting: {
                     ...emptySheet.spellcasting,
                     ...(playerSheet.spellcasting || {}),
@@ -907,7 +922,7 @@
             window.currentSheetData = sheetData; // Cache for immediate UI updates
             
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (['armorClass', 'race', 'initiative', 'proficiencyBonus'].includes(el.dataset.field) || el.dataset.field === 'featuresTraits') return;
+                if (['armorClass', 'race', 'initiative', 'proficiencyBonus', 'senses.passivePerception'].includes(el.dataset.field) || el.dataset.field === 'featuresTraits') return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 if (el.tagName === 'SELECT') { el.value = value || el.options[0].value; } else { el.value = value; }
@@ -936,6 +951,7 @@
             updateAC(sheetData);
             updateInitiative(sheetData);
             updateSpeedField(sheetData);
+            updatePassivePerception(sheetData);
             renderWeaponsList(sheetData);
             updateSpellcastingCalculatedFields(sheetData);
         }
@@ -1080,14 +1096,15 @@
         function updateTotalLevel(sheetData) { const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0); const totalLevelInput = document.getElementById('cs-total-level'); if (totalLevelInput) { totalLevelInput.value = totalLevel; } }
         function updateAC(sheetData) { const dexMod = getModifier(sheetData.stats.dexterity); let totalAC = 10; let armorBonus = 0; let dexBonus = dexMod; let otherBonuses = 0; const wornArmor = (sheetData.defenses || []).find(d => d.worn && ['light', 'medium', 'heavy'].includes(d.type)); if (wornArmor) { armorBonus = parseInt(wornArmor.value || 0); if (wornArmor.type === 'medium') { dexBonus = Math.min(dexMod, 2); } else if (wornArmor.type === 'heavy') { dexBonus = 0; } } (sheetData.defenses || []).forEach(item => { if (item.worn && (item.type === 'shield' || item.type === 'other')) { otherBonuses += parseInt(item.value || 0); } }); if (wornArmor) { totalAC = armorBonus + dexBonus + otherBonuses; } else { totalAC = 10 + dexBonus + otherBonuses; } csModalContent.querySelector('[data-field="armorClass"]').value = totalAC; }
         function updateInitiative(sheetData) { const dexMod = getModifier(sheetData.stats.dexterity); const bonus = parseInt(sheetData.initiativeBonus || 0); const total = dexMod + bonus; document.getElementById('cs-initiative-total').value = formatModifier(total); }
+        function updatePassivePerception(sheetData) { const wisMod = getModifier(sheetData.stats.wisdom); const isProficient = (sheetData.proficiencies.skills || []).includes('Percezione'); const profBonus = sheetData.proficiencyBonus || 2; const perceptionBonus = wisMod + (isProficient ? profBonus : 0); const passivePerception = 10 + perceptionBonus; csModalContent.querySelector('[data-field="senses.passivePerception"]').value = passivePerception; }
 
         csModalContent.addEventListener('input', (e) => {
             const token = csModal.dataset.currentToken; if (!token) return;
             const sheetDataForUI = readSheetFromDOM();
             window.currentSheetData = sheetDataForUI;
             
-            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
-            if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); }
+            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updatePassivePerception(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
+            if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); updatePassivePerception(sheetDataForUI); }
             if (e.target.closest('.defense-item')) { updateAC(sheetDataForUI); }
             if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) { updateTotalLevel(sheetDataForUI); updateSpeedField(sheetDataForUI); }
             if (e.target.id === 'cs-race-select' || e.target.id === 'cs-race-custom') { updateSpeedField(sheetDataForUI); }
@@ -1186,23 +1203,33 @@
                 if (level > 0) {
                     slotsHtml = `<div class="flex items-center gap-2 mb-2"><label class="text-xs">Slot Totali</label><input type="number" class="cs-input text-sm w-16 spell-slot-total" value="${slotsData.total}"><label class="text-xs">Usati</label><input type="number" class="cs-input text-sm w-16 spell-slot-used" value="${slotsData.used}"></div>`;
                 }
-                const spellListHtml = levelData.map(spell => `
+                const spellListHtml = levelData.map(spell => {
+                    const components = [];
+                    if (spell.components?.v) components.push('V');
+                    if (spell.components?.s) components.push('S');
+                    if (spell.components?.m) components.push('M');
+                    const concentration = spell.concentration ? '<span class="text-xs font-bold text-red-700">(C)</span>' : '';
+                    return `
                     <div class="p-1 border-b border-gray-300">
                         <details>
                             <summary class="flex justify-between items-center cursor-pointer">
                                 <div class="flex items-center gap-2">
                                     <input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''} data-id="${spell.id}" data-level="${level}">
-                                    <span>${spell.name}</span>
+                                    <span>${spell.name} ${concentration}</span>
                                 </div>
                                 <div class="flex-shrink-0">
                                     <button class="edit-spell-btn text-blue-600 p-1" data-id="${spell.id}" data-level="${level}">✎</button>
                                     <button class="delete-spell-btn text-red-600 p-1" data-id="${spell.id}" data-level="${level}">&times;</button>
                                 </div>
                             </summary>
-                            <p class="text-sm p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">${(spell.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p>
+                            <div class="text-xs p-2 mt-1 border-t border-gray-200 bg-white/50 rounded">
+                                <p><strong>Tempo Lancio:</strong> ${spell.castingTime || 'N/A'} | <strong>Gittata:</strong> ${spell.range || 'N/A'}</p>
+                                <p><strong>Componenti:</strong> ${components.join(', ') || 'Nessuna'} | <strong>Durata:</strong> ${spell.duration || 'N/A'}</p>
+                                <p class="mt-2">${(spell.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p>
+                            </div>
                         </details>
                     </div>
-                `).join('');
+                `}).join('');
                 levelEl.innerHTML = `
                     <h4 class="text-lg font-bold text-red-800">${level === 0 ? 'Trucchetti' : `Livello ${level}`}</h4>
                     ${slotsHtml}
@@ -1220,6 +1247,13 @@
                 document.getElementById('spell-modal-title').textContent = "Modifica Incantesimo";
                 document.getElementById('spell-id').value = spell.id;
                 document.getElementById('spell-name').value = spell.name;
+                document.getElementById('spell-casting-time').value = spell.castingTime || '';
+                document.getElementById('spell-range').value = spell.range || '';
+                document.getElementById('spell-duration').value = spell.duration || '';
+                document.getElementById('spell-concentration').checked = spell.concentration || false;
+                document.getElementById('spell-comp-v').checked = spell.components?.v || false;
+                document.getElementById('spell-comp-s').checked = spell.components?.s || false;
+                document.getElementById('spell-comp-m').checked = spell.components?.m || false;
                 document.getElementById('spell-description').value = spell.description;
             } else {
                 document.getElementById('spell-modal-title').textContent = `Aggiungi Incantesimo (Liv. ${level})`;
@@ -1240,10 +1274,31 @@
             const token = csModal.dataset.currentToken; if (!token) return;
             const id = document.getElementById('spell-id').value;
             const level = document.getElementById('spell-level').value;
-            const newSpell = { id: id || crypto.randomUUID(), name: document.getElementById('spell-name').value, description: document.getElementById('spell-description').value, prepared: false };
+            const newSpell = { 
+                id: id || crypto.randomUUID(), 
+                name: document.getElementById('spell-name').value, 
+                castingTime: document.getElementById('spell-casting-time').value,
+                range: document.getElementById('spell-range').value,
+                duration: document.getElementById('spell-duration').value,
+                concentration: document.getElementById('spell-concentration').checked,
+                components: {
+                    v: document.getElementById('spell-comp-v').checked,
+                    s: document.getElementById('spell-comp-s').checked,
+                    m: document.getElementById('spell-comp-m').checked,
+                },
+                description: document.getElementById('spell-description').value, 
+                prepared: false 
+            };
             let sheetData = window.currentSheetData;
-            if (id) { sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].map(s => s.id === id ? newSpell : s); }
-            else { if (!sheetData.spellcasting.spells[level]) sheetData.spellcasting.spells[level] = []; sheetData.spellcasting.spells[level].push(newSpell); }
+            if (id) { 
+                const existingSpell = sheetData.spellcasting.spells[level].find(s => s.id === id);
+                newSpell.prepared = existingSpell.prepared; // Preserve prepared state
+                sheetData.spellcasting.spells[level] = sheetData.spellcasting.spells[level].map(s => s.id === id ? newSpell : s); 
+            }
+            else { 
+                if (!sheetData.spellcasting.spells[level]) sheetData.spellcasting.spells[level] = []; 
+                sheetData.spellcasting.spells[level].push(newSpell); 
+            }
             saveCharacterSheet(token, sheetData);
             populateCharacterSheet(sheetData);
             spellModal.classList.add('hidden');
@@ -1448,7 +1503,7 @@
             const sheetData = JSON.parse(JSON.stringify(window.currentSheetData || createEmptyCharacterSheet()));
 
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if(el.dataset.field === 'featuresTraits' || el.dataset.field === 'armorClass' || el.dataset.field === 'race' || el.dataset.field === 'initiative' || el.dataset.field === 'proficiencyBonus') return;
+                if(el.dataset.field === 'featuresTraits' || el.dataset.field === 'armorClass' || el.dataset.field === 'race' || el.dataset.field === 'initiative' || el.dataset.field === 'proficiencyBonus' || el.dataset.field === 'senses.passivePerception') return;
                 const fieldPath = el.dataset.field;
                 const keys = fieldPath.split('.');
                 let current = sheetData;
