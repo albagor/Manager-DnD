@@ -178,7 +178,7 @@
                                 <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
                                 <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
                             </div>
-                            <div class="cs-box"><div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus"></div><div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div></div>
+                            <div class="cs-box"><div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus" readonly></div><div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div></div>
                         </div>
                         <div class="space-y-2">
                              <div class="grid grid-cols-2 gap-2">
@@ -768,7 +768,7 @@
                 classes: [{ id: crypto.randomUUID(), name: "Guerriero", level: 1 }],
                 background: "", race: "Umano",
                 stats: { strength: 10, dexterity: 10, constitution: 10, intelligence: 10, wisdom: 10, charisma: 10 },
-                proficiencyBonus: "+2", initiativeBonus: 0, speedModifier: "",
+                proficiencyBonus: 2, initiativeBonus: 0, speedModifier: "",
                 hp: { max: 10, current: 10 }, hitDice: "",
                 deathSaves: { successes: [false, false, false], failures: [false, false, false] },
                 features: [],
@@ -837,6 +837,15 @@
         const csModal = document.getElementById('character-sheet-modal');
         const csModalContent = document.getElementById('cs-modal-content');
 
+        function getProficiencyBonusFromLevel(level) {
+            if (level < 1) level = 1;
+            if (level >= 17) return 6;
+            if (level >= 13) return 5;
+            if (level >= 9) return 4;
+            if (level >= 5) return 3;
+            return 2;
+        }
+
         function openCharacterSheetModal(playerToken, isPlayerView = false) {
             const player = currentAdventureData.players.find(p => p.token === playerToken);
             if (!player) return;
@@ -891,13 +900,24 @@
         }
 
         function populateCharacterSheet(sheetData) {
+            const totalLevel = (sheetData.classes || []).reduce((sum, c) => sum + parseInt(c.level || 0), 0);
+            const correctProfBonus = getProficiencyBonusFromLevel(totalLevel);
+            sheetData.proficiencyBonus = correctProfBonus;
+
             window.currentSheetData = sheetData; // Cache for immediate UI updates
+            
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if (['armorClass', 'race', 'initiative'].includes(el.dataset.field) || el.dataset.field === 'featuresTraits') return;
+                if (['armorClass', 'race', 'initiative', 'proficiencyBonus'].includes(el.dataset.field) || el.dataset.field === 'featuresTraits') return;
                 const fieldPath = el.dataset.field;
                 const value = fieldPath.split('.').reduce((obj, key) => (obj && obj[key] !== undefined) ? obj[key] : '', sheetData);
                 if (el.tagName === 'SELECT') { el.value = value || el.options[0].value; } else { el.value = value; }
             });
+
+            const profBonusInput = csModalContent.querySelector('[data-field="proficiencyBonus"]');
+            if (profBonusInput) {
+                profBonusInput.value = formatModifier(sheetData.proficiencyBonus);
+            }
+
             updateAllModifiers(sheetData);
             renderSkillsAndSaves(sheetData);
             renderDefenses(sheetData.defenses || []);
@@ -922,7 +942,13 @@
         
         function getStatMod(stat, stats) { return Math.floor(((stats[stat] || 10) - 10) / 2); }
         function getAttackStat(weapon, stats) { if ((weapon.properties || '').toLowerCase().includes('finesse')) { return getStatMod('dexterity', stats) > getStatMod('strength', stats) ? 'dexterity' : 'strength'; } if (weapon.type === 'distanza') return 'dexterity'; if (weapon.type === 'magica') return weapon.spellStat || 'intelligence'; return 'strength'; }
-        function calcAttackBonus(weapon, stats, proficiencyBonus) { const stat = getAttackStat(weapon, stats); const mod = getStatMod(stat, stats); let bonus = mod + (weapon.proficient ? parseInt(proficiencyBonus) : 0) + (parseInt(weapon.attackBonus) || 0); return bonus >= 0 ? `+${bonus}` : `${bonus}`; }
+        
+        function calcAttackBonus(weapon, stats, proficiencyBonus) {
+            const stat = getAttackStat(weapon, stats);
+            const mod = getStatMod(stat, stats);
+            let bonus = mod + (weapon.proficient ? proficiencyBonus : 0) + (parseInt(weapon.attackBonus) || 0);
+            return bonus >= 0 ? `+${bonus}` : `${bonus}`;
+        }
         
         function renderWeaponsList(sheetData) {
             const container = document.getElementById('weapons-list-container');
@@ -934,7 +960,7 @@
                 if (weapons.length === 0) return;
                 const groupDiv = document.createElement('div');
                 groupDiv.className = 'mb-2';
-                groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4><table class="w-full text-xs md:text-sm mb-2"><thead><tr class="bg-gray-300 text-black"><th class="p-1 text-left">Nome</th><th class="p-1">TxC</th><th class="p-1">Danno</th><th class="p-1"></th></tr></thead><tbody>${weapons.map(w => { const globalIndex = sheetData.weapons.indexOf(w); let damageButtonsHtml = ''; if (w.versatileDamage) { damageButtonsHtml = `<div class="flex gap-1 justify-center"><button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button><button class="roll-damage-btn bg-orange-500 hover:bg-orange-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="true">${w.versatileDamage} (V)</button></div>`; } else { damageButtonsHtml = `<button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button>`; } const ammoType = w.ammunitionType ? `<em class="text-gray-500 text-xs">(${w.properties} | ${w.ammunitionType})</em>` : `<em class="text-gray-500 text-xs">(${w.properties})</em>`; return `<tr class="border-b border-gray-200 text-center"><td class="p-1 text-left">${w.name} ${ammoType}</td><td class="p-1"><button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus.replace('+',''))}</button></td><td class="p-1">${damageButtonsHtml}</td><td class="p-1"><button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button><button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button></td></tr>`}).join('')}</tbody></table>`;
+                groupDiv.innerHTML = `<h4 class="text-red-700 text-lg font-bold mb-1 capitalize">${type}</h4><table class="w-full text-xs md:text-sm mb-2"><thead><tr class="bg-gray-300 text-black"><th class="p-1 text-left">Nome</th><th class="p-1">TxC</th><th class="p-1">Danno</th><th class="p-1"></th></tr></thead><tbody>${weapons.map(w => { const globalIndex = sheetData.weapons.indexOf(w); let damageButtonsHtml = ''; if (w.versatileDamage) { damageButtonsHtml = `<div class="flex gap-1 justify-center"><button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button><button class="roll-damage-btn bg-orange-500 hover:bg-orange-600 text-black text-xs rounded px-2 py-1 font-sans" data-idx="${globalIndex}" data-versatile="true">${w.versatileDamage} (V)</button></div>`; } else { damageButtonsHtml = `<button class="roll-damage-btn bg-yellow-500 hover:bg-yellow-600 text-black text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}" data-versatile="false">${w.damage}</button>`; } const ammoType = w.ammunitionType ? `<em class="text-gray-500 text-xs">(${w.properties} | ${w.ammunitionType})</em>` : `<em class="text-gray-500 text-xs">(${w.properties})</em>`; return `<tr class="border-b border-gray-200 text-center"><td class="p-1 text-left">${w.name} ${ammoType}</td><td class="p-1"><button class="roll-attack-btn bg-red-600 hover:bg-red-700 text-white text-sm rounded px-3 py-1 font-sans" data-idx="${globalIndex}">${calcAttackBonus(w, sheetData.stats, sheetData.proficiencyBonus)}</button></td><td class="p-1">${damageButtonsHtml}</td><td class="p-1"><button class="edit-weapon-btn text-blue-600 p-1" data-idx="${globalIndex}">✎</button><button class="delete-weapon-btn text-red-600 p-1" data-idx="${globalIndex}">&times;</button></td></tr>`}).join('')}</tbody></table>`;
                 container.appendChild(groupDiv);
             });
         }
@@ -1015,7 +1041,7 @@
         }
         
         function updateSkillAndSaveBonuses(sheetData) {
-            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
+            const profBonus = sheetData.proficiencyBonus || 2;
             const stats = sheetData.stats || {};
             csModalContent.querySelectorAll('[data-save-prof]').forEach(el => { const saveName = el.dataset.saveProf; const statName = DND_SAVES[saveName]; const statMod = getModifier(stats[statName]); const bonus = statMod + (el.checked ? profBonus : 0); el.nextElementSibling.textContent = formatModifier(bonus); });
             csModalContent.querySelectorAll('[data-skill-prof]').forEach(el => { const skillName = el.dataset.skillProf; const statName = DND_SKILLS[skillName]; const statMod = getModifier(stats[statName]); const bonus = statMod + (el.checked ? profBonus : 0); el.nextElementSibling.textContent = formatModifier(bonus); });
@@ -1047,7 +1073,7 @@
             const sheetDataForUI = readSheetFromDOM();
             window.currentSheetData = sheetDataForUI;
             
-            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'proficiencyBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
+            if (e.target.dataset.field && (e.target.dataset.field.startsWith('stats.') || e.target.dataset.field === 'initiativeBonus' || e.target.dataset.field === 'spellcasting.ability')) { updateAllModifiers(sheetDataForUI); updateSkillAndSaveBonuses(sheetDataForUI); updateAC(sheetDataForUI); updateInitiative(sheetDataForUI); updateSpellcastingCalculatedFields(sheetDataForUI); }
             if (e.target.dataset.skillProf || e.target.dataset.saveProf) { updateSkillAndSaveBonuses(sheetDataForUI); }
             if (e.target.closest('.defense-item')) { updateAC(sheetDataForUI); }
             if (e.target.classList.contains('cs-class-level') || e.target.classList.contains('cs-class-name')) { updateTotalLevel(sheetDataForUI); updateSpeedField(sheetDataForUI); }
@@ -1055,6 +1081,8 @@
             
             clearTimeout(characterSheetUpdateTimeout);
             characterSheetUpdateTimeout = setTimeout(() => {
+                const finalSheetData = readSheetFromDOM(); // Rilegge i dati finali prima di salvare
+                populateCharacterSheet(finalSheetData); // Ricalcola tutto con i dati aggiornati
                 saveCharacterSheet(token, window.currentSheetData);
             }, 500);
         });
@@ -1208,7 +1236,7 @@
             spellModal.classList.add('hidden');
         });
         function updateSpellcastingCalculatedFields(sheetData) {
-            const profBonus = parseInt((sheetData.proficiencyBonus || '+2').replace('+', ''));
+            const profBonus = sheetData.proficiencyBonus || 2;
             const spellAbility = sheetData.spellcasting.ability || 'intelligence';
             const abilityMod = getModifier(sheetData.stats[spellAbility]);
             const saveDC = 8 + profBonus + abilityMod;
@@ -1407,7 +1435,7 @@
             const sheetData = JSON.parse(JSON.stringify(window.currentSheetData || createEmptyCharacterSheet()));
 
             csModalContent.querySelectorAll('[data-field]').forEach(el => {
-                if(el.dataset.field === 'featuresTraits' || el.dataset.field === 'armorClass' || el.dataset.field === 'race' || el.dataset.field === 'initiative') return;
+                if(el.dataset.field === 'featuresTraits' || el.dataset.field === 'armorClass' || el.dataset.field === 'race' || el.dataset.field === 'initiative' || el.dataset.field === 'proficiencyBonus') return;
                 const fieldPath = el.dataset.field;
                 const keys = fieldPath.split('.');
                 let current = sheetData;
@@ -1575,7 +1603,7 @@
                 }
 
                 const d20Roll = Math.floor(Math.random() * 20) + 1;
-                const attackBonusString = calcAttackBonus(weapon, sheetData.stats, sheetData.proficiencyBonus.replace('+', ''));
+                const attackBonusString = calcAttackBonus(weapon, sheetData.stats, sheetData.proficiencyBonus);
                 const bonus = parseInt(attackBonusString);
                 const total = d20Roll + bonus;
                 rollData = { id: crypto.randomUUID(), playerName: player.name, rollNotation: `Attacco con ${weapon.name}`, result: total, details: `Tiro d20: [${d20Roll}] Bonus: ${formatModifier(bonus)}`, timestamp: Date.now() };
