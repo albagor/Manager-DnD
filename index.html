@@ -389,7 +389,6 @@
                     document.getElementById('player-adventure-title').textContent = data.title || "Avventura";
                     document.getElementById('player-open-sheet-btn').addEventListener('click', () => { openCharacterSheetModal(token, true); });
                     
-                    // FIX: Rimuovere il controllo della cache per garantire che il log dei dadi si aggiorni sempre.
                     const diceLogContainer = document.getElementById('player-dice-log');
                     renderDiceLog(diceLogContainer, data.diceRolls);
 
@@ -1467,9 +1466,9 @@
                 if (adventureSnap.exists()) {
                     let diceRolls = adventureSnap.data().diceRolls || [];
                     diceRolls.push(rollData);
-                    if (diceRolls.length > 10) {
-                        // Mantiene solo gli ultimi 10 tiri
-                        diceRolls = diceRolls.slice(-10);
+                    // MODIFICA: Mantiene solo gli ultimi 30 tiri come richiesto.
+                    if (diceRolls.length > 30) {
+                        diceRolls = diceRolls.slice(-30);
                     }
                     await updateDoc(adventureRef, { diceRolls: diceRolls });
                 }
