@@ -324,7 +324,8 @@
                     } catch (error) {
                         console.error("Anonymous sign-in failed:", error);
                         const container = document.getElementById('player-view-container');
-                        container.innerHTML = '<p class="text-red-500 text-center text-2xl p-8">Impossibile connettersi. Riprova più tardi.</p>';
+                        // MODIFICA: Messaggio di errore più specifico per il DM
+                        container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p><p class="text-gray-400 mt-4 font-sans">Controlla la tua connessione a internet. Se il problema persiste, il DM deve assicurarsi che l'autenticazione anonima sia abilitata nelle impostazioni del progetto Firebase.</p></div>`;
                         container.classList.add('active');
                         document.getElementById('auth-container').style.display = 'none';
                         document.getElementById('app-container').style.display = 'none';
@@ -1390,13 +1391,21 @@
             document.querySelectorAll('.spell-level-container').forEach(container => {
                 const level = container.dataset.level;
                 if(level > 0) {
-                    sheetData.spellcasting.slots[level] = { total: container.querySelector('.spell-slot-total').value, used: container.querySelector('.spell-slot-used').value };
+                    const totalEl = container.querySelector('.spell-slot-total');
+                    const usedEl = container.querySelector('.spell-slot-used');
+                    if (totalEl && usedEl) {
+                         sheetData.spellcasting.slots[level] = { total: totalEl.value, used: usedEl.value };
+                    }
                 }
-                sheetData.spellcasting.spells[level] = Array.from(container.querySelectorAll('.spell-list [data-id]')).map(spellEl => {
-                    const id = spellEl.dataset.id;
-                    const existingSpell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === id);
-                    return { ...existingSpell, prepared: spellEl.querySelector('.spell-prepared-checkbox').checked };
-                });
+                const spellList = container.querySelector('.spell-list');
+                if(spellList) {
+                    sheetData.spellcasting.spells[level] = Array.from(spellList.querySelectorAll('[data-id]')).map(spellEl => {
+                        const id = spellEl.dataset.id;
+                        const existingSpell = window.currentSheetData.spellcasting.spells[level]?.find(s => s.id === id);
+                        const preparedCheckbox = spellEl.closest('details').querySelector('.spell-prepared-checkbox');
+                        return { ...(existingSpell || {}), prepared: preparedCheckbox ? preparedCheckbox.checked : false };
+                    });
+                }
             });
 
             return sheetData;
@@ -1476,7 +1485,31 @@
             await addAndTrimDiceRoll(adventureId, rollData);
         }
 
-        function parseAndRollDamage(damageString) { const parts = damageString.toLowerCase().replace(/\s/g, '').split('+'); let diceTotal = 0; const rolls = []; let flatBonus = 0; for (const part of parts) { if (part.includes('d')) { const [numDiceStr, diceSidesStr] = part.split('d'); const numDice = parseInt(numDiceStr) || 1; const diceSides = parseInt(diceSidesStr); if (!isNaN(numDice) && !isNaN(diceSides)) { for (let i = 0; i < numDice; i++) { const roll = Math.floor(Math.random() * sides) + 1; rolls.push(roll); diceTotal += roll; } } } else { const bonus = parseInt(part); if (!isNaN(bonus)) flatBonus += bonus; } } return { diceTotal, rolls, flatBonus }; }
+        function parseAndRollDamage(damageString) {
+            const parts = damageString.toLowerCase().replace(/\s/g, '').split('+');
+            let diceTotal = 0;
+            const rolls = [];
+            let flatBonus = 0;
+            for (const part of parts) {
+                if (part.includes('d')) {
+                    const [numDiceStr, diceSidesStr] = part.split('d');
+                    const numDice = parseInt(numDiceStr) || 1;
+                    const diceSides = parseInt(diceSidesStr);
+                    if (!isNaN(numDice) && !isNaN(diceSides)) {
+                        for (let i = 0; i < numDice; i++) {
+                            // CORREZIONE: Usare diceSides invece di sides
+                            const roll = Math.floor(Math.random() * diceSides) + 1;
+                            rolls.push(roll);
+                            diceTotal += roll;
+                        }
+                    }
+                } else {
+                    const bonus = parseInt(part);
+                    if (!isNaN(bonus)) flatBonus += bonus;
+                }
+            }
+            return { diceTotal, rolls, flatBonus };
+        }
 
         async function handleWeaponRoll(type, weaponIndex, isVersatile = false) {
             const token = csModal.dataset.currentToken;
