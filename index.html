@@ -80,6 +80,32 @@
     max-height: calc(100vh - 3rem); /* Altezza schermo meno un po' di margine */
     overflow-y: auto;
 }
+
+        /* --- INIZIO BLOCCO DA AGGIUNGERE --- */
+
+.compendium-section summary::-webkit-details-marker {
+    display: none; /* Nasconde la freccia di default */
+}
+.compendium-section summary {
+    list-style: none; /* Nasconde la freccia di default */
+}
+.compendium-section summary::before {
+    content: '►'; /* Aggiunge una freccia personalizzata */
+    margin-right: 0.5rem;
+    display: inline-block;
+    transition: transform 0.2s;
+}
+.compendium-section[open] > summary::before {
+    transform: rotate(90deg);
+}
+.search-highlight {
+    background-color: #facc15; /* yellow-400 */
+    color: #1f2937; /* gray-800 */
+    padding: 0 2px;
+    border-radius: 2px;
+}
+
+/* --- FINE BLOCCO DA AGGIUNGERE --- */
         
         /* Stili per il Combat Tracker */
        /*  #combat-tracker-panel {
@@ -133,7 +159,16 @@
                 <div><h1 class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider">D&D Adventure Manager</h1><p class="text-gray-400 mt-2 font-sans">Il tuo compagno digitale per avventure indimenticabili.</p></div>
                 <div id="user-info" class="text-right"><p id="user-email" class="text-gray-300 font-sans"></p><button id="logout-btn" class="text-lg text-red-400 hover:text-red-300">Logout</button></div>
             </header>
-            <div class="mb-8"><div class="border-b border-gray-700"><nav class="flex flex-wrap -mb-px" aria-label="Tabs"><button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button><button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button></nav></div></div>
+            <div class="mb-8"><div class="border-b border-gray-700">
+                <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
+    <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button>
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button>
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button>
+    <!-- Pulsante Aggiunto -->
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="gm-compendium">Compendio del GM</button>
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button>
+</nav>
+            </div></div>
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
@@ -142,6 +177,106 @@
             </main>
         </div>
     </div>
+
+<!-- === INIZIO BLOCCO COMPENDIO GM === -->
+<div id="gm-compendium" class="tab-content">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <h2 class="text-3xl font-bold mb-4 text-red-400">Compendio del GM</h2>
+        
+        <!-- Barra di Ricerca -->
+        <div class="mb-6">
+            <input type="search" id="compendium-search" placeholder="Cerca una regola, condizione, azione..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
+        </div>
+
+        <div id="compendium-sections" class="space-y-3 font-sans">
+            
+            <!-- Sezione Azioni in Combattimento -->
+            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Azioni in Combattimento</summary>
+                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
+                    <p><strong>Attaccare:</strong> Effettui un attacco con un'arma o senz'armi.</p>
+                    <p><strong>Lanciare un Incantesimo:</strong> Lanci un incantesimo con tempo di lancio "1 azione".</p>
+                    <p><strong>Scattare (Dash):</strong> Ottieni movimento extra pari alla tua velocità.</p>
+                    <p><strong>Disimpegnarsi (Disengage):</strong> Il tuo movimento non provoca attacchi di opportunità per il resto del turno.</p>
+                    <p><strong>Schivare (Dodge):</strong> Fino all'inizio del tuo prossimo turno, qualsiasi tiro per colpire contro di te ha svantaggio se puoi vedere l'attaccante, e tu hai vantaggio ai tiri salvezza su Destrezza.</p>
+                    <p><strong>Aiutare (Help):</strong> Fornisci vantaggio al prossimo tiro per colpire di un alleato contro un bersaglio entro 1.5m, oppure fornisci vantaggio a una prova di abilità di un alleato.</p>
+                    <p><strong>Nascondersi (Hide):</strong> Effettui una prova di Destrezza (Furtività) per diventare non visto.</p>
+                    <p><strong>Preparare (Ready):</strong> Scegli un'azione e una condizione scatenante. Usi la tua reazione per compiere l'azione quando la condizione si verifica.</p>
+                    <p><strong>Cercare (Search):</strong> Ti concentri per trovare qualcosa. Effettui una prova di Saggezza (Percezione) o Intelligenza (Indagare).</p>
+                    <p><strong>Usare un Oggetto (Use an Object):</strong> Interagisci con un secondo oggetto o usi un oggetto che richiede la tua azione (es. pozione).</p>
+                </div>
+            </details>
+
+            <!-- Sezione Condizioni -->
+            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Condizioni</summary>
+                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
+                    <p><strong>Accecato:</strong> Fallisci automaticamente le prove di abilità che richiedono la vista. Svantaggio ai tiri per colpire. I tiri per colpire contro di te hanno vantaggio.</p>
+                    <p><strong>Affascinato:</strong> Non puoi attaccare chi ti ha affascinato. Chi ti ha affascinato ha vantaggio alle prove di abilità per interagire socialmente con te.</p>
+                    <p><strong>Assordato:</strong> Non puoi sentire e fallisci automaticamente le prove di abilità che richiedono l'udito.</p>
+                    <p><strong>Spaventato:</strong> Svantaggio a prove di abilità e tiri per colpire finché la fonte della paura è in linea di vista. Non puoi avvicinarti volontariamente alla fonte della tua paura.</p>
+                    <p><strong>Afferrato:</strong> La tua velocità diventa 0 e non puoi beneficiare di bonus alla velocità.</p>
+                    <p><strong>Incapacitato:</strong> Non puoi compiere azioni o reazioni.</p>
+                    <p><strong>Invisibile:</strong> Sei impossibile da vedere senza l'aiuto della magia o di un senso speciale. Vantaggio ai tiri per colpire. I tiri per colpire contro di te hanno svantaggio.</p>
+                    <p><strong>Paralizzato:</strong> Sei incapacitato e non puoi muoverti o parlare. Fallisci automaticamente i tiri salvezza su Forza e Destrezza. I tiri per colpire contro di te hanno vantaggio. Qualsiasi attacco che ti colpisce da 1.5m è un colpo critico.</p>
+                    <p><strong>Avvelenato:</strong> Svantaggio ai tiri per colpire e alle prove di abilità.</p>
+                    <p><strong>Prono:</strong> Il tuo unico movimento è strisciare. Svantaggio ai tiri per colpire. I tiri per colpire contro di te hanno vantaggio se l'attaccante è entro 1.5m, altrimenti hanno svantaggio.</p>
+                    <p><strong>Trattenuto:</strong> Velocità 0. Svantaggio ai tiri per colpire e ai tiri salvezza su Destrezza. I tiri per colpire contro di te hanno vantaggio.</p>
+                    <p><strong>Stordito:</strong> Sei incapacitato, non puoi muoverti e puoi parlare solo in modo vacillante. Fallisci automaticamente i tiri salvezza su Forza e Destrezza. I tiri per colpire contro di te hanno vantaggio.</p>
+                    <p><strong>Privo di Sensi:</strong> Sei incapacitato, non puoi muoverti o parlare e non sei consapevole di ciò che ti circonda. Lasci cadere qualsiasi cosa tu stia tenendo e cadi prono. Stesse regole di Paralizzato per gli attacchi.</p>
+                </div>
+            </details>
+
+            <!-- Sezione Ambiente e Movimento -->
+            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Ambiente e Movimento</summary>
+                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
+                    <p><strong>Terreno Difficile:</strong> Muoversi in terreno difficile costa 1.5m extra per ogni 1.5m di movimento.</p>
+                    <p><strong>Copertura Mezza:</strong> +2 alla CA e ai tiri salvezza su Destrezza.</p>
+                    <p><strong>Copertura Tre Quarti:</strong> +5 alla CA e ai tiri salvezza su Destrezza.</p>
+                    <p><strong>Copertura Totale:</strong> Non puoi essere bersagliato direttamente da un attacco o incantesimo.</p>
+                    <p><strong>Luce Fioca:</strong> Crea un'area leggermente oscurata. Le creature hanno svantaggio alle prove di Saggezza (Percezione) basate sulla vista.</p>
+                    <p><strong>Oscurità:</strong> Crea un'area pesantemente oscurata. Le creature soffrono della condizione Accecato quando cercano di vedere in quest'area.</p>
+                    <p><strong>Ritmo di Viaggio (8 ore):</strong> Lento (30km, furtivo), Normale (45km), Veloce (60km, -5 Percezione Passiva).</p>
+                    <p><strong>Soffocamento:</strong> Una creatura può trattenere il respiro per un numero di minuti pari a 1 + il suo modificatore di Costituzione (minimo 30 secondi). Quando finisce il fiato, può sopravvivere per un numero di round pari al suo modificatore di Costituzione (minimo 1). All'inizio del suo turno successivo, scende a 0 punti ferita e sta morendo.</p>
+                </div>
+            </details>
+
+            <!-- Sezione CD e Prove Abilità -->
+            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                <summary class="text-2xl text-red-400 font-bold cursor-pointer">CD e Prove Abilità</summary>
+                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
+                    <h4 class="text-xl text-red-300">Classi Difficoltà (CD) Tipiche</h4>
+                    <p><strong>Molto Facile:</strong> 5 | <strong>Facile:</strong> 10 | <strong>Medio:</strong> 15 | <strong>Difficile:</strong> 20 | <strong>Molto Difficile:</strong> 25 | <strong>Quasi Impossibile:</strong> 30</p>
+                    <h4 class="text-xl text-red-300 mt-4">Prove contrapposte</h4>
+                    <p>Quando due creature si sfidano, entrambe effettuano una prova di abilità. Chi ottiene il risultato più alto vince. Esempi: Afferrare (Forza - Atletica vs Forza - Atletica o Destrezza - Acrobazia), Ingannare (Carisma - Inganno vs Saggezza - Intuizione).</p>
+                </div>
+            </details>
+
+            <!-- Sezione Nomi Casuali -->
+            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
+                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Tabelle Rapide (Nomi, Luoghi...)</summary>
+                <div class="mt-3 pt-3 border-t border-gray-600 grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300">
+                    <div>
+                        <h4 class="text-xl text-red-300">Nomi Umani/Elfici</h4>
+                        <ul class="list-disc list-inside"><li>Arion</li><li>Elara</li><li>Kael</li><li>Lyra</li><li>Fendrel</li><li>Seraphina</li></ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl text-red-300">Nomi Naneschi/Orcheschi</h4>
+                        <ul class="list-disc list-inside"><li>Borgun</li><li>Grak</li><li>Durin</li><li>Urka</li><li>Thrain</li><li>Grosh</li></ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xl text-red-300">Nomi di Taverne</h4>
+                        <ul class="list-disc list-inside"><li>Il Drago Addormentato</li><li>La Fanciulla Ridente</li><li>Il Grifone di Bronzo</li><li>La Pinta Sbeccata</li></ul>
+                    </div>
+                </div>
+            </details>
+
+        </div>
+    </div>
+</div>
+<!-- === FINE BLOCCO COMPENDIO GM === -->
+
     
     <!-- Contenitore Vista Giocatore -->
     <div id="player-view-container" class="p-4 md:p-8">
@@ -1813,6 +1948,50 @@
             }, 500);
         });
 
+        // --- INIZIO LOGICA COMPENDIO GM ---
+
+const compendiumSearch = document.getElementById('compendium-search');
+const compendiumSections = document.querySelectorAll('.compendium-section');
+
+compendiumSearch.addEventListener('input', () => {
+    const searchTerm = compendiumSearch.value.toLowerCase().trim();
+
+    // Rimuovi evidenziazioni precedenti
+    compendiumSections.forEach(section => {
+        const content = section.querySelector('div');
+        content.innerHTML = content.innerHTML.replace(/<span class="search-highlight">(.*?)<\/span>/gi, '$1');
+    });
+
+    if (searchTerm === '') {
+        // Se la ricerca è vuota, mostra tutto e chiudi i dettagli
+        compendiumSections.forEach(section => {
+            section.style.display = 'block';
+            section.open = false;
+        });
+        return;
+    }
+
+    compendiumSections.forEach(section => {
+        const summaryText = section.querySelector('summary').textContent.toLowerCase();
+        const contentText = section.querySelector('div').textContent.toLowerCase();
+        const fullText = summaryText + ' ' + contentText;
+        
+        if (fullText.includes(searchTerm)) {
+            section.style.display = 'block';
+            section.open = true;
+
+            // Evidenzia i risultati
+            const contentDiv = section.querySelector('div');
+            const regex = new RegExp(`(${searchTerm})`, 'gi');
+            contentDiv.innerHTML = contentDiv.innerHTML.replace(regex, '<span class="search-highlight">$1</span>');
+
+        } else {
+            section.style.display = 'none';
+        }
+    });
+});
+// --- FINE LOGICA COMPENDIO GM ---
+        
     </script>
 </body>
 </html>
