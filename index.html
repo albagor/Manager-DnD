@@ -734,23 +734,44 @@
                 } else if (target.classList.contains('cancel-edit-btn')) {
                     container.querySelector('.node-view-mode').classList.remove('hidden');
                     container.querySelector('.node-edit-mode').classList.add('hidden');
-                } else if (target.classList.contains('save-node-btn')) {
-                    const adventureSnap = await getDoc(adventureRef);
-                    if (adventureSnap.exists()) {
-                        const nodes = adventureSnap.data()[type] || [];
-                        const nodeIndex = nodes.findIndex(n => n.title === nodeId);
-                        if (nodeIndex !== -1) {
-                            const updatedNodes = [...nodes];
-                            const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
-                            updatedNodes[nodeIndex] = newNodeData;
-                            const sharedItems = adventureSnap.data().sharedItems || [];
-                            const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
-                            const updatePayload = { [type]: updatedNodes };
-                            if (sharedItemIndex > -1) { const updatedSharedItems = [...sharedItems]; updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData }; updatePayload.sharedItems = updatedSharedItems; }
-                            await updateDoc(adventureRef, updatePayload);
-                        }
-                    }
-                }
+            } else if (target.classList.contains('save-node-btn')) {
+    const adventureSnap = await getDoc(adventureRef);
+    if (adventureSnap.exists()) {
+        const nodes = adventureSnap.data()[type] || [];
+        const nodeIndex = nodes.findIndex(n => n.title === nodeId);
+        if (nodeIndex !== -1) {
+            const updatedNodes = [...nodes];
+            const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
+            updatedNodes[nodeIndex] = newNodeData;
+            
+            const sharedItems = adventureSnap.data().sharedItems || [];
+            const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
+            const updatePayload = { [type]: updatedNodes };
+            let updatedSharedItemsCache = null;
+
+            if (sharedItemIndex > -1) { 
+                const updatedSharedItems = [...sharedItems]; 
+                updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData }; 
+                updatePayload.sharedItems = updatedSharedItems;
+                updatedSharedItemsCache = updatedSharedItems;
+            }
+            
+            // 1. Salva i dati su Firebase
+            await updateDoc(adventureRef, updatePayload);
+
+            // --- INIZIO MODIFICA CHIAVE ---
+            // 2. Aggiorna lo stato locale dell'app con i nuovi dati
+            currentAdventureData[type] = updatedNodes;
+            if (updatedSharedItemsCache) {
+                currentAdventureData.sharedItems = updatedSharedItemsCache;
+            }
+
+            // 3. Forza la re-renderizzazione della lista dei nodi per mostrare subito le modifiche
+            renderGroupedNodes(type, updatedNodes);
+            // --- FINE MODIFICA CHIAVE ---
+        }
+    }
+}
             }
         });
 
