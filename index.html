@@ -188,38 +188,7 @@
     </div>
 </div>
 
-    <div id="spell-grimoire" class="tab-content">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2>
-            <button id="add-new-spell-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Nuovo Incantesimo</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-900/50 p-4 rounded-lg">
-            <input type="search" id="spell-search-input" placeholder="Cerca per nome..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-            <select id="spell-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-                <option value="">Tutte le Classi</option>
-                </select>
-            <select id="spell-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-                <option value="">Tutti i Livelli</option>
-                <option value="0">Trucchetti</option>
-                <option value="1">Livello 1</option>
-                <option value="2">Livello 2</option>
-                <option value="3">Livello 3</option>
-                <option value="4">Livello 4</option>
-                <option value="5">Livello 5</option>
-                <option value="6">Livello 6</option>
-                <option value="7">Livello 7</option>
-                <option value="8">Livello 8</option>
-                <option value="9">Livello 9</option>
-            </select>
-        </div>
-
-        <div id="spell-list-container" class="space-y-2">
-            <p class="text-gray-500 text-center">Caricamento incantesimi...</p>
-        </div>
-    </div>
-</div>
+    
 
 
     
@@ -433,6 +402,40 @@
                 </div>
             </details>
 
+<div id="spell-grimoire" class="tab-content">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2>
+            <button id="add-new-spell-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Nuovo Incantesimo</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-900/50 p-4 rounded-lg">
+            <input type="search" id="spell-search-input" placeholder="Cerca per nome..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+            <select id="spell-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+                <option value="">Tutte le Classi</option>
+                </select>
+            <select id="spell-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+                <option value="">Tutti i Livelli</option>
+                <option value="0">Trucchetti</option>
+                <option value="1">Livello 1</option>
+                <option value="2">Livello 2</option>
+                <option value="3">Livello 3</option>
+                <option value="4">Livello 4</option>
+                <option value="5">Livello 5</option>
+                <option value="6">Livello 6</option>
+                <option value="7">Livello 7</option>
+                <option value="8">Livello 8</option>
+                <option value="9">Livello 9</option>
+            </select>
+        </div>
+
+        <div id="spell-list-container" class="space-y-2">
+            <p class="text-gray-500 text-center">Caricamento incantesimi...</p>
+        </div>
+    </div>
+</div>
+            
+            
         </div>
     </div>
 </div>
@@ -465,34 +468,78 @@
     <div id="spell-editor-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[80]">
     <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[90vh] flex flex-col">
         <h2 id="spell-editor-title" class="text-3xl font-bold text-red-400 mb-4 flex-shrink-0">Aggiungi Nuovo Incantesimo</h2>
-        <form id="spell-editor-form" class="space-y-3 overflow-y-auto pr-2 flex-grow">
-            <input type="hidden" id="spell-editor-id">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                <div class="md:col-span-2">
-                    <label class="block text-sm font-bold mb-1 text-gray-300 font-sans">Nome Incantesimo</label>
-                    <input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2 font-sans" required>
-                </div>
-                <div>
-                    <label class="block text-sm font-bold mb-1 text-gray-300 font-sans">Livello</label>
-                    <select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2 font-sans">
-                        <option value="0">Trucchetto</option>
-                        <option value="1">1° Livello</option>
-                        <option value="2">2° Livello</option>
-                        <option value="3">3° Livello</option>
-                        <option value="4">4° Livello</option>
-                        <option value="5">5° Livello</option>
-                        <option value="6">6° Livello</option>
-                        <option value="7">7° Livello</option>
-                        <option value="8">8° Livello</option>
-                        <option value="9">9° Livello</option>
-                    </select>
-                </div>
+        <form id="spell-editor-form" class="space-y-2 overflow-y-auto pr-2 flex-grow text-sm font-sans">
+    <input type="hidden" id="spell-editor-id">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+        <div class="md:col-span-2">
+            <label class="block font-bold text-gray-300">Nome Incantesimo</label>
+            <input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2" required>
+        </div>
+        <div>
+            <label class="block font-bold text-gray-300">Livello</label>
+            <select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2">
+                <option value="0">Trucchetto</option>
+                <option value="1">1° Livello</option>
+                <option value="2">2° Livello</option>
+                <option value="3">3° Livello</option>
+                <option value="4">4° Livello</option>
+                <option value="5">5° Livello</option>
+                <option value="6">6° Livello</option>
+                <option value="7">7° Livello</option>
+                <option value="8">8° Livello</option>
+                <option value="9">9° Livello</option>
+            </select>
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div>
+            <label class="block font-bold text-gray-300">Scuola di Magia</label>
+            <select id="spell-editor-school" class="bg-gray-700 w-full rounded p-2">
+                <option>Abiurazione</option><option>Ammaliamento</option><option>Divinazione</option><option>Evocazione</option><option>Illusione</option><option>Invocazione</option><option>Necromanzia</option><option>Trasmutazione</option>
+            </select>
+        </div>
+        <div>
+            <label class="block font-bold text-gray-300">Tempo di Lancio</label>
+            <input type="text" id="spell-editor-casting-time" class="bg-gray-700 w-full rounded p-2" value="1 azione">
+        </div>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+        <div>
+            <label class="block font-bold text-gray-300">Gittata</label>
+            <input type="text" id="spell-editor-range" class="bg-gray-700 w-full rounded p-2" value="18 metri">
+        </div>
+        <div>
+            <label class="block font-bold text-gray-300">Durata</label>
+            <input type="text" id="spell-editor-duration" class="bg-gray-700 w-full rounded p-2" value="Istantanea">
+        </div>
+    </div>
+    <div>
+        <label class="block font-bold text-gray-300">Componenti</label>
+        <div class="flex items-center gap-4 bg-gray-700 p-2 rounded">
+            <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-v" class="w-4 h-4"> Verbale (V)</label>
+            <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-s" class="w-4 h-4"> Somatico (S)</label>
+            <div class="flex items-center gap-2 flex-grow"><input type="checkbox" id="spell-editor-comp-m" class="w-4 h-4"><input type="text" id="spell-editor-comp-m-details" class="bg-gray-600 rounded p-1 text-xs w-full" placeholder="Materiale (M)..."></div>
+        </div>
+    </div>
+    <div>
+        <label class="block font-bold text-gray-300">Descrizione</label>
+        <textarea id="spell-editor-description" class="bg-gray-700 w-full rounded p-2 h-32"></textarea>
+    </div>
+    <div>
+        <label class="block font-bold text-gray-300">A Livelli Superiori</label>
+        <textarea id="spell-editor-higher-levels" class="bg-gray-700 w-full rounded p-2 h-16"></textarea>
+    </div>
+    <div>
+        <label class="block font-bold text-gray-300 mb-1">Classi</label>
+        <div id="spell-editor-classes" class="grid grid-cols-3 sm:grid-cols-4 gap-2 bg-gray-700 p-2 rounded">
             </div>
-            <div class="flex justify-end gap-4 mt-4 flex-shrink-0">
-                <button type="button" id="spell-editor-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Annulla</button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salva Incantesimo</button>
-            </div>
-        </form>
+    </div>
+    <div class="flex justify-end gap-4 pt-2 flex-shrink-0">
+        <button type="button" id="spell-editor-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Annulla</button>
+        <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salva Incantesimo</button>
+    </div>
+</form>
+        
     </div>
 </div>
 <div id="spell-selector-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[90]">
@@ -2377,15 +2424,16 @@ document.getElementById('adventure-detail-view').addEventListener('input', e => 
 });
 // --- FINE LOGICA GRIMORIO PERSONALE E APPUNTI DM ---
 
-        // --- INIZIO LOGICA GRIMORIO INCANTESIMI ---
 
-// Variabili e costanti
-let allSpells = [];
+// --- INIZIO LOGICA GRIMORIO INCANTESIMI ---
+
+// Costanti e Variabili
+const SPELL_SCHOOLS = ["Abiurazione", "Ammaliamento", "Divinazione", "Evocazione", "Illusione", "Invocazione", "Necromanzia", "Trasmutazione"];
 const spellEditorModal = document.getElementById('spell-editor-modal');
 const spellEditorForm = document.getElementById('spell-editor-form');
 const spellSelectorModal = document.getElementById('spell-selector-modal');
 
-// Funzione principale per caricare tutti gli incantesimi da Firebase
+// Funzioni Principali
 function loadAllSpells() {
     if (!currentUserId) return;
     const spellsRef = collection(db, `users/${currentUserId}/spells`);
@@ -2398,71 +2446,63 @@ function loadAllSpells() {
 }
 
 function populateClassFilter() {
-    const allClasses = [...new Set(allSpells.flatMap(s => s.classi || []))].sort();
+    const allClasses = DND_CLASSES.sort();
     const classFilter = document.getElementById('spell-class-filter');
     const selectorClassFilter = document.getElementById('selector-class-filter');
+    const editorClassesContainer = document.getElementById('spell-editor-classes');
+
     classFilter.innerHTML = '<option value="">Tutte le Classi</option>';
     selectorClassFilter.innerHTML = '<option value="">Tutte le Classi</option>';
+    editorClassesContainer.innerHTML = '';
+
     allClasses.forEach(c => {
         classFilter.innerHTML += `<option value="${c}">${c}</option>`;
         selectorClassFilter.innerHTML += `<option value="${c}">${c}</option>`;
+        editorClassesContainer.innerHTML += `<label class="flex items-center gap-2 text-gray-300"><input type="checkbox" value="${c}" class="spell-editor-class-cb w-4 h-4">${c}</label>`;
     });
 }
 
-// Funzione per mostrare gli incantesimi nell'interfaccia del Grimorio
 function renderGrimorioUI() {
     const container = document.getElementById('spell-list-container');
     if (!container) return;
-
     const search = document.getElementById('spell-search-input').value.toLowerCase();
     const className = document.getElementById('spell-class-filter').value;
     const level = document.getElementById('spell-level-filter').value;
-
     const filteredSpells = allSpells.filter(s => {
         const nameMatch = s.nome.toLowerCase().includes(search);
         const classMatch = !className || (s.classi && s.classi.includes(className));
-        const levelMatch = !level || s.livello == level;
+        const levelMatch = level === "" || s.livello == level;
         return nameMatch && classMatch && levelMatch;
     });
-
     if (filteredSpells.length === 0) {
         container.innerHTML = '<p class="text-gray-500 text-center">Nessun incantesimo trovato con questi filtri.</p>';
         return;
     }
-
     container.innerHTML = filteredSpells.map(spell => `
         <details class="bg-gray-900/50 p-3 rounded-lg border border-gray-700">
             <summary class="flex justify-between items-center cursor-pointer">
-                <div>
-                    <span class="text-xl text-red-400 font-bold">${spell.nome}</span>
-                    <span class="text-sm text-gray-400 ml-2">(${spell.livello === 0 ? 'Trucchetto' : 'Liv. ' + spell.livello} ${spell.scuola || ''})</span>
-                </div>
-                <div>
-                    <button class="edit-spell-btn bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded" data-id="${spell.id}">Modifica</button>
-                    <button class="delete-spell-btn bg-red-800 text-white text-xs font-bold py-1 px-2 rounded" data-id="${spell.id}">Elimina</button>
-                </div>
+                <div><span class="text-xl text-red-400 font-bold">${spell.nome}</span><span class="text-sm text-gray-400 ml-2">(${spell.livello == 0 ? 'Trucchetto' : 'Liv. ' + spell.livello} ${spell.scuola || ''})</span></div>
+                <div><button class="edit-spell-btn bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded" data-id="${spell.id}">Modifica</button><button class="delete-spell-btn bg-red-800 text-white text-xs font-bold py-1 px-2 rounded ml-2" data-id="${spell.id}">Elimina</button></div>
             </summary>
             <div class="mt-3 pt-3 border-t border-gray-600 text-gray-300 space-y-1 text-sm">
                 <p><strong>Tempo di Lancio:</strong> ${spell.tempo_lancio || ''}</p>
                 <p><strong>Gittata:</strong> ${spell.gittata || ''}</p>
-                <p><strong>Componenti:</strong> ${(spell.componenti || []).join(', ')}</p>
-                <p><strong>Durata:</strong> ${spell.durata || ''}</p>
+                <p><strong>Componenti:</strong> ${[spell.componenti?.v ? 'V' : '', spell.componenti?.s ? 'S' : '', spell.componenti?.m ? `M (${spell.componenti.m_details})` : ''].filter(Boolean).join(', ')}</p>
+                <p><strong>Durata:</strong> ${spell.durata || ''} ${spell.concentrazione ? '(Concentrazione)' : ''}</p>
                 <p class="mt-2">${(spell.descrizione || '').replace(/\n/g, '<br>')}</p>
                 ${spell.livelli_superiori ? `<p class="mt-2"><strong>A Livelli Superiori:</strong> ${(spell.livelli_superiori).replace(/\n/g, '<br>')}</p>` : ''}
                 <p class="mt-2 text-xs text-gray-500"><strong>Classi:</strong> ${(spell.classi || []).join(', ')}</p>
             </div>
-        </details>
-    `).join('');
+        </details>`).join('');
 }
 
-// Eventi per i filtri del Grimorio
+// Event Listeners per i filtri
 document.getElementById('spell-search-input')?.addEventListener('input', renderGrimorioUI);
 document.getElementById('spell-class-filter')?.addEventListener('input', renderGrimorioUI);
 document.getElementById('spell-level-filter')?.addEventListener('input', renderGrimorioUI);
 
-// Logica per Aprire l'Editor di Incantesimi
+// Gestione dell'Editor Incantesimi
 document.getElementById('add-new-spell-btn')?.addEventListener('click', () => openSpellEditor());
-
 document.getElementById('spell-list-container')?.addEventListener('click', e => {
     if (e.target.classList.contains('edit-spell-btn')) {
         const spell = allSpells.find(s => s.id === e.target.dataset.id);
@@ -2477,25 +2517,51 @@ document.getElementById('spell-list-container')?.addEventListener('click', e => 
 
 function openSpellEditor(spell = null) {
     spellEditorForm.reset();
+    document.getElementById('spell-editor-id').value = spell ? spell.id : '';
+    document.getElementById('spell-editor-title').textContent = spell ? "Modifica Incantesimo" : "Aggiungi Nuovo Incantesimo";
+
     if (spell) {
-        document.getElementById('spell-editor-title').textContent = "Modifica Incantesimo";
-        document.getElementById('spell-editor-id').value = spell.id;
-        // Popola tutti i campi del form con i dati dell'incantesimo
-    } else {
-        document.getElementById('spell-editor-title').textContent = "Aggiungi Nuovo Incantesimo";
-        document.getElementById('spell-editor-id').value = '';
+        document.getElementById('spell-editor-name').value = spell.nome || '';
+        document.getElementById('spell-editor-level').value = spell.livello || 0;
+        document.getElementById('spell-editor-school').value = spell.scuola || 'Invocazione';
+        document.getElementById('spell-editor-casting-time').value = spell.tempo_lancio || '';
+        document.getElementById('spell-editor-range').value = spell.gittata || '';
+        document.getElementById('spell-editor-duration').value = spell.durata || '';
+        document.getElementById('spell-editor-comp-v').checked = spell.componenti?.v || false;
+        document.getElementById('spell-editor-comp-s').checked = spell.componenti?.s || false;
+        document.getElementById('spell-editor-comp-m').checked = spell.componenti?.m || false;
+        document.getElementById('spell-editor-comp-m-details').value = spell.componenti?.m_details || '';
+        document.getElementById('spell-editor-description').value = spell.descrizione || '';
+        document.getElementById('spell-editor-higher-levels').value = spell.livelli_superiori || '';
+        document.querySelectorAll('.spell-editor-class-cb').forEach(cb => {
+            cb.checked = (spell.classi || []).includes(cb.value);
+        });
     }
+
     spellEditorModal.classList.remove('hidden');
 }
 
-// Logica per Salvare e Cancellare Incantesimi
 spellEditorForm.addEventListener('submit', async e => {
     e.preventDefault();
     const spellId = document.getElementById('spell-editor-id').value;
+    const selectedClasses = Array.from(document.querySelectorAll('.spell-editor-class-cb:checked')).map(cb => cb.value);
+
     const spellData = {
         nome: document.getElementById('spell-editor-name').value,
         livello: parseInt(document.getElementById('spell-editor-level').value),
-        // ... raccogli tutti gli altri dati dal form
+        scuola: document.getElementById('spell-editor-school').value,
+        tempo_lancio: document.getElementById('spell-editor-casting-time').value,
+        gittata: document.getElementById('spell-editor-range').value,
+        durata: document.getElementById('spell-editor-duration').value,
+        componenti: {
+            v: document.getElementById('spell-editor-comp-v').checked,
+            s: document.getElementById('spell-editor-comp-s').checked,
+            m: document.getElementById('spell-editor-comp-m').checked,
+            m_details: document.getElementById('spell-editor-comp-m-details').value
+        },
+        descrizione: document.getElementById('spell-editor-description').value,
+        livelli_superiori: document.getElementById('spell-editor-higher-levels').value,
+        classi: selectedClasses
     };
 
     if (spellId) {
@@ -2513,14 +2579,88 @@ document.getElementById('spell-editor-cancel-btn')?.addEventListener('click', ()
 
 // Integrazione con la Scheda Personaggio
 function openSpellSelectorForCharacter(level) {
-    // Logica per aprire il selettore, filtrare per livello e classe,
-    // e aggiungere l'incantesimo selezionato alla scheda
+    const token = csModal.dataset.currentToken;
+    if (!token) return;
+    const player = currentAdventureData.players.find(p => p.token === token);
+    if (!player) return;
+
+    const spellcastingClass = player.characterSheet?.spellcasting?.class || '';
+    document.getElementById('selector-level-filter').innerHTML = Array.from({length: 10}, (_, i) => `<option value="${i}" ${i == level ? 'selected' : ''}>${i === 0 ? 'Trucchetti' : `Livello ${i}`}</option>`).join('');
+    document.getElementById('selector-class-filter').value = spellcastingClass;
+
+    renderSpellSelector();
     spellSelectorModal.classList.remove('hidden');
 }
+
+function renderSpellSelector() {
+    const container = document.getElementById('spell-selector-content');
+    const search = document.getElementById('selector-search-input').value.toLowerCase();
+    const className = document.getElementById('selector-class-filter').value;
+    const level = document.getElementById('selector-level-filter').value;
+
+    const filteredSpells = allSpells.filter(s => {
+        const nameMatch = s.nome.toLowerCase().includes(search);
+        const classMatch = !className || (s.classi && s.classi.includes(className));
+        const levelMatch = level === "" || s.livello == level;
+        return nameMatch && classMatch && levelMatch;
+    });
+
+    if (filteredSpells.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center">Nessun incantesimo trovato.</p>'; return;
+    }
+
+    container.innerHTML = filteredSpells.map(spell => `
+        <div class="flex justify-between items-center p-2 border-b border-gray-700">
+            <div>
+                <p class="font-bold text-red-400">${spell.nome}</p>
+                <p class="text-xs text-gray-400">${spell.scuola}</p>
+            </div>
+            <button class="add-spell-to-sheet-btn bg-green-600 hover:bg-green-700 text-white text-sm font-bold py-1 px-3 rounded" data-spell-id="${spell.id}">Aggiungi</button>
+        </div>
+    `).join('');
+}
+
+document.getElementById('selector-search-input')?.addEventListener('input', renderSpellSelector);
+document.getElementById('selector-class-filter')?.addEventListener('input', renderSpellSelector);
+document.getElementById('selector-level-filter')?.addEventListener('input', renderSpellSelector);
+
+document.getElementById('spell-selector-content').addEventListener('click', async e => {
+    if (e.target.classList.contains('add-spell-to-sheet-btn')) {
+        const spellId = e.target.dataset.spellId;
+        const spellToAdd = allSpells.find(s => s.id === spellId);
+        if (!spellToAdd) return;
+
+        const token = csModal.dataset.currentToken;
+        let sheetData = window.currentSheetData;
+
+        const newSpellData = {
+            id: spellToAdd.id,
+            name: spellToAdd.nome,
+            castingTime: spellToAdd.tempo_lancio,
+            range: spellToAdd.gittata,
+            duration: spellToAdd.durata,
+            concentration: spellToAdd.concentrazione,
+            components: spellToAdd.componenti,
+            description: spellToAdd.descrizione,
+            prepared: false
+        };
+
+        if (!sheetData.spellcasting.spells[spellToAdd.livello]) {
+            sheetData.spellcasting.spells[spellToAdd.livello] = [];
+        }
+        sheetData.spellcasting.spells[spellToAdd.livello].push(newSpellData);
+
+        await saveCharacterSheet(token, sheetData);
+        populateCharacterSheet(sheetData);
+        spellSelectorModal.classList.add('hidden');
+    }
+});
 
 document.getElementById('spell-selector-close-btn')?.addEventListener('click', () => spellSelectorModal.classList.add('hidden'));
 
 // --- FINE LOGICA GRIMORIO INCANTESIMI ---
+        
+
 
         
 
