@@ -1468,23 +1468,7 @@ function createEmptyCharacterSheet() {
     }
 }
 
-        async function addAndTrimDiceRoll(adventureId, rollData) {
-            if (!adventureId) { console.error("ID Avventura non trovato per il tiro."); return; }
-            const adventureRef = doc(db, 'publicAdventures', adventureId);
-            try {
-                const adventureSnap = await getDoc(adventureRef);
-                if (adventureSnap.exists()) {
-                    let diceRolls = adventureSnap.data().diceRolls || [];
-                    diceRolls.push(rollData);
-                    if (diceRolls.length > 30) {
-                        diceRolls = diceRolls.slice(-30);
-                    }
-                    await updateDoc(adventureRef, { diceRolls: diceRolls });
-                }
-            } catch (error) {
-                console.error("Errore nell'invio del tiro al log:", error);
-            }
-        }
+       
 
         async function addRollToLog(rollData) {
             const isPlayerView = csModal.dataset.isPlayerView === 'true';
