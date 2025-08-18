@@ -72,6 +72,16 @@
         #character-sheet-modal details > summary {
             color: #991b1b; /* text-red-800 */
         }
+        /* Stili per il Combat Tracker */
+        #combat-tracker-panel {
+            position: sticky;
+            top: 1.5rem; /* 6 in tailwind */
+            align-self: start;
+        }
+        .combatant-item.current-turn {
+            background-color: #7f1d1d; /* red-900 */
+            border-left: 4px solid #ef4444; /* red-500 */
+        }
     </style>
 </head>
 <body class="bg-gray-900 text-white">
@@ -116,7 +126,7 @@
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-4 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-3 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-5 gap-6"><aside class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4 h-fit sticky top-6"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section><aside id="combat-tracker-panel" class="md:col-span-2 bg-gray-800 p-4 rounded-lg"><h2 class="text-3xl font-bold text-red-400 mb-4">Tracciatore Combattimento</h2><div id="combat-tracker-content"></div></aside></div></div></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div><div id="master-dice-log-container" class="mt-8 hidden"><h3 class="text-2xl font-bold mb-4 text-gray-300">Registro Tiri in Tempo Reale</h3><div id="master-dice-log" class="p-4 bg-gray-900 rounded-lg min-h-[200px] max-h-[400px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei giocatori appariranno qui...</span></div></div></div></div>
             </main>
         </div>
@@ -320,6 +330,7 @@
         let currentAdventureData = {};
         let currentAdventureUnsubscribe = null;
         let characterSheetUpdateTimeout = null;
+        let combatTrackerUpdateTimeout = null;
 
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
@@ -533,7 +544,7 @@
         
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], treasures: [], monsters: [], images: [], players: [], sharedItems: [], createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
+        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], treasures: [], monsters: [], images: [], players: [], sharedItems: [], combatState: createEmptyCombatState(), createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
         function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         
         function openAdventureDetail(userId, docId) {
@@ -562,6 +573,7 @@
                 renderGroupedNodes('treasures', currentAdventureData.treasures || []);
                 renderGroupedNodes('monsters', currentAdventureData.monsters || []);
                 renderGroupedNodes('images', currentAdventureData.images || []);
+                renderCombatTrackerUI(currentAdventureData.combatState || createEmptyCombatState());
             });
 
             const publicUnsubscribe = onSnapshot(publicAdventureRef, (publicDoc) => {
@@ -1592,6 +1604,168 @@
                 saveCharacterSheet(token, latestSheetData);
             }
             csModal.classList.add('hidden');
+        });
+        
+        // --- LOGICA COMBAT TRACKER ---
+        function createEmptyCombatState() {
+            return {
+                isActive: false,
+                round: 1,
+                currentTurnIndex: 0,
+                notes: "",
+                combatants: []
+            };
+        }
+
+        function renderCombatTrackerUI(combatState) {
+            const container = document.getElementById('combat-tracker-content');
+            if (!combatState.isActive) {
+                container.innerHTML = `<button id="start-combat-btn" class="w-full bg-green-700 hover:bg-green-800 text-white font-bold py-3 px-4 rounded-lg text-xl">Inizia Combattimento</button>`;
+                return;
+            }
+
+            const sortedCombatants = [...combatState.combatants].sort((a, b) => b.initiative - a.initiative);
+            const opponentCount = sortedCombatants.filter(c => !c.isPlayer).length;
+
+            let combatantsHtml = sortedCombatants.map((c, index) => {
+                const isCurrentTurn = index === combatState.currentTurnIndex;
+                const hpHtml = c.isPlayer ? '' : `<div class="flex items-center gap-1"><input type="number" value="${c.hp}" class="combatant-hp-input bg-gray-600 w-16 text-center rounded-md p-1 text-sm" data-id="${c.id}"><span>/ ${c.maxHp}</span></div>`;
+                return `
+                    <div class="combatant-item flex items-center justify-between p-2 rounded-lg ${isCurrentTurn ? 'current-turn' : 'bg-gray-700'}" data-id="${c.id}">
+                        <div class="flex items-center gap-3">
+                            <span class="text-xl font-bold w-8 text-center">${c.initiative}</span>
+                            <span class="font-semibold">${c.name}</span>
+                        </div>
+                        <div class="flex items-center gap-3">
+                            ${hpHtml}
+                            <input type="text" value="${c.status || ''}" placeholder="Status" class="combatant-status-input bg-gray-600 w-24 rounded-md p-1 text-sm" data-id="${c.id}">
+                            <button class="remove-combatant-btn text-red-400 hover:text-red-300 font-bold text-xl" data-id="${c.id}">&times;</button>
+                        </div>
+                    </div>`;
+            }).join('');
+
+            container.innerHTML = `
+                <div class="flex justify-between items-center mb-4">
+                    <h3 class="text-2xl">Round <span id="round-counter" class="font-bold text-white">${combatState.round}</span></h3>
+                    <h3 class="text-xl">Avversari: <span class="font-bold text-white">${opponentCount}</span></h3>
+                </div>
+                <div class="flex gap-2 mb-4">
+                    <button id="next-turn-btn" class="flex-grow bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Turno Succ.</button>
+                    <button id="end-combat-btn" class="flex-grow bg-red-700 hover:bg-red-800 text-white font-bold py-2 px-4 rounded-lg">Termina</button>
+                </div>
+                <div id="initiative-list" class="space-y-2 mb-4">${combatantsHtml}</div>
+                <hr class="border-gray-600 my-4">
+                <div>
+                    <h4 class="text-xl mb-2 text-gray-300">Aggiungi Combattente</h4>
+                    <form id="add-combatant-form" class="grid grid-cols-3 gap-2 font-sans text-sm">
+                        <input type="text" id="combatant-name" placeholder="Nome" class="bg-gray-700 border border-gray-600 rounded-lg p-2" required>
+                        <input type="number" id="combatant-initiative" placeholder="Iniz." class="bg-gray-700 border border-gray-600 rounded-lg p-2" required>
+                        <input type="number" id="combatant-hp" placeholder="PF (max)" class="bg-gray-700 border border-gray-600 rounded-lg p-2">
+                        <button type="submit" class="col-span-3 bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg mt-1 text-base">Aggiungi</button>
+                    </form>
+                </div>
+                 <hr class="border-gray-600 my-4">
+                <div>
+                    <h4 class="text-xl mb-2 text-gray-300">Note di Combattimento</h4>
+                    <textarea id="combat-notes" class="w-full h-24 bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans text-sm">${combatState.notes || ''}</textarea>
+                </div>
+            `;
+        }
+        
+        async function saveCombatState(newState) {
+            if (!currentAdventureId || !currentUserId) return;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            await updateDoc(adventureRef, { combatState: newState });
+        }
+
+        document.getElementById('adventure-detail-view').addEventListener('click', async e => {
+            if (e.target.id === 'start-combat-btn') {
+                const players = currentAdventureData.players || [];
+                const combatants = players.map(p => ({
+                    id: p.token,
+                    name: p.name,
+                    initiative: parseInt(prompt(`Iniziativa per ${p.name}:`, '10')) || 10,
+                    isPlayer: true,
+                    status: ''
+                }));
+                const newState = { ...createEmptyCombatState(), isActive: true, combatants: combatants };
+                await saveCombatState(newState);
+            }
+            if (e.target.id === 'end-combat-btn') {
+                if (confirm('Sei sicuro di voler terminare il combattimento? La lista verrà azzerata.')) {
+                    await saveCombatState(createEmptyCombatState());
+                }
+            }
+            if (e.target.id === 'next-turn-btn') {
+                let combatState = currentAdventureData.combatState;
+                let newIndex = combatState.currentTurnIndex + 1;
+                if (newIndex >= combatState.combatants.length) {
+                    newIndex = 0;
+                    combatState.round++;
+                }
+                combatState.currentTurnIndex = newIndex;
+                await saveCombatState(combatState);
+            }
+            const removeBtn = e.target.closest('.remove-combatant-btn');
+            if(removeBtn) {
+                const combatantId = removeBtn.dataset.id;
+                let combatState = currentAdventureData.combatState;
+                combatState.combatants = combatState.combatants.filter(c => c.id !== combatantId);
+                if (combatState.currentTurnIndex >= combatState.combatants.length && combatState.combatants.length > 0) {
+                    combatState.currentTurnIndex = 0;
+                }
+                await saveCombatState(combatState);
+            }
+        });
+
+        document.getElementById('adventure-detail-view').addEventListener('submit', async e => {
+            if (e.target.id === 'add-combatant-form') {
+                e.preventDefault();
+                const name = document.getElementById('combatant-name').value;
+                const initiative = parseInt(document.getElementById('combatant-initiative').value);
+                const maxHp = parseInt(document.getElementById('combatant-hp').value) || null;
+                
+                if (name && !isNaN(initiative)) {
+                    const newCombatant = {
+                        id: crypto.randomUUID(),
+                        name,
+                        initiative,
+                        isPlayer: false,
+                        hp: maxHp,
+                        maxHp: maxHp,
+                        status: ''
+                    };
+                    let combatState = currentAdventureData.combatState;
+                    combatState.combatants.push(newCombatant);
+                    await saveCombatState(combatState);
+                    e.target.reset();
+                }
+            }
+        });
+        
+        document.getElementById('adventure-detail-view').addEventListener('input', e => {
+            const target = e.target;
+            const isCombatInput = target.matches('.combatant-hp-input, .combatant-status-input, #combat-notes');
+            if (!isCombatInput) return;
+
+            clearTimeout(combatTrackerUpdateTimeout);
+            combatTrackerUpdateTimeout = setTimeout(() => {
+                let combatState = { ...currentAdventureData.combatState };
+                if (target.id === 'combat-notes') {
+                    combatState.notes = target.value;
+                } else {
+                    const combatantId = target.dataset.id;
+                    const combatantIndex = combatState.combatants.findIndex(c => c.id === combatantId);
+                    if (combatantIndex > -1) {
+                        if (target.classList.contains('combatant-hp-input')) {
+                            combatState.combatants[combatantIndex].hp = parseInt(target.value);
+                        } else if (target.classList.contains('combatant-status-input')) {
+                            combatState.combatants[combatantIndex].status = target.value;
+                        }
+                    }
+                }
+                saveCombatState(combatState);
+            }, 500);
         });
 
     </script>
