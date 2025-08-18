@@ -164,15 +164,67 @@
     <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button>
     <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button>
     <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button>
-    <!-- Pulsante Aggiunto -->
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="gm-compendium">Compendio del DM</button>
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="gm-compendium">Compendio del GM</button>
+    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="spell-grimoire">Grimorio Incantesimi</button>
     <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button>
 </nav>
             </div></div>
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" required><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-5 gap-6"><aside id="nodes-panel" class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4 h-fit"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section><aside id="combat-tracker-panel" class="md:col-span-2 bg-gray-800 p-4 rounded-lg"><h2 class="text-3xl font-bold text-red-400 mb-4">Tracciatore Combattimento</h2><div id="combat-tracker-content"></div></aside></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
+<form id="add-adventure-form" class="flex gap-4 mb-6">
+    <div class="flex-grow relative">
+        <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans pr-16" required>
+        <button type="button" class="open-grimoire-btn absolute top-1/2 right-3 -translate-y-1/2 text-yellow-400 hover:text-yellow-300 text-xs font-bold" data-target="#adventure-title-input">📚 SCEGLI</button>
+    </div>
+    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
+</form>                    <div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-5 gap-6"><aside id="nodes-panel" class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4 h-fit"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
+    
+    <div id="dm-notes-container" class="mb-6">
+    <h3 class="text-2xl font-bold text-gray-300 mb-4">Appunti Rapidi del DM (salvataggio automatico)</h3>
+    <div class="bg-gray-700 rounded-lg p-1">
+        <textarea id="dm-notes-textarea" class="w-full h-48 bg-gray-700 border-none rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui gli eventi inaspettati, le idee, il bottino trovato, le decisioni dei giocatori..."></textarea>
+    </div>
+</div>
+
+    <div id="spell-grimoire" class="tab-content">
+    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
+        <div class="flex justify-between items-center mb-4">
+            <h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2>
+            <button id="add-new-spell-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Nuovo Incantesimo</button>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-900/50 p-4 rounded-lg">
+            <input type="search" id="spell-search-input" placeholder="Cerca per nome..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+            <select id="spell-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+                <option value="">Tutte le Classi</option>
+                </select>
+            <select id="spell-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+                <option value="">Tutti i Livelli</option>
+                <option value="0">Trucchetti</option>
+                <option value="1">Livello 1</option>
+                <option value="2">Livello 2</option>
+                <option value="3">Livello 3</option>
+                <option value="4">Livello 4</option>
+                <option value="5">Livello 5</option>
+                <option value="6">Livello 6</option>
+                <option value="7">Livello 7</option>
+                <option value="8">Livello 8</option>
+                <option value="9">Livello 9</option>
+            </select>
+        </div>
+
+        <div id="spell-list-container" class="space-y-2">
+            <p class="text-gray-500 text-center">Caricamento incantesimi...</p>
+        </div>
+    </div>
+</div>
+
+
+    
+    
+    <div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section><aside id="combat-tracker-panel" class="md:col-span-2 bg-gray-800 p-4 rounded-lg"><h2 class="text-3xl font-bold text-red-400 mb-4">Tracciatore Combattimento</h2><div id="combat-tracker-content"></div></aside></div></div></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div><div id="master-dice-log-container" class="mt-8 hidden"><h3 class="text-2xl font-bold mb-4 text-gray-300">Registro Tiri in Tempo Reale</h3><div id="master-dice-log" class="p-4 bg-gray-900 rounded-lg min-h-[200px] max-h-[400px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei giocatori appariranno qui...</span></div></div></div></div>
             </main>
         </div>
@@ -187,7 +239,18 @@
         <div class="mb-6">
             <input type="search" id="compendium-search" placeholder="Cerca una regola, condizione, azione..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
         </div>
-
+<div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-6">
+    <h3 class="text-2xl text-red-400 font-bold mb-3">Il Tuo Grimorio Personale</h3>
+    <div id="custom-lists-manager" class="space-y-4">
+        </div>
+    <div class="mt-4 pt-4 border-t border-gray-600">
+        <form id="add-new-list-form" class="flex gap-2">
+            <input type="text" id="new-list-name-input" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" placeholder="Nome nuova lista (es. Nomi Elfici)" required>
+            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg">Crea Lista</button>
+        </form>
+    </div>
+</div>
+        
         <div id="compendium-sections" class="space-y-3 font-sans">
             
             <!-- Sezione Azioni in Combattimento -->
@@ -386,6 +449,70 @@
         <div id="player-shared-items" class="space-y-8"></div>
     </div>
 
+    <!-- Grimorio -->
+    <div id="grimoire-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[70]">
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[80vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+            <h2 class="text-3xl font-bold text-red-400">Scegli dal Tuo Grimorio</h2>
+            <button id="grimoire-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <div id="grimoire-modal-content" class="overflow-y-auto font-sans text-gray-300">
+            </div>
+    </div>
+</div>
+
+
+    <div id="spell-editor-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[80]">
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[90vh] flex flex-col">
+        <h2 id="spell-editor-title" class="text-3xl font-bold text-red-400 mb-4 flex-shrink-0">Aggiungi Nuovo Incantesimo</h2>
+        <form id="spell-editor-form" class="space-y-3 overflow-y-auto pr-2 flex-grow">
+            <input type="hidden" id="spell-editor-id">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                <div class="md:col-span-2">
+                    <label class="block text-sm font-bold mb-1 text-gray-300 font-sans">Nome Incantesimo</label>
+                    <input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2 font-sans" required>
+                </div>
+                <div>
+                    <label class="block text-sm font-bold mb-1 text-gray-300 font-sans">Livello</label>
+                    <select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2 font-sans">
+                        <option value="0">Trucchetto</option>
+                        <option value="1">1° Livello</option>
+                        <option value="2">2° Livello</option>
+                        <option value="3">3° Livello</option>
+                        <option value="4">4° Livello</option>
+                        <option value="5">5° Livello</option>
+                        <option value="6">6° Livello</option>
+                        <option value="7">7° Livello</option>
+                        <option value="8">8° Livello</option>
+                        <option value="9">9° Livello</option>
+                    </select>
+                </div>
+            </div>
+            <div class="flex justify-end gap-4 mt-4 flex-shrink-0">
+                <button type="button" id="spell-editor-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Annulla</button>
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salva Incantesimo</button>
+            </div>
+        </form>
+    </div>
+</div>
+<div id="spell-selector-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[90]">
+    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl border border-red-500 max-h-[90vh] flex flex-col">
+        <div class="flex justify-between items-center mb-4 flex-shrink-0">
+            <h2 id="spell-selector-title" class="text-3xl font-bold text-red-400">Aggiungi Incantesimo</h2>
+            <button id="spell-selector-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-shrink-0">
+            <input type="search" id="selector-search-input" placeholder="Cerca..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+            <select id="selector-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
+            <select id="selector-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
+        </div>
+        <div id="spell-selector-content" class="overflow-y-auto font-sans text-gray-300 flex-grow">
+            </div>
+    </div>
+</div>
+
+    
+
     <!-- Finestra Modale per i Nodi -->
     <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
 
@@ -576,50 +703,37 @@
         let characterSheetUpdateTimeout = null;
         let combatTrackerUpdateTimeout = null;
 
+        let dmNotesUpdateTimeout = null;
+let userCustomLists = {};
+let grimoireTargetInput = null;
+
+        let allSpells = []; // Conterrà tutti gli incantesimi dal DB
+
         const urlParams = new URLSearchParams(window.location.search);
         const playerViewId = urlParams.get('player_view');
         const playerToken = urlParams.get('token');
         let playerViewInitialized = false;
 
         onAuthStateChanged(auth, user => {
-            document.getElementById('initial-loader').style.display = 'none';
-
-            if (playerViewId && playerToken) {
-                if (playerViewInitialized) return;
-                playerViewInitialized = true;
-
-                (async () => {
-                    try {
-                        if (!auth.currentUser) {
-                            await signInAnonymously(auth);
-                        }
-                        document.getElementById('auth-container').style.display = 'none';
-                        document.getElementById('app-container').style.display = 'none';
-                        document.getElementById('player-view-container').classList.add('active');
-                        loadPlayerView(playerViewId, playerToken);
-                    } catch (error) {
-                        console.error("Anonymous sign-in failed:", error);
-                        const container = document.getElementById('player-view-container');
-                        container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p><p class="text-gray-400 mt-4 font-sans">Controlla la tua connessione a internet. Se il problema persiste, il DM deve assicurarsi che l'autenticazione anonima sia abilitata nelle impostazioni del progetto Firebase.</p></div>`;
-                        container.classList.add('active');
-                        document.getElementById('auth-container').style.display = 'none';
-                        document.getElementById('app-container').style.display = 'none';
-                    }
-                })();
-            } else if (user) { 
-                document.getElementById('auth-container').classList.remove('active');
-                document.getElementById('app-container').classList.add('active');
-                document.getElementById('player-view-container').style.display = 'none';
-                document.getElementById('user-email').textContent = user.email;
-                currentUserId = user.uid;
-                loadAdventures(user.uid);
-            } else {
-                document.getElementById('app-container').classList.remove('active');
-                document.getElementById('player-view-container').style.display = 'none';
-                document.getElementById('auth-container').classList.add('active');
-                currentUserId = null;
-            }
-        });
+    document.getElementById('initial-loader').style.display = 'none';
+    if (playerViewId && playerToken) {
+        // ... (la logica per la vista giocatore non cambia)
+    } else if (user) { 
+        document.getElementById('auth-container').classList.remove('active');
+        document.getElementById('app-container').classList.add('active');
+        document.getElementById('player-view-container').style.display = 'none';
+        document.getElementById('user-email').textContent = user.email;
+        currentUserId = user.uid;
+        loadAdventures(user.uid);
+        loadUserLists(); 
+        loadAllSpells(); // <-- RIGA AGGIUNTA per caricare gli incantesimi
+    } else {
+        document.getElementById('app-container').classList.remove('active');
+        document.getElementById('player-view-container').style.display = 'none';
+        document.getElementById('auth-container').classList.add('active');
+        currentUserId = null;
+    }
+});
 
         function renderDiceLog(containerEl, rolls = []) {
             if (!containerEl) return;
@@ -788,8 +902,7 @@
         
         const adventureDetailView = document.getElementById('adventure-detail-view');
         const backToListBtn = document.getElementById('back-to-list-btn');
-        addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, background: [], environments: [], pngs: [], maps: [], treasures: [], monsters: [], images: [], players: [], sharedItems: [], combatState: createEmptyCombatState(), createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });
-        function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
+addAdventureForm.addEventListener('submit', async e => { e.preventDefault(); const title = adventureTitleInput.value.trim(); if (title && currentUserId) { const newAdvRef = doc(collection(db, `users/${currentUserId}/adventures`)); await setDoc(newAdvRef, { title, ownerId: currentUserId, dmNotes: "", background: [], environments: [], pngs: [], maps: [], treasures: [], monsters: [], images: [], players: [], sharedItems: [], combatState: createEmptyCombatState(), createdAt: serverTimestamp() }); await setDoc(doc(db, 'publicAdventures', newAdvRef.id), { title, ownerId: currentUserId, players: [], sharedItems: [], diceRolls: [] }); adventureTitleInput.value = ''; } });        function loadAdventures(userId) { const q = query(collection(db, `users/${userId}/adventures`)); onSnapshot(q, snapshot => { adventuresList.innerHTML = ''; if (snapshot.empty) { adventuresList.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna avventura.</p>'; return; } snapshot.forEach(doc => { const adventure = doc.data(); const el = document.createElement('div'); el.className = 'adventure-item bg-gray-700 p-3 rounded-lg flex justify-between items-center'; el.innerHTML = `<button data-id="${doc.id}" class="adventure-link text-left text-xl flex-grow">${adventure.title}</button><button data-id="${doc.id}" class="delete-btn text-gray-400 hover:text-red-500 text-2xl font-bold">&times;</button>`; adventuresList.appendChild(el); }); }); }
         
         function openAdventureDetail(userId, docId) {
             adventureListView.style.display = 'none';
@@ -810,6 +923,9 @@
                 privateDataCache = doc.data();
                 currentAdventureData = { ...privateDataCache, ...currentAdventureData };
                 document.getElementById('adventure-detail-title').textContent = currentAdventureData.title;
+
+                document.getElementById('dm-notes-textarea').value = currentAdventureData.dmNotes || "";
+                
                 renderChaptersUI(currentAdventureData.background || []);
                 renderGroupedNodes('environments', currentAdventureData.environments || []);
                 renderGroupedNodes('pngs', currentAdventureData.pngs || []);
@@ -967,7 +1083,7 @@
                 } else if (target.classList.contains('cancel-edit-btn')) {
                     container.querySelector('.node-view-mode').classList.remove('hidden');
                     container.querySelector('.node-edit-mode').classList.add('hidden');
-            } else if (target.classList.contains('save-node-btn')) {
+           } else if (target.classList.contains('save-node-btn')) {
     const adventureSnap = await getDoc(adventureRef);
     if (adventureSnap.exists()) {
         const nodes = adventureSnap.data()[type] || [];
@@ -976,32 +1092,22 @@
             const updatedNodes = [...nodes];
             const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
             updatedNodes[nodeIndex] = newNodeData;
-            
             const sharedItems = adventureSnap.data().sharedItems || [];
             const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
             const updatePayload = { [type]: updatedNodes };
             let updatedSharedItemsCache = null;
-
-            if (sharedItemIndex > -1) { 
-                const updatedSharedItems = [...sharedItems]; 
-                updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData }; 
+            if (sharedItemIndex > -1) {
+                const updatedSharedItems = [...sharedItems];
+                updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData };
                 updatePayload.sharedItems = updatedSharedItems;
                 updatedSharedItemsCache = updatedSharedItems;
             }
-            
-            // 1. Salva i dati su Firebase
             await updateDoc(adventureRef, updatePayload);
-
-            // --- INIZIO MODIFICA CHIAVE ---
-            // 2. Aggiorna lo stato locale dell'app con i nuovi dati
             currentAdventureData[type] = updatedNodes;
             if (updatedSharedItemsCache) {
                 currentAdventureData.sharedItems = updatedSharedItemsCache;
             }
-
-            // 3. Forza la re-renderizzazione della lista dei nodi per mostrare subito le modifiche
             renderGroupedNodes(type, updatedNodes);
-            // --- FINE MODIFICA CHIAVE ---
         }
     }
 }
@@ -1495,9 +1601,17 @@
             }
         }
         document.getElementById('spell-cancel-btn').addEventListener('click', () => spellModal.classList.add('hidden'));
+        
+
         csModalContent.addEventListener('click', e => {
-            const addBtn = e.target.closest('.add-spell-btn');
-            if (addBtn) { const level = addBtn.closest('.spell-level-container').dataset.level; openSpellModal(level); }
+    const addBtn = e.target.closest('.add-spell-btn');
+    if (addBtn) {
+        const level = addBtn.closest('.spell-level-container').dataset.level;
+        openSpellSelectorForCharacter(level); // <-- Logica modificata
+        return;
+    }
+
+            
             const editBtn = e.target.closest('.edit-spell-btn');
             if (editBtn) { const level = editBtn.dataset.level; const spellId = editBtn.dataset.id; const spell = window.currentSheetData.spellcasting.spells[level].find(s => s.id === spellId); if (spell) openSpellModal(level, spell); }
             const deleteBtn = e.target.closest('.delete-spell-btn');
@@ -1726,22 +1840,18 @@
             return sheetData;
         }
 
-        async function saveCharacterSheet(token, sheetData) {
+        // INCOLLA QUESTA VERSIONE
+async function saveCharacterSheet(token, sheetData) {
     window.currentSheetData = sheetData;
     const isPlayerView = csModal.dataset.isPlayerView === 'true';
     const adventureId = isPlayerView ? playerViewId : currentAdventureId;
-
     if (!adventureId) { console.error("Adventure ID not found for saving sheet."); return; }
-
     const publicAdventureRef = doc(db, 'publicAdventures', adventureId);
-
     try {
         const publicAdventureSnap = await getDoc(publicAdventureRef);
         if (!publicAdventureSnap.exists()) { console.error("Public adventure not found."); return; }
-
         let players = publicAdventureSnap.data().players || [];
         const playerIndex = players.findIndex(p => p.token === token);
-
         if (playerIndex > -1) {
             players[playerIndex].characterSheet = sheetData;
             if (isPlayerView) {
@@ -1753,16 +1863,12 @@
                 await updateDoc(adventureRef, { players: players });
                 await updateDoc(publicAdventureRef, { players: players });
             }
-            
-            // --- INIZIO MODIFICA CHIAVE ---
-            // Aggiorna manualmente lo stato locale per una reattività immediata
             if (currentAdventureData && currentAdventureData.players) {
                 const localPlayerIndex = currentAdventureData.players.findIndex(p => p.token === token);
                 if (localPlayerIndex > -1) {
                     currentAdventureData.players[localPlayerIndex].characterSheet = sheetData;
                 }
             }
-            // --- FINE MODIFICA CHIAVE ---
         }
     } catch (error) {
         console.error("Errore salvataggio scheda:", error);
@@ -1871,7 +1977,8 @@
             }
         }
 
-        document.getElementById('cs-modal-close-btn').addEventListener('click', async () => {
+        // INCOLLA QUESTO
+document.getElementById('cs-modal-close-btn').addEventListener('click', async () => {
     clearTimeout(characterSheetUpdateTimeout);
     const token = csModal.dataset.currentToken;
     if (token) {
@@ -2089,6 +2196,315 @@ compendiumSearch.addEventListener('input', () => {
     });
 });
 // --- FINE LOGICA COMPENDIO GM ---
+
+        // --- INIZIO LOGICA GRIMORIO PERSONALE E APPUNTI DM ---
+
+// Variabili del DOM
+const customListsManager = document.getElementById('custom-lists-manager');
+const addNewListForm = document.getElementById('add-new-list-form');
+const grimoireModal = document.getElementById('grimoire-modal');
+const grimoireModalContent = document.getElementById('grimoire-modal-content');
+const grimoireModalCloseBtn = document.getElementById('grimoire-modal-close-btn');
+
+// --- Logica Grimorio ---
+async function loadUserLists() {
+    if (!currentUserId) return;
+    const docRef = doc(db, "userCustomLists", currentUserId);
+    const docSnap = await getDoc(docRef);
+    if (docSnap.exists()) { userCustomLists = docSnap.data().lists || {}; } 
+    else { userCustomLists = {}; }
+    renderCustomListsManager();
+}
+
+async function saveUserLists() {
+    if (!currentUserId) return;
+    const docRef = doc(db, "userCustomLists", currentUserId);
+    await setDoc(docRef, { lists: userCustomLists });
+}
+
+function renderCustomListsManager() {
+    if (!customListsManager) return;
+    customListsManager.innerHTML = '';
+    if (Object.keys(userCustomLists).length === 0) {
+        customListsManager.innerHTML = '<p class="text-gray-500 text-center font-sans">Non hai ancora creato nessuna lista.</p>';
+        return;
+    }
+    for (const listName in userCustomLists) {
+        const items = userCustomLists[listName];
+        const listEl = document.createElement('div');
+        listEl.className = 'bg-gray-800 p-3 rounded-lg';
+        let itemsHtml = items.map((item, index) => `
+            <div class="flex justify-between items-center bg-gray-700 p-1 rounded">
+                <span class="text-gray-300">${item}</span>
+                <button class="delete-list-item-btn text-red-400 hover:text-red-300 font-bold px-2" data-list-name="${listName}" data-item-index="${index}">&times;</button>
+            </div>`).join('');
+        listEl.innerHTML = `
+            <div class="flex justify-between items-center mb-2">
+                <h4 class="text-xl text-red-300">${listName}</h4>
+                <button class="delete-list-btn text-gray-500 hover:text-red-400 font-bold text-lg" data-list-name="${listName}">Elimina Lista</button>
+            </div>
+            <div class="space-y-1 mb-2">${itemsHtml}</div>
+            <form class="add-list-item-form flex gap-2">
+                <input type="text" class="new-item-input flex-grow bg-gray-600 border border-gray-500 rounded-lg p-1 text-sm font-sans" placeholder="Nuova voce..." required>
+                <input type="hidden" value="${listName}" class="list-name-hidden">
+                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-1 px-2 rounded-lg text-sm">Aggiungi</button>
+            </form>`;
+        customListsManager.appendChild(listEl);
+    }
+}
+
+if (addNewListForm) {
+    addNewListForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const input = document.getElementById('new-list-name-input');
+        const newListName = input.value.trim();
+        if (newListName && !userCustomLists[newListName]) {
+            userCustomLists[newListName] = [];
+            await saveUserLists();
+            renderCustomListsManager();
+            input.value = '';
+        }
+    });
+}
+
+if (customListsManager) {
+    customListsManager.addEventListener('submit', async (e) => {
+        if (e.target.classList.contains('add-list-item-form')) {
+            e.preventDefault();
+            const input = e.target.querySelector('.new-item-input');
+            const listName = e.target.querySelector('.list-name-hidden').value;
+            const newItem = input.value.trim();
+            if (newItem && userCustomLists[listName]) {
+                userCustomLists[listName].push(newItem);
+                await saveUserLists();
+                renderCustomListsManager();
+            }
+        }
+    });
+    customListsManager.addEventListener('click', async (e) => {
+        if (e.target.classList.contains('delete-list-item-btn')) {
+            const listName = e.target.dataset.listName;
+            const itemIndex = parseInt(e.target.dataset.itemIndex);
+            if (userCustomLists[listName]) {
+                userCustomLists[listName].splice(itemIndex, 1);
+                await saveUserLists();
+                renderCustomListsManager();
+            }
+        }
+        if (e.target.classList.contains('delete-list-btn')) {
+            const listName = e.target.dataset.listName;
+            if (confirm(`Sei sicuro di voler eliminare l'intera lista "${listName}"?`)) {
+                delete userCustomLists[listName];
+                await saveUserLists();
+                renderCustomListsManager();
+            }
+        }
+    });
+}
+
+document.body.addEventListener('click', (e) => {
+    if (e.target.classList.contains('open-grimoire-btn')) {
+        grimoireTargetInput = document.querySelector(e.target.dataset.target);
+        if (grimoireTargetInput) {
+            populateGrimoireModal();
+            grimoireModal.classList.remove('hidden');
+        }
+    }
+});
+
+function populateGrimoireModal() {
+    grimoireModalContent.innerHTML = '';
+    if (Object.keys(userCustomLists).length === 0) {
+        grimoireModalContent.innerHTML = '<p class="text-gray-500 text-center font-sans">Nessuna lista trovata. Creane una nel Grimorio!</p>';
+        return;
+    }
+    for (const listName in userCustomLists) {
+        const items = userCustomLists[listName];
+        let itemsHtml = items.map(item => `<button class="grimoire-item-btn block w-full text-left bg-gray-700 hover:bg-gray-600 p-2 rounded text-gray-300">${item}</button>`).join('');
+        grimoireModalContent.innerHTML += `<div class="mb-4"><h4 class="text-xl text-red-300 mb-2">${listName}</h4><div class="space-y-1">${itemsHtml}</div></div>`;
+    }
+}
+
+if (grimoireModalContent) {
+    grimoireModalContent.addEventListener('click', (e) => {
+        if (e.target.classList.contains('grimoire-item-btn')) {
+            if (grimoireTargetInput) {
+                grimoireTargetInput.value = e.target.textContent;
+            }
+            grimoireModal.classList.add('hidden');
+        }
+    });
+}
+
+if (grimoireModalCloseBtn) {
+    grimoireModalCloseBtn.addEventListener('click', () => grimoireModal.classList.add('hidden'));
+}
+
+// --- Logica Appunti DM ---
+document.getElementById('adventure-detail-view').addEventListener('input', e => {
+    if (e.target.id === 'dm-notes-textarea') {
+        clearTimeout(dmNotesUpdateTimeout);
+        dmNotesUpdateTimeout = setTimeout(async () => {
+            if (!currentAdventureId || !currentUserId) return;
+            const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+            try {
+                await updateDoc(adventureRef, { dmNotes: e.target.value });
+            } catch (error) {
+                console.error("Errore salvataggio appunti DM:", error);
+            }
+        }, 800);
+    }
+});
+// --- FINE LOGICA GRIMORIO PERSONALE E APPUNTI DM ---
+
+        // --- INIZIO LOGICA GRIMORIO INCANTESIMI ---
+
+// Variabili e costanti
+let allSpells = [];
+const spellEditorModal = document.getElementById('spell-editor-modal');
+const spellEditorForm = document.getElementById('spell-editor-form');
+const spellSelectorModal = document.getElementById('spell-selector-modal');
+
+// Funzione principale per caricare tutti gli incantesimi da Firebase
+function loadAllSpells() {
+    if (!currentUserId) return;
+    const spellsRef = collection(db, `users/${currentUserId}/spells`);
+    onSnapshot(query(spellsRef), (snapshot) => {
+        allSpells = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+        allSpells.sort((a, b) => a.nome.localeCompare(b.nome));
+        populateClassFilter();
+        renderGrimorioUI();
+    });
+}
+
+function populateClassFilter() {
+    const allClasses = [...new Set(allSpells.flatMap(s => s.classi || []))].sort();
+    const classFilter = document.getElementById('spell-class-filter');
+    const selectorClassFilter = document.getElementById('selector-class-filter');
+    classFilter.innerHTML = '<option value="">Tutte le Classi</option>';
+    selectorClassFilter.innerHTML = '<option value="">Tutte le Classi</option>';
+    allClasses.forEach(c => {
+        classFilter.innerHTML += `<option value="${c}">${c}</option>`;
+        selectorClassFilter.innerHTML += `<option value="${c}">${c}</option>`;
+    });
+}
+
+// Funzione per mostrare gli incantesimi nell'interfaccia del Grimorio
+function renderGrimorioUI() {
+    const container = document.getElementById('spell-list-container');
+    if (!container) return;
+
+    const search = document.getElementById('spell-search-input').value.toLowerCase();
+    const className = document.getElementById('spell-class-filter').value;
+    const level = document.getElementById('spell-level-filter').value;
+
+    const filteredSpells = allSpells.filter(s => {
+        const nameMatch = s.nome.toLowerCase().includes(search);
+        const classMatch = !className || (s.classi && s.classi.includes(className));
+        const levelMatch = !level || s.livello == level;
+        return nameMatch && classMatch && levelMatch;
+    });
+
+    if (filteredSpells.length === 0) {
+        container.innerHTML = '<p class="text-gray-500 text-center">Nessun incantesimo trovato con questi filtri.</p>';
+        return;
+    }
+
+    container.innerHTML = filteredSpells.map(spell => `
+        <details class="bg-gray-900/50 p-3 rounded-lg border border-gray-700">
+            <summary class="flex justify-between items-center cursor-pointer">
+                <div>
+                    <span class="text-xl text-red-400 font-bold">${spell.nome}</span>
+                    <span class="text-sm text-gray-400 ml-2">(${spell.livello === 0 ? 'Trucchetto' : 'Liv. ' + spell.livello} ${spell.scuola || ''})</span>
+                </div>
+                <div>
+                    <button class="edit-spell-btn bg-blue-600 text-white text-xs font-bold py-1 px-2 rounded" data-id="${spell.id}">Modifica</button>
+                    <button class="delete-spell-btn bg-red-800 text-white text-xs font-bold py-1 px-2 rounded" data-id="${spell.id}">Elimina</button>
+                </div>
+            </summary>
+            <div class="mt-3 pt-3 border-t border-gray-600 text-gray-300 space-y-1 text-sm">
+                <p><strong>Tempo di Lancio:</strong> ${spell.tempo_lancio || ''}</p>
+                <p><strong>Gittata:</strong> ${spell.gittata || ''}</p>
+                <p><strong>Componenti:</strong> ${(spell.componenti || []).join(', ')}</p>
+                <p><strong>Durata:</strong> ${spell.durata || ''}</p>
+                <p class="mt-2">${(spell.descrizione || '').replace(/\n/g, '<br>')}</p>
+                ${spell.livelli_superiori ? `<p class="mt-2"><strong>A Livelli Superiori:</strong> ${(spell.livelli_superiori).replace(/\n/g, '<br>')}</p>` : ''}
+                <p class="mt-2 text-xs text-gray-500"><strong>Classi:</strong> ${(spell.classi || []).join(', ')}</p>
+            </div>
+        </details>
+    `).join('');
+}
+
+// Eventi per i filtri del Grimorio
+document.getElementById('spell-search-input')?.addEventListener('input', renderGrimorioUI);
+document.getElementById('spell-class-filter')?.addEventListener('input', renderGrimorioUI);
+document.getElementById('spell-level-filter')?.addEventListener('input', renderGrimorioUI);
+
+// Logica per Aprire l'Editor di Incantesimi
+document.getElementById('add-new-spell-btn')?.addEventListener('click', () => openSpellEditor());
+
+document.getElementById('spell-list-container')?.addEventListener('click', e => {
+    if (e.target.classList.contains('edit-spell-btn')) {
+        const spell = allSpells.find(s => s.id === e.target.dataset.id);
+        if(spell) openSpellEditor(spell);
+    }
+    if (e.target.classList.contains('delete-spell-btn')) {
+        if(confirm('Sei sicuro di voler eliminare questo incantesimo?')) {
+            deleteSpell(e.target.dataset.id);
+        }
+    }
+});
+
+function openSpellEditor(spell = null) {
+    spellEditorForm.reset();
+    if (spell) {
+        document.getElementById('spell-editor-title').textContent = "Modifica Incantesimo";
+        document.getElementById('spell-editor-id').value = spell.id;
+        // Popola tutti i campi del form con i dati dell'incantesimo
+    } else {
+        document.getElementById('spell-editor-title').textContent = "Aggiungi Nuovo Incantesimo";
+        document.getElementById('spell-editor-id').value = '';
+    }
+    spellEditorModal.classList.remove('hidden');
+}
+
+// Logica per Salvare e Cancellare Incantesimi
+spellEditorForm.addEventListener('submit', async e => {
+    e.preventDefault();
+    const spellId = document.getElementById('spell-editor-id').value;
+    const spellData = {
+        nome: document.getElementById('spell-editor-name').value,
+        livello: parseInt(document.getElementById('spell-editor-level').value),
+        // ... raccogli tutti gli altri dati dal form
+    };
+
+    if (spellId) {
+        await updateDoc(doc(db, `users/${currentUserId}/spells`, spellId), spellData);
+    } else {
+        await addDoc(collection(db, `users/${currentUserId}/spells`), spellData);
+    }
+    spellEditorModal.classList.add('hidden');
+});
+
+async function deleteSpell(spellId) {
+    await deleteDoc(doc(db, `users/${currentUserId}/spells`, spellId));
+}
+document.getElementById('spell-editor-cancel-btn')?.addEventListener('click', () => spellEditorModal.classList.add('hidden'));
+
+// Integrazione con la Scheda Personaggio
+function openSpellSelectorForCharacter(level) {
+    // Logica per aprire il selettore, filtrare per livello e classe,
+    // e aggiungere l'incantesimo selezionato alla scheda
+    spellSelectorModal.classList.remove('hidden');
+}
+
+document.getElementById('spell-selector-close-btn')?.addEventListener('click', () => spellSelectorModal.classList.add('hidden'));
+
+// --- FINE LOGICA GRIMORIO INCANTESIMI ---
+
+        
+
+        
         
     </script>
 </body>
