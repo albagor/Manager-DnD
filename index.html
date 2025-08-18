@@ -1691,11 +1691,14 @@
                 const newState = { ...createEmptyCombatState(), isActive: true, combatants: combatants };
                 await saveCombatState(newState);
             }
+            // --- INIZIO CODICE MODIFICATO ---
             if (e.target.id === 'end-combat-btn') {
-                if (confirm('Sei sicuro di voler terminare il combattimento? La lista verrà azzerata.')) {
-                    await saveCombatState(createEmptyCombatState());
-                }
+                // NOTA: Ho rimosso la finestra di conferma (`confirm`) che può causare problemi 
+                // in alcuni browser o ambienti di esecuzione.
+                // Ora il combattimento termina e si resetta immediatamente al click.
+                await saveCombatState(createEmptyCombatState());
             }
+            // --- FINE CODICE MODIFICATO ---
             if (e.target.id === 'next-turn-btn') {
                 let combatState = currentAdventureData.combatState;
                 let newIndex = combatState.currentTurnIndex + 1;
