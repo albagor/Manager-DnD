@@ -716,17 +716,37 @@ let grimoireTargetInput = null;
 
         onAuthStateChanged(auth, user => {
     document.getElementById('initial-loader').style.display = 'none';
+
     if (playerViewId && playerToken) {
-        // ... (la logica per la vista giocatore non cambia)
-    } else if (user) { 
+        if (playerViewInitialized) return;
+        playerViewInitialized = true;
+        (async () => {
+            try {
+                if (!auth.currentUser) {
+                    await signInAnonymously(auth);
+                }
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'none';
+                document.getElementById('player-view-container').classList.add('active');
+                loadPlayerView(playerViewId, playerToken);
+            } catch (error) {
+                console.error("Anonymous sign-in failed:", error);
+                const container = document.getElementById('player-view-container');
+                container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p><p class="text-gray-400 mt-4 font-sans">Controlla la tua connessione a internet. Se il problema persiste, il DM deve assicurarsi che l'autenticazione anonima sia abilitata nelle impostazioni del progetto Firebase.</p></div>`;
+                container.classList.add('active');
+                document.getElementById('auth-container').style.display = 'none';
+                document.getElementById('app-container').style.display = 'none';
+            }
+        })();
+    } else if (user) {
         document.getElementById('auth-container').classList.remove('active');
         document.getElementById('app-container').classList.add('active');
         document.getElementById('player-view-container').style.display = 'none';
         document.getElementById('user-email').textContent = user.email;
         currentUserId = user.uid;
         loadAdventures(user.uid);
-        loadUserLists(); 
-        loadAllSpells(); // <-- RIGA AGGIUNTA per caricare gli incantesimi
+        loadUserLists();
+        loadAllSpells();
     } else {
         document.getElementById('app-container').classList.remove('active');
         document.getElementById('player-view-container').style.display = 'none';
