@@ -123,12 +123,10 @@
 </head>
 <body class="bg-gray-900 text-white">
 
-    <!-- Initial Loading Indicator -->
     <div id="initial-loader" class="min-h-screen flex items-center justify-center">
         <div class="loader"></div>
     </div>
 
-    <!-- Contenitore Autenticazione -->
     <div id="auth-container" class="min-h-screen items-center justify-center p-4">
         <div class="w-full max-w-md">
             <div class="bg-gray-800 shadow-lg rounded-lg p-8">
@@ -152,7 +150,6 @@
         </div>
     </div>
 
-    <!-- Contenitore App Principale (per il Master) -->
     <div id="app-container">
         <div class="container mx-auto p-4 md:p-8">
             <header class="flex justify-between items-center mb-8">
@@ -161,675 +158,180 @@
             </header>
             <div class="mb-8"><div class="border-b border-gray-700">
                 <nav class="flex flex-wrap -mb-px" aria-label="Tabs">
-    <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button>
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button>
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button>
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="gm-compendium">Compendio del GM</button>
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="spell-grimoire">Grimorio Incantesimi</button>
-    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button>
-</nav>
+                    <button class="tab-btn active text-red-400 border-red-400 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="dice-roller">Tira Dadi</button>
+                    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="ai-generator">Generatore AI</button>
+                    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="adventures">Le Mie Avventure</button>
+                    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="gm-compendium">Compendio del GM</button>
+                    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="spell-grimoire">Grimorio Incantesimi</button>
+                    <button class="tab-btn text-gray-400 hover:text-white hover:border-gray-300 whitespace-nowrap py-4 px-3 border-b-2 font-medium text-xl" data-tab="player-view-master">Vista Giocatore</button>
+                </nav>
             </div></div>
             <main>
                 <div id="dice-roller" class="tab-content active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4 mb-6"><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="4">d4</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="6">d6</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="8">d8</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="10">d10</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="12">d12</button><button type="button" class="dice-btn bg-red-600 hover:bg-red-700 p-4 rounded-lg font-bold text-2xl" data-sides="20">d20</button></div><div class="flex flex-wrap items-center gap-4 mb-6 font-sans"><div class="flex items-center gap-2"><label for="dice-count">Numero dadi:</label><input type="number" id="dice-count" value="1" min="1" max="100" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div><div class="flex items-center gap-2"><label for="dice-modifier">Modificatore:</label><input type="number" id="dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24"></div></div><div id="dice-results-container" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[100px] flex items-center justify-center font-sans"><span class="text-gray-500">I risultati appariranno qui...</span></div></div></div>
                 <div id="ai-generator" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Generatore di Contenuti AI</h2><div class="grid grid-cols-1 md:grid-cols-2 gap-6"><div><div class="mb-4"><label for="generator-type" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Cosa vuoi generare?</label><select id="generator-type" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans"><option value="PNG">PNG</option><option value="Mostro">Mostro</option><option value="Ambientazione">Ambientazione</option><option value="Mappa">Mappa</option><option value="Tesoro">Tesoro</option></select></div><div class="mb-4"><label for="generator-prompt" class="block text-gray-300 text-sm font-bold mb-2 font-sans">Descrivi la tua idea</label><textarea id="generator-prompt" rows="4" class="bg-gray-700 border border-gray-600 rounded-lg w-full py-2 px-3 text-white focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="es. un oste nano brontolone..."></textarea></div><button id="generate-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Genera</button></div><div class="bg-gray-900 p-4 rounded-lg min-h-[250px] flex flex-col items-center justify-center"><div id="generator-result-container" class="flex-grow overflow-y-auto font-sans w-full flex items-center justify-center"><p class="text-gray-500 text-center">I contenuti generati appariranno qui.</p></div><button id="save-to-adventure-btn" class="hidden mt-4 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva in Avventura</button></div></div></div></div>
-                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2>
-<form id="add-adventure-form" class="flex gap-4 mb-6">
-    <div class="flex-grow relative">
-        <input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans pr-16" required>
-        <button type="button" class="open-grimoire-btn absolute top-1/2 right-3 -translate-y-1/2 text-yellow-400 hover:text-yellow-300 text-xs font-bold" data-target="#adventure-title-input">📚 SCEGLI</button>
-    </div>
-    <button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button>
-</form>                    <div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-5 gap-6"><aside id="nodes-panel" class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4 h-fit"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3>
-    
-    <div id="dm-notes-container" class="mb-6">
-    <h3 class="text-2xl font-bold text-gray-300 mb-4">Appunti Rapidi del DM (salvataggio automatico)</h3>
-    <div class="bg-gray-700 rounded-lg p-1">
-        <textarea id="dm-notes-textarea" class="w-full h-48 bg-gray-700 border-none rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui gli eventi inaspettati, le idee, il bottino trovato, le decisioni dei giocatori..."></textarea>
-    </div>
-</div>
-
-    
-
-
-    
-    
-    <div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section><aside id="combat-tracker-panel" class="md:col-span-2 bg-gray-800 p-4 rounded-lg"><h2 class="text-3xl font-bold text-red-400 mb-4">Tracciatore Combattimento</h2><div id="combat-tracker-content"></div></aside></div></div></div>
+                <div id="adventures" class="tab-content"><div id="adventure-list-view" class="active"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Le Mie Avventure</h2><form id="add-adventure-form" class="flex gap-4 mb-6"><div class="flex-grow relative"><input type="text" id="adventure-title-input" placeholder="Titolo della nuova avventura" class="w-full bg-gray-700 border border-gray-600 rounded-lg p-2 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans pr-16" required><button type="button" class="open-grimoire-btn absolute top-1/2 right-3 -translate-y-1/2 text-yellow-400 hover:text-yellow-300 text-xs font-bold" data-target="#adventure-title-input">📚 SCEGLI</button></div><button type="submit" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi</button></form><div id="adventures-list" class="space-y-3"></div></div></div><div id="adventure-detail-view" style="display: none;"><button id="back-to-list-btn" class="mb-4 bg-gray-700 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg text-lg">&larr; Torna alla lista</button><div class="grid grid-cols-1 md:grid-cols-5 gap-6"><aside id="nodes-panel" class="md:col-span-1 bg-gray-800 p-4 rounded-lg space-y-4 h-fit"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Ambienti</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="environments">Nuovo Ambiente</button><div id="environments-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">PNG</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="pngs">Nuovo PNG</button><div id="pngs-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mappe</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="maps">Nuova Mappa</button><div id="maps-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Tesori</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="treasures">Nuovo Tesoro</button><div id="treasures-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Mostri</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="monsters">Nuovo Mostro</button><div id="monsters-list" class="space-y-2"></div></div><hr class="border-gray-600"><div><h3 class="text-2xl font-bold text-red-400 mb-2">Immagini</h3><button class="node-add-btn w-full mb-2 bg-green-700 hover:bg-green-800 text-white font-bold py-1 px-2 rounded-lg text-base" data-type="images">Nuova Immagine</button><div id="images-list" class="space-y-2"></div></div></aside><section class="md:col-span-2 bg-gray-800 p-6 rounded-lg"><h2 id="adventure-detail-title" class="text-3xl font-bold text-red-400 mb-4"></h2><div id="dm-notes-container" class="mb-6"><h3 class="text-2xl font-bold text-gray-300 mb-4">Appunti Rapidi del DM (salvataggio automatico)</h3><div class="bg-gray-700 rounded-lg p-1"><textarea id="dm-notes-textarea" class="w-full h-48 bg-gray-700 border-none rounded-lg p-3 text-gray-200 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans" placeholder="Scrivi qui gli eventi inaspettati, le idee, il bottino trovato, le decisioni dei giocatori..."></textarea></div></div><h3 class="text-2xl font-bold text-gray-300 mb-4">Background / Capitoli</h3><div id="chapters-container" class="space-y-4"></div><button id="add-chapter-btn" class="mt-6 w-full bg-green-700 hover:bg-green-800 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Capitolo</button></section><aside id="combat-tracker-panel" class="md:col-span-2 bg-gray-800 p-4 rounded-lg"><h2 class="text-3xl font-bold text-red-400 mb-4">Tracciatore Combattimento</h2><div id="combat-tracker-content"></div></aside></div></div></div>
+                <div id="gm-compendium" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Compendio del GM</h2><div class="mb-6"><input type="search" id="compendium-search" placeholder="Cerca una regola, condizione, azione..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg"></div><div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-6"><h3 class="text-2xl text-red-400 font-bold mb-3">Le Tue Avventure Personali</h3><div id="custom-lists-manager" class="space-y-4"></div><div class="mt-4 pt-4 border-t border-gray-600"><form id="add-new-list-form" class="flex gap-2"><input type="text" id="new-list-name-input" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" placeholder="Nome nuova lista (es. Nomi Elfici)" required><button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg">Crea Lista</button></form></div></div><div id="compendium-sections" class="space-y-3 font-sans"></div></div></div>
+                <div id="spell-grimoire" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><div class="flex justify-between items-center mb-4"><h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2><button id="add-new-spell-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Nuovo Incantesimo</button></div><div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-900/50 p-4 rounded-lg"><input type="search" id="spell-search-input" placeholder="Cerca per nome..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"><select id="spell-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"><option value="">Tutte le Classi</option></select><select id="spell-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"><option value="">Tutti i Livelli</option><option value="0">Trucchetti</option><option value="1">Livello 1</option><option value="2">Livello 2</option><option value="3">Livello 3</option><option value="4">Livello 4</option><option value="5">Livello 5</option><option value="6">Livello 6</option><option value="7">Livello 7</option><option value="8">Livello 8</option><option value="9">Livello 9</option></select></div><div id="spell-list-container" class="space-y-2"><p class="text-gray-500 text-center">Caricamento incantesimi...</p></div></div></div>
                 <div id="player-view-master" class="tab-content"><div class="bg-gray-800 p-6 rounded-lg shadow-lg"><h2 class="text-3xl font-bold mb-4 text-red-400">Condividi con i Giocatori</h2><div id="player-share-content"><p class="text-gray-400 font-sans mb-4">Apri un'avventura per gestire i giocatori.</p></div><div id="master-dice-log-container" class="mt-8 hidden"><h3 class="text-2xl font-bold mb-4 text-gray-300">Registro Tiri in Tempo Reale</h3><div id="master-dice-log" class="p-4 bg-gray-900 rounded-lg min-h-[200px] max-h-[400px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei giocatori appariranno qui...</span></div></div></div></div>
             </main>
         </div>
     </div>
 
-<!-- === INIZIO BLOCCO COMPENDIO GM === -->
-<div id="gm-compendium" class="tab-content">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <h2 class="text-3xl font-bold mb-4 text-red-400">Compendio del GM</h2>
-        
-        <!-- Barra di Ricerca -->
-        <div class="mb-6">
-            <input type="search" id="compendium-search" placeholder="Cerca una regola, condizione, azione..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
-        </div>
-<div class="bg-gray-900/50 p-4 rounded-lg border border-gray-700 mb-6">
-    <h3 class="text-2xl text-red-400 font-bold mb-3">Le Tue Avventure Personali</h3>
-    <div id="custom-lists-manager" class="space-y-4">
-        </div>
-    <div class="mt-4 pt-4 border-t border-gray-600">
-        <form id="add-new-list-form" class="flex gap-2">
-            <input type="text" id="new-list-name-input" class="flex-grow bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans" placeholder="Nome nuova lista (es. Nomi Elfici)" required>
-            <button type="submit" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-3 rounded-lg">Crea Lista</button>
-        </form>
-    </div>
-</div>
-        
-        <div id="compendium-sections" class="space-y-3 font-sans">
-            
-            <!-- Sezione Azioni in Combattimento -->
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Azioni in Combattimento</summary>
-                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
-                    <p><strong>Attaccare:</strong> Effettui un attacco con un'arma o senz'armi.</p>
-                    <p><strong>Lanciare un Incantesimo:</strong> Lanci un incantesimo con tempo di lancio "1 azione".</p>
-                    <p><strong>Scattare (Dash):</strong> Ottieni movimento extra pari alla tua velocità.</p>
-                    <p><strong>Disimpegnarsi (Disengage):</strong> Il tuo movimento non provoca attacchi di opportunità per il resto del turno.</p>
-                    <p><strong>Schivare (Dodge):</strong> Fino all'inizio del tuo prossimo turno, qualsiasi tiro per colpire contro di te ha svantaggio se puoi vedere l'attaccante, e tu hai vantaggio ai tiri salvezza su Destrezza.</p>
-                    <p><strong>Aiutare (Help):</strong> Fornisci vantaggio al prossimo tiro per colpire di un alleato contro un bersaglio entro 1.5m, oppure fornisci vantaggio a una prova di abilità di un alleato.</p>
-                    <p><strong>Nascondersi (Hide):</strong> Effettui una prova di Destrezza (Furtività) per diventare non visto.</p>
-                    <p><strong>Preparare (Ready):</strong> Scegli un'azione e una condizione scatenante. Usi la tua reazione per compiere l'azione quando la condizione si verifica.</p>
-                    <p><strong>Cercare (Search):</strong> Ti concentri per trovare qualcosa. Effettui una prova di Saggezza (Percezione) o Intelligenza (Indagare).</p>
-                    <p><strong>Usare un Oggetto (Use an Object):</strong> Interagisci con un secondo oggetto o usi un oggetto che richiede la tua azione (es. pozione).</p>
-                </div>
-            </details>
-
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-    <summary class="text-2xl text-red-400 font-bold cursor-pointer">TITOLO NUOVA SEZIONE</summary>
-    <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
-        <p><strong>Nuova Regola 1:</strong> Descrizione della prima regola...</p>
-        <p><strong>Nuova Regola 2:</strong> Descrizione della seconda regola...</p>
-    </div>
-</details>
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-    <summary class="text-2xl text-red-400 font-bold cursor-pointer">Viaggi, Distanze e Trasporti</summary>
-    <div class="mt-3 pt-3 border-t border-gray-600 space-y-4 text-gray-300">
-        
-        <h4 class="text-xl text-red-300">Ritmo di Viaggio (per 8 ore)</h4>
-        <p>Queste distanze si applicano a un gruppo a piedi o a un carro trainato da animali da soma.</p>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-gray-700 text-red-300">
-                    <tr>
-                        <th class="p-2">Ritmo</th>
-                        <th class="p-2">Km/Ora</th>
-                        <th class="p-2">Km/Giorno</th>
-                        <th class="p-2">Effetto</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Veloce</strong></td>
-                        <td class="p-2">~6 km</td>
-                        <td class="p-2">~45 km</td>
-                        <td class="p-2">-5 alla Percezione Passiva</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Normale</strong></td>
-                        <td class="p-2">~4.5 km</td>
-                        <td class="p-2">~36 km</td>
-                        <td class="p-2">Nessuno</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Lento</strong></td>
-                        <td class="p-2">~3 km</td>
-                        <td class="p-2">~27 km</td>
-                        <td class="p-2">Possibilità di muoversi Furtivamente</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <h4 class="text-xl text-red-300 mt-4">Velocità di Cavalcature e Veicoli</h4>
-        <p>La velocità di viaggio giornaliera presuppone condizioni meteo favorevoli.</p>
-        <div class="overflow-x-auto">
-            <table class="w-full text-left">
-                <thead class="bg-gray-700 text-red-300">
-                    <tr>
-                        <th class="p-2">Mezzo</th>
-                        <th class="p-2">Velocità (in combattimento)</th>
-                        <th class="p-2">Km/Giorno (viaggio)</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Cavallo da galoppo, Mulo</strong></td>
-                        <td class="p-2">40 piedi</td>
-                        <td class="p-2">~36 km</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Cavallo da guerra</strong></td>
-                        <td class="p-2">60 piedi</td>
-                        <td class="p-2">~45 km</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Carro o Carovana</strong></td>
-                        <td class="p-2">N/A</td>
-                        <td class="p-2">~25 km</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Nave a remi (galea)</strong></td>
-                        <td class="p-2">N/A</td>
-                        <td class="p-2">~60 km</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Nave a vela</strong></td>
-                        <td class="p-2">N/A</td>
-                        <td class="p-2">~75 km (con vento favorevole)</td>
-                    </tr>
-                    <tr class="border-b border-gray-600">
-                        <td class="p-2"><strong>Grifone, Viverna (volo)</strong></td>
-                        <td class="p-2">80 piedi</td>
-                        <td class="p-2">~115 km</td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-        <p class="text-sm text-gray-400 mt-2"><strong>Nota:</strong> Per calcolare i giorni di viaggio, dividi la distanza totale per i "Km/Giorno". Il terreno difficile (foreste fitte, montagne, paludi) dimezza la velocità di viaggio.</p>
-
-    </div>
-</details>
-
-            
-
-            <!-- Sezione Condizioni -->
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Condizioni</summary>
-                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
-                    <p><strong>Accecato:</strong> Fallisci automaticamente le prove di abilità che richiedono la vista. Svantaggio ai tiri per colpire. I tiri per colpire contro di te hanno vantaggio.</p>
-                    <p><strong>Affascinato:</strong> Non puoi attaccare chi ti ha affascinato. Chi ti ha affascinato ha vantaggio alle prove di abilità per interagire socialmente con te.</p>
-                    <p><strong>Assordato:</strong> Non puoi sentire e fallisci automaticamente le prove di abilità che richiedono l'udito.</p>
-                    <p><strong>Spaventato:</strong> Svantaggio a prove di abilità e tiri per colpire finché la fonte della paura è in linea di vista. Non puoi avvicinarti volontariamente alla fonte della tua paura.</p>
-                    <p><strong>Afferrato:</strong> La tua velocità diventa 0 e non puoi beneficiare di bonus alla velocità.</p>
-                    <p><strong>Incapacitato:</strong> Non puoi compiere azioni o reazioni.</p>
-                    <p><strong>Invisibile:</strong> Sei impossibile da vedere senza l'aiuto della magia o di un senso speciale. Vantaggio ai tiri per colpire. I tiri per colpire contro di te hanno svantaggio.</p>
-                    <p><strong>Paralizzato:</strong> Sei incapacitato e non puoi muoverti o parlare. Fallisci automaticamente i tiri salvezza su Forza e Destrezza. I tiri per colpire contro di te hanno vantaggio. Qualsiasi attacco che ti colpisce da 1.5m è un colpo critico.</p>
-                    <p><strong>Avvelenato:</strong> Svantaggio ai tiri per colpire e alle prove di abilità.</p>
-                    <p><strong>Prono:</strong> Il tuo unico movimento è strisciare. Svantaggio ai tiri per colpire. I tiri per colpire contro di te hanno vantaggio se l'attaccante è entro 1.5m, altrimenti hanno svantaggio.</p>
-                    <p><strong>Trattenuto:</strong> Velocità 0. Svantaggio ai tiri per colpire e ai tiri salvezza su Destrezza. I tiri per colpire contro di te hanno vantaggio.</p>
-                    <p><strong>Stordito:</strong> Sei incapacitato, non puoi muoverti e puoi parlare solo in modo vacillante. Fallisci automaticamente i tiri salvezza su Forza e Destrezza. I tiri per colpire contro di te hanno vantaggio.</p>
-                    <p><strong>Privo di Sensi:</strong> Sei incapacitato, non puoi muoverti o parlare e non sei consapevole di ciò che ti circonda. Lasci cadere qualsiasi cosa tu stia tenendo e cadi prono. Stesse regole di Paralizzato per gli attacchi.</p>
-                </div>
-            </details>
-
-            <!-- Sezione Ambiente e Movimento -->
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Ambiente e Movimento</summary>
-                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
-                    <p><strong>Terreno Difficile:</strong> Muoversi in terreno difficile costa 1.5m extra per ogni 1.5m di movimento.</p>
-                    <p><strong>Copertura Mezza:</strong> +2 alla CA e ai tiri salvezza su Destrezza.</p>
-                    <p><strong>Copertura Tre Quarti:</strong> +5 alla CA e ai tiri salvezza su Destrezza.</p>
-                    <p><strong>Copertura Totale:</strong> Non puoi essere bersagliato direttamente da un attacco o incantesimo.</p>
-                    <p><strong>Luce Fioca:</strong> Crea un'area leggermente oscurata. Le creature hanno svantaggio alle prove di Saggezza (Percezione) basate sulla vista.</p>
-                    <p><strong>Oscurità:</strong> Crea un'area pesantemente oscurata. Le creature soffrono della condizione Accecato quando cercano di vedere in quest'area.</p>
-                    <p><strong>Ritmo di Viaggio (8 ore):</strong> Lento (30km, furtivo), Normale (45km), Veloce (60km, -5 Percezione Passiva).</p>
-                    <p><strong>Soffocamento:</strong> Una creatura può trattenere il respiro per un numero di minuti pari a 1 + il suo modificatore di Costituzione (minimo 30 secondi). Quando finisce il fiato, può sopravvivere per un numero di round pari al suo modificatore di Costituzione (minimo 1). All'inizio del suo turno successivo, scende a 0 punti ferita e sta morendo.</p>
-                </div>
-            </details>
-
-            <!-- Sezione CD e Prove Abilità -->
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-                <summary class="text-2xl text-red-400 font-bold cursor-pointer">CD e Prove Abilità</summary>
-                <div class="mt-3 pt-3 border-t border-gray-600 space-y-2 text-gray-300">
-                    <h4 class="text-xl text-red-300">Classi Difficoltà (CD) Tipiche</h4>
-                    <p><strong>Molto Facile:</strong> 5 | <strong>Facile:</strong> 10 | <strong>Medio:</strong> 15 | <strong>Difficile:</strong> 20 | <strong>Molto Difficile:</strong> 25 | <strong>Quasi Impossibile:</strong> 30</p>
-                    <h4 class="text-xl text-red-300 mt-4">Prove contrapposte</h4>
-                    <p>Quando due creature si sfidano, entrambe effettuano una prova di abilità. Chi ottiene il risultato più alto vince. Esempi: Afferrare (Forza - Atletica vs Forza - Atletica o Destrezza - Acrobazia), Ingannare (Carisma - Inganno vs Saggezza - Intuizione).</p>
-                </div>
-            </details>
-
-            <!-- Sezione Nomi Casuali -->
-            <details class="compendium-section bg-gray-900/50 p-4 rounded-lg border border-gray-700">
-                <summary class="text-2xl text-red-400 font-bold cursor-pointer">Tabelle Rapide (Nomi, Luoghi...)</summary>
-                <div class="mt-3 pt-3 border-t border-gray-600 grid grid-cols-1 md:grid-cols-3 gap-4 text-gray-300">
-                    <div>
-                        <h4 class="text-xl text-red-300">Nomi Umani/Elfici</h4>
-                        <ul class="list-disc list-inside"><li>Arion</li><li>Elara</li><li>Kael</li><li>Lyra</li><li>Fendrel</li><li>Seraphina</li></ul>
-                    </div>
-                    <div>
-                        <h4 class="text-xl text-red-300">Nomi Naneschi/Orcheschi</h4>
-                        <ul class="list-disc list-inside"><li>Borgun</li><li>Grak</li><li>Durin</li><li>Urka</li><li>Thrain</li><li>Grosh</li></ul>
-                    </div>
-                    <div>
-                        <h4 class="text-xl text-red-300">Nomi di Taverne</h4>
-                        <ul class="list-disc list-inside"><li>Il Drago Addormentato</li><li>La Fanciulla Ridente</li><li>Il Grifone di Bronzo</li><li>La Pinta Sbeccata</li></ul>
-                    </div>
-                </div>
-            </details>
-
-<div id="spell-grimoire" class="tab-content">
-    <div class="bg-gray-800 p-6 rounded-lg shadow-lg">
-        <div class="flex justify-between items-center mb-4">
-            <h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2>
-            <button id="add-new-spell-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Aggiungi Nuovo Incantesimo</button>
-        </div>
-
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6 bg-gray-900/50 p-4 rounded-lg">
-            <input type="search" id="spell-search-input" placeholder="Cerca per nome..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-            <select id="spell-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-                <option value="">Tutte le Classi</option>
-                </select>
-            <select id="spell-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-                <option value="">Tutti i Livelli</option>
-                <option value="0">Trucchetti</option>
-                <option value="1">Livello 1</option>
-                <option value="2">Livello 2</option>
-                <option value="3">Livello 3</option>
-                <option value="4">Livello 4</option>
-                <option value="5">Livello 5</option>
-                <option value="6">Livello 6</option>
-                <option value="7">Livello 7</option>
-                <option value="8">Livello 8</option>
-                <option value="9">Livello 9</option>
-            </select>
-        </div>
-
-        <div id="spell-list-container" class="space-y-2">
-            <p class="text-gray-500 text-center">Caricamento incantesimi...</p>
-        </div>
-    </div>
-</div>
-            
-            
-        </div>
-    </div>
-</div>
-<!-- === FINE BLOCCO COMPENDIO GM === -->
-
-    
-    <!-- Contenitore Vista Giocatore -->
     <div id="player-view-container" class="p-4 md:p-8">
-        <div class="flex justify-between items-center mb-8">
-            <h1 id="player-adventure-title" class="text-4xl md:text-5xl font-bold text-red-500 tracking-wider"></h1>
-            <button id="player-open-sheet-btn" class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-lg text-lg">La Mia Scheda</button>
         </div>
-        <div class="bg-gray-800 p-4 rounded-lg shadow-lg mb-8"><h2 class="text-3xl font-bold mb-4 text-red-400">Lancia i Dadi</h2><div class="grid grid-cols-3 sm:grid-cols-6 gap-4 mb-4"><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="4">d4</button><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="6">d6</button><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="8">d8</button><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="10">d10</button><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="12">d12</button><button type="button" class="player-dice-btn bg-red-600 hover:bg-red-700 p-3 rounded-lg font-bold text-xl" data-sides="20">d20</button></div><div class="flex items-center gap-2 mb-4 font-sans"><label for="player-dice-modifier">Modificatore:</label><input type="number" id="player-dice-modifier" value="0" class="bg-gray-700 border border-gray-600 rounded-lg p-2 w-24 text-white"></div><div id="player-dice-log" class="mt-4 p-4 bg-gray-900 rounded-lg min-h-[150px] max-h-[300px] overflow-y-auto font-sans"><span class="text-gray-500">I tiri dei dadi appariranno qui...</span></div></div>
-        <div id="player-shared-items" class="space-y-8"></div>
-    </div>
 
-    <!-- Grimorio -->
-   <div id="grimoire-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[70]">
-    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[80vh] flex flex-col">
-        <div class="flex justify-between items-center mb-4 flex-shrink-0">
-            <h2 class="text-3xl font-bold text-red-400">Scegli dalle Tue Avventure Personali</h2>
-            <button id="grimoire-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
-        </div>
-        <div id="grimoire-modal-content" class="overflow-y-auto font-sans text-gray-300">
+    <div id="grimoire-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[70]">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[80vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                <h2 class="text-3xl font-bold text-red-400">Scegli dalle Tue Avventure Personali</h2>
+                <button id="grimoire-modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
             </div>
+            <div id="grimoire-modal-content" class="overflow-y-auto font-sans text-gray-300"></div>
+        </div>
     </div>
-</div>
-
 
     <div id="spell-editor-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[80]">
-    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[90vh] flex flex-col">
-        <h2 id="spell-editor-title" class="text-3xl font-bold text-red-400 mb-4 flex-shrink-0">Aggiungi Nuovo Incantesimo</h2>
-        <form id="spell-editor-form" class="space-y-2 overflow-y-auto pr-2 flex-grow text-sm font-sans">
-    <input type="hidden" id="spell-editor-id">
-    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-        <div class="md:col-span-2">
-            <label class="block font-bold text-gray-300">Nome Incantesimo</label>
-            <input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2" required>
-        </div>
-        <div>
-            <label class="block font-bold text-gray-300">Livello</label>
-            <select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2">
-                <option value="0">Trucchetto</option>
-                <option value="1">1° Livello</option>
-                <option value="2">2° Livello</option>
-                <option value="3">3° Livello</option>
-                <option value="4">4° Livello</option>
-                <option value="5">5° Livello</option>
-                <option value="6">6° Livello</option>
-                <option value="7">7° Livello</option>
-                <option value="8">8° Livello</option>
-                <option value="9">9° Livello</option>
-            </select>
-        </div>
-    </div>
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-        <div>
-            <label class="block font-bold text-gray-300">Scuola di Magia</label>
-            <select id="spell-editor-school" class<div id="spell-editor-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[80]">
-    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[90vh] flex flex-col">
-        <h2 id="spell-editor-title" class="text-3xl font-bold text-red-400 mb-4 flex-shrink-0">Aggiungi Nuovo Incantesimo</h2>
-        <form id="spell-editor-form" class="space-y-2 overflow-y-auto pr-2 flex-grow text-sm font-sans">
-            <input type="hidden" id="spell-editor-id">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                <div class="md:col-span-2">
-                    <label class="block font-bold text-gray-300">Nome Incantesimo</label>
-                    <input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2" required>
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-3xl border border-red-500 max-h-[90vh] flex flex-col">
+            <h2 id="spell-editor-title" class="text-3xl font-bold text-red-400 mb-4 flex-shrink-0">Aggiungi Nuovo Incantesimo</h2>
+            <form id="spell-editor-form" class="space-y-2 overflow-y-auto pr-2 flex-grow text-sm font-sans">
+                <input type="hidden" id="spell-editor-id">
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div class="md:col-span-2"><label class="block font-bold text-gray-300">Nome Incantesimo</label><input type="text" id="spell-editor-name" class="bg-gray-700 w-full rounded p-2" required></div>
+                    <div><label class="block font-bold text-gray-300">Livello</label><select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2"><option value="0">Trucchetto</option><option value="1">1° Livello</option><option value="2">2° Livello</option><option value="3">3° Livello</option><option value="4">4° Livello</option><option value="5">5° Livello</option><option value="6">6° Livello</option><option value="7">7° Livello</option><option value="8">8° Livello</option><option value="9">9° Livello</option></select></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div><label class="block font-bold text-gray-300">Scuola di Magia</label><select id="spell-editor-school" class="bg-gray-700 w-full rounded p-2"><option>Abiurazione</option><option>Ammaliamento</option><option>Divinazione</option><option>Evocazione</option><option>Illusione</option><option>Invocazione</option><option>Necromanzia</option><option>Trasmutazione</option></select></div>
+                    <div><label class="block font-bold text-gray-300">Tempo di Lancio</label><input type="text" id="spell-editor-casting-time" class="bg-gray-700 w-full rounded p-2" value="1 azione"></div>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div><label class="block font-bold text-gray-300">Gittata</label><input type="text" id="spell-editor-range" class="bg-gray-700 w-full rounded p-2" value="18 metri"></div>
+                    <div><label class="block font-bold text-gray-300">Durata</label><input type="text" id="spell-editor-duration" class="bg-gray-700 w-full rounded p-2" value="Istantanea"></div>
                 </div>
                 <div>
-                    <label class="block font-bold text-gray-300">Livello</label>
-                    <select id="spell-editor-level" class="bg-gray-700 w-full rounded p-2">
-                        <option value="0">Trucchetto</option>
-                        <option value="1">1° Livello</option>
-                        <option value="2">2° Livello</option>
-                        <option value="3">3° Livello</option>
-                        <option value="4">4° Livello</option>
-                        <option value="5">5° Livello</option>
-                        <option value="6">6° Livello</option>
-                        <option value="7">7° Livello</option>
-                        <option value="8">8° Livello</option>
-                        <option value="9">9° Livello</option>
-                    </select>
+                    <label class="block font-bold text-gray-300">Componenti</label>
+                    <div class="flex items-center gap-4 bg-gray-700 p-2 rounded">
+                        <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-v" class="w-4 h-4"> Verbale</label>
+                        <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-s" class="w-4 h-4"> Somatico</label>
+                        <div class="flex items-center gap-2 flex-grow"><input type="checkbox" id="spell-editor-comp-m" class="w-4 h-4"><input type="text" id="spell-editor-comp-m-details" class="bg-gray-600 rounded p-1 text-xs w-full" placeholder="Dettagli Materiale..."></div>
+                        <label class="flex items-center gap-2 border-l border-gray-500 pl-4"><input type="checkbox" id="spell-editor-concentration" class="w-4 h-4"> Concentrazione</label>
+                    </div>
                 </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div>
-                    <label class="block font-bold text-gray-300">Scuola di Magia</label>
-                    <select id="spell-editor-school" class="bg-gray-700 w-full rounded p-2">
-                        <option>Abiurazione</option><option>Ammaliamento</option><option>Divinazione</option><option>Evocazione</option><option>Illusione</option><option>Invocazione</option><option>Necromanzia</option><option>Trasmutazione</option>
-                    </select>
+                <div><label class="block font-bold text-gray-300">Descrizione</label><textarea id="spell-editor-description" class="bg-gray-700 w-full rounded p-2 h-24"></textarea></div>
+                <div><label class="block font-bold text-gray-300">A Livelli Superiori (opzionale)</label><textarea id="spell-editor-higher-levels" class="bg-gray-700 w-full rounded p-2 h-16"></textarea></div>
+                <div><label class="block font-bold text-gray-300 mb-1">Classi che possono lanciare questo incantesimo</label><div id="spell-editor-classes" class="grid grid-cols-3 sm:grid-cols-4 gap-2 bg-gray-700 p-2 rounded"></div></div>
+                <div class="flex justify-end gap-4 pt-2 flex-shrink-0">
+                    <button type="button" id="spell-editor-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Annulla</button>
+                    <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salva Incantesimo</button>
                 </div>
-                <div>
-                    <label class="block font-bold text-gray-300">Tempo di Lancio</label>
-                    <input type="text" id="spell-editor-casting-time" class="bg-gray-700 w-full rounded p-2" value="1 azione">
-                </div>
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-2">
-                <div>
-                    <label class="block font-bold text-gray-300">Gittata</label>
-                    <input type="text" id="spell-editor-range" class="bg-gray-700 w-full rounded p-2" value="18 metri">
-                </div>
-                <div>
-                    <label class="block font-bold text-gray-300">Durata</label>
-                    <input type="text" id="spell-editor-duration" class="bg-gray-700 w-full rounded p-2" value="Istantanea">
-                </div>
-            </div>
-            <div>
-                <label class="block font-bold text-gray-300">Componenti</label>
-                <div class="flex items-center gap-4 bg-gray-700 p-2 rounded">
-                    <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-v" class="w-4 h-4"> Verbale</label>
-                    <label class="flex items-center gap-2"><input type="checkbox" id="spell-editor-comp-s" class="w-4 h-4"> Somatico</label>
-                    <div class="flex items-center gap-2 flex-grow"><input type="checkbox" id="spell-editor-comp-m" class="w-4 h-4"><input type="text" id="spell-editor-comp-m-details" class="bg-gray-600 rounded p-1 text-xs w-full" placeholder="Dettagli Materiale..."></div>
-                    <label class="flex items-center gap-2 border-l border-gray-500 pl-4"><input type="checkbox" id="spell-editor-concentration" class="w-4 h-4"> Concentrazione</label>
-                </div>
-            </div>
-            <div>
-                <label class="block font-bold text-gray-300">Descrizione</label>
-                <textarea id="spell-editor-description" class="bg-gray-700 w-full rounded p-2 h-24"></textarea>
-            </div>
-            <div>
-                <label class="block font-bold text-gray-300">A Livelli Superiori (opzionale)</label>
-                <textarea id="spell-editor-higher-levels" class="bg-gray-700 w-full rounded p-2 h-16"></textarea>
-            </div>
-            <div>
-                <label class="block font-bold text-gray-300 mb-1">Classi che possono lanciare questo incantesimo</label>
-                <div id="spell-editor-classes" class="grid grid-cols-3 sm:grid-cols-4 gap-2 bg-gray-700 p-2 rounded">
-                    </div>
-            </div>
-            <div class="flex justify-end gap-4 pt-2 flex-shrink-0">
-                <button type="button" id="spell-editor-cancel-btn" class="bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg">Annulla</button>
-                <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg">Salva Incantesimo</button>
-            </div>
-        </form>
-    </div>
-</div>
-<div id="spell-selector-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[90]">
-    <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl border border-red-500 max-h-[90vh] flex flex-col">
-        <div class="flex justify-between items-center mb-4 flex-shrink-0">
-            <h2 id="spell-selector-title" class="text-3xl font-bold text-red-400">Aggiungi Incantesimo</h2>
-            <button id="spell-selector-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
-        </div>
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-shrink-0">
-            <input type="search" id="selector-search-input" placeholder="Cerca..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
-            <select id="selector-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
-            <select id="selector-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
-        </div>
-        <div id="spell-selector-content" class="overflow-y-auto font-sans text-gray-300 flex-grow">
-            </div>
-    </div>
-</div>
-
-    
-
-    <!-- Finestra Modale per i Nodi -->
-    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-2xl border border-red-500"><div class="flex justify-between items-center mb-4"><h2 id="modal-title" class="text-3xl font-bold text-red-400"></h2><button id="modal-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button></div><div id="modal-content" class="font-sans text-gray-300 max-h-[70vh] overflow-y-auto"></div></div></div>
-
-    <!-- Finestra Modale per la Condivisione -->
-    <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"><div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-md border border-red-500"><h2 id="share-modal-title" class="text-3xl font-bold text-red-400 mb-4">Condividi Contenuto</h2><div id="share-player-list" class="space-y-2 mb-6 font-sans"></div><div class="flex gap-4"><button id="share-modal-save" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg">Salva</button><button id="share-modal-cancel" class="w-full bg-gray-600 hover:bg-gray-500 text-white font-bold py-2 px-4 rounded-lg text-lg">Annulla</button></div></div></div>
-
-    <!-- Finestra Modale Scheda Personaggio -->
-    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50">
-        <div class="cs-main-container rounded-lg shadow-xl w-full max-w-6xl h-[95vh] border-2 border-red-800 flex flex-col">
-            <div class="flex justify-between items-center p-3 border-b border-gray-400 flex-shrink-0">
-                <h2 id="cs-modal-title" class="text-2xl font-bold text-red-800">Scheda Personaggio</h2>
-                <button id="cs-modal-close-btn" class="text-3xl text-gray-600 hover:text-black">&times;</button>
-            </div>
-            <div id="cs-modal-content" class="p-2 sm:p-4 overflow-y-auto flex-grow font-sans">
-                
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-                    <summary class="text-2xl text-red-800 font-bold">Anagrafica & Background</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <div class="grid grid-cols-1 md:grid-cols-10 gap-2 mb-2">
-                            <div class="cs-box md:col-span-4"><label class="cs-label">Nome Personaggio</label><input type="text" class="cs-input text-2xl" data-field="characterName"></div>
-                            <div class="cs-box md:col-span-2" id="cs-race-container"><label class="cs-label">Razza</label></div>
-                            <div class="cs-box md:col-span-2"><label class="cs-label">Background</label><input type="text" class="cs-input" data-field="background"></div>
-                            <div class="cs-box md:col-span-2 text-center"><label class="cs-label">Livello Totale</label><input type="number" id="cs-total-level" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly></div>
-                        </div>
-                        <div class="cs-box mb-2"><label class="cs-label">Classi & Livelli</label><div id="cs-classes-list" class="space-y-1 mt-1"></div><button id="cs-add-class-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Classe</button></div>
-                        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-2">
-                            <div class="cs-box h-32"><label class="cs-label">Tratti Personali</label><textarea class="cs-textarea" data-field="personalityTraits"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Ideali</label><textarea class="cs-textarea" data-field="ideals"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Legami</label><textarea class="cs-textarea" data-field="bonds"></textarea></div>
-                            <div class="cs-box h-32"><label class="cs-label">Difetti</label><textarea class="cs-textarea" data-field="flaws"></textarea></div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-                    <summary class="text-2xl text-red-800 font-bold">Caratteristiche & Combattimento</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 lg:grid-cols-2 gap-4">
-                        <div class="space-y-2">
-                            <div class="grid grid-cols-2 sm:grid-cols-3 gap-2">
-                                <div class="cs-stat-box"><label class="cs-label">Forza</label><input type="number" class="cs-stat-input" data-field="stats.strength"><div class="cs-stat-mod" data-mod="strength">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Destrezza</label><input type="number" class="cs-stat-input" data-field="stats.dexterity"><div class="cs-stat-mod" data-mod="dexterity">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Costituzione</label><input type="number" class="cs-stat-input" data-field="stats.constitution"><div class="cs-stat-mod" data-mod="constitution">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Intelligenza</label><input type="number" class="cs-stat-input" data-field="stats.intelligence"><div class="cs-stat-mod" data-mod="intelligence">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Saggezza</label><input type="number" class="cs-stat-input" data-field="stats.wisdom"><div class="cs-stat-mod" data-mod="wisdom">+0</div></div>
-                                <div class="cs-stat-box"><label class="cs-label">Carisma</label><input type="number" class="cs-stat-input" data-field="stats.charisma"><div class="cs-stat-mod" data-mod="charisma">+0</div></div>
-                            </div>
-                            <div class="grid grid-cols-2 gap-2">
-                                <div class="cs-box"><label class="cs-label">Bonus Competenza</label><input type="text" class="cs-input text-center" data-field="proficiencyBonus" readonly></div>
-                                <div class="cs-box"><label class="cs-label">Percezione Passiva</label><input type="text" class="cs-input text-center" data-field="senses.passivePerception" readonly></div>
-                            </div>
-                            <div class="cs-box mt-2" id="saving-throws-list"></div><div class="cs-box mt-2" id="skills-list"></div>
-                        </div>
-                        <div class="space-y-2">
-                             <div class="grid grid-cols-2 gap-2">
-                                <div class="cs-box text-center"><label class="cs-label">Classe Armatura</label><input type="number" class="cs-input text-3xl text-center max-w-[90px]" data-field="armorClass" readonly></div>
-                               <div class="cs-box text-center"><label class="cs-label">Iniziativa</label><div class="flex items-center justify-center"><input type="text" id="cs-initiative-total" class="cs-input text-3xl text-center max-w-[80px] mx-auto" readonly><input type="number" data-field="initiativeBonus" class="cs-input text-sm w-20 ml-2 max-w-[70px]" placeholder="Bonus"></div></div>
-                            </div>
-                            <div class="cs-box"><label class="cs-label">Velocità</label><div class="flex gap-2 items-center"><input type="text" id="cs-speed-auto" class="cs-input text-center max-w-[80px]" readonly><input type="text" data-field="speedModifier" id="cs-speed-modifier" class="cs-input text-center max-w-[100px]" placeholder="Bonus/Malus"></div><small class="text-xs text-gray-500 font-sans">Velocità base calcolata da razza/classe.</small></div>
-                            <div class="cs-box"><label class="cs-label">Punti Ferita</label><div class="grid grid-cols-2 gap-2"><div><label class="text-xs">Massimi</label><input type="number" class="cs-input" data-field="hp.max"></div><div><label class="text-xs">Attuali</label><input type="number" class="cs-input" data-field="hp.current"></div></div></div>
-                            <div class="cs-box"><label class="cs-label">Dadi Vita</label><input type="text" class="cs-input" data-field="hitDice"></div>
-                            <div class="cs-box" id="cs-death-saves">
-                                <label class="cs-label">Tiri Salvezza contro Morte</label>
-                                <div class="flex justify-around items-center mt-1">
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm">Successi</span>
-                                        <input type="checkbox" data-death-save-success="0" class="w-5 h-5">
-                                        <input type="checkbox" data-death-save-success="1" class="w-5 h-5">
-                                        <input type="checkbox" data-death-save-success="2" class="w-5 h-5">
-                                    </div>
-                                    <div class="flex items-center gap-2">
-                                        <span class="text-sm">Fallimenti</span>
-                                        <input type="checkbox" data-death-save-failure="0" class="w-5 h-5">
-                                        <input type="checkbox" data-death-save-failure="1" class="w-5 h-5">
-                                        <input type="checkbox" data-death-save-failure="2" class="w-5 h-5">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="cs-box"><label class="cs-label mb-2">Difese</label><div id="cs-defenses-list" class="space-y-1"></div><button id="cs-add-defense-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Difesa</button></div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400" open>
-                  <summary class="text-2xl text-red-800 font-bold">Armi & Attacchi</summary>
-                  <div class="mt-2 pt-2 border-t border-gray-400"><div id="weapons-list-container" class="space-y-2"></div><button id="add-weapon-btn" class="mt-2 bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Arma</button></div>
-                </details>
-                
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Privilegi & Tratti</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <div class="cs-box h-[32rem] flex flex-col">
-                            <div id="cs-features-list" class="flex-grow overflow-y-auto pr-2 space-y-2"></div>
-                            <button id="cs-add-feature-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Privilegio / Tratto</button>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Altre Competenze & Linguaggi</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div class="cs-box h-48"><label class="cs-label">Competenze (Armature, Armi, Strumenti)</label><textarea class="cs-textarea" data-field="otherProficiencies"></textarea></div>
-                        <div class="cs-box h-48"><label class="cs-label">Linguaggi</label><textarea class="cs-textarea" data-field="languages"></textarea></div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Equipaggiamento & Tesoro</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400 grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <div class="cs-box h-96 flex flex-col"><label class="cs-label">Equipaggiamento</label><div id="cs-equipment-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div><button id="cs-add-equipment-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Oggetto</button></div>
-                        </div>
-                        <div>
-                            <div class="flex gap-4 h-full">
-                                <div class="cs-box w-32 flex-shrink-0">
-                                    <div class="space-y-3">
-                                        <div class="text-center"><label class="cs-label">MR</label><input type="number" class="cs-input text-center" data-field="treasure.cp"></div>
-                                        <div class="text-center"><label class="cs-label">MA</label><input type="number" class="cs-input text-center" data-field="treasure.sp"></div>
-                                        <div class="text-center"><label class="cs-label">MO</label><input type="number" class="cs-input text-center" data-field="treasure.gp"></div>
-                                        <div class="text-center"><label class="cs-label">MP</label><input type="number" class="cs-input text-center" data-field="treasure.pp"></div>
-                                    </div>
-                                </div>
-                                <div class="cs-box flex-grow h-[384px] flex flex-col">
-                                    <label class="cs-label">Altri Tesori</label>
-                                    <div id="cs-other-treasures-list" class="flex-grow overflow-y-auto pr-2 space-y-1"></div>
-                                    <button id="cs-add-treasure-btn" class="mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Tesoro</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Compagni & Gregari</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <div id="cs-companions-list" class="space-y-3"></div>
-                        <button id="cs-add-companion-btn" class="mt-3 w-full bg-green-700 hover:bg-green-800 rounded p-2 text-white">Aggiungi Compagno / Gregario</button>
-                    </div>
-                </details>
-
-                <details class="bg-white/60 rounded-lg p-3 mb-2 border border-gray-400">
-                    <summary class="text-2xl text-red-800 font-bold">Incantesimi</summary>
-                    <div class="mt-2 pt-2 border-t border-gray-400">
-                        <div class="grid grid-cols-1 md:grid-cols-4 gap-2 mb-4">
-                            <div class="cs-box"><label class="cs-label">Classe da Incantatore</label><input type="text" class="cs-input" data-field="spellcasting.class"></div>
-                            <div class="cs-box"><label class="cs-label">Caratteristica</label><select class="cs-select" data-field="spellcasting.ability"><option value="strength">Forza</option><option value="dexterity">Destrezza</option><option value="constitution">Costituzione</option><option value="intelligence">Intelligenza</option><option value="wisdom">Saggezza</option><option value="charisma">Carisma</option></select></div>
-                            <div class="cs-box"><label class="cs-label">CD Tiro Salvezza</label><input type="number" class="cs-input text-center" data-field="spellcasting.saveDC" readonly></div>
-                            <div class="cs-box"><label class="cs-label">Bonus Attacco Inc.</label><input type="text" class="cs-input text-center" data-field="spellcasting.attackBonus" readonly></div>
-                        </div>
-                        <div id="cs-spell-levels-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-2"></div>
-                    </div>
-                </details>
-
-            </div>
+            </form>
         </div>
     </div>
-    
-    <!-- === MODALI SCHEDA PERSONAGGIO === -->
-    <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-2" id="weapon-modal-title">Aggiungi/Modifica Arma</h3><form id="weapon-form" class="space-y-2"><input type="hidden" id="weapon-index" value=""><div><label class="block text-xs font-bold mb-1">Nome Arma</label><input type="text" id="weapon-name" class="cs-input" required></div><div><label class="block text-xs font-bold mb-1">Tipo</label><select id="weapon-type" class="cs-select"><option value="mischia">Mischia</option><option value="distanza">Distanza</option><option value="altro">Altro</option></select></div><div id="weapon-ammo-container" class="hidden"><label class="block text-xs font-bold mb-1">Tipo Munizione (es. Frecce)</label><input type="text" id="weapon-ammunition-type" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Caratteristica per l'Attacco (Override)</label><select id="weapon-override-stat" class="cs-select"><option value="default">Default</option><option value="strength">Forza</option><option value="dexterity">Destrezza</option><option value="constitution">Costituzione</option><option value="intelligence">Intelligenza</option><option value="wisdom">Saggezza</option><option value="charisma">Carisma</option></select></div><div><label class="block text-xs font-bold mb-1">Danno (es: 1d8)</label><input type="text" id="weapon-damage" class="cs-input" required></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="weapon-versatile-checkbox"><label for="weapon-versatile-checkbox" class="text-xs font-bold">Versatile?</label></div><div id="weapon-versatile-container" class="hidden"><label class="block text-xs font-bold mb-1">Danno Versatile (es: 1d10)</label><input type="text" id="weapon-versatile-damage" class="cs-input"></div><div><label class="block text-xs font-bold mb-1">Tipo Danno</label><input type="text" id="weapon-damage-type" class="cs-input" placeholder="tagliente, contundente..."></div><div><label class="block text-xs font-bold mb-1">Proprietà (es. accurata)</label><input type="text" id="weapon-properties" class="cs-input" placeholder="leggera, versatile, accurata..."></div><div><label class="block text-xs font-bold mb-1">Competenza?</label><input type="checkbox" id="weapon-proficient"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Attacco</label><input type="number" id="weapon-attack-bonus" class="cs-input" value="0"></div><div><label class="block text-xs font-bold mb-1">Bonus/Malus Danni</label><input type="number" id="weapon-damage-bonus" class="cs-input" value="0"></div><div class="flex gap-2 mt-2"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-1 text-base text-white">Salva</button><button type="button" id="weapon-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-1 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="equipment-modal-title">Oggetto</h3><form id="equipment-form" class="space-y-3"><input type="hidden" id="equipment-id"><div><label class="block text-sm font-bold mb-1">Nome Oggetto</label><input type="text" id="equipment-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Quantità</label><input type="number" id="equipment-quantity" class="cs-input" value="1"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="equipment-description" class="cs-textarea h-24"></textarea></div><div class="flex items-center gap-2 mt-1"><input type="checkbox" id="equipment-is-ammo"><label for="equipment-is-ammo" class="text-sm font-bold">Questo è un tipo di munizione?</label></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Oggetto</button><button type="button" id="equipment-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-lg w-full"><h3 class="text-xl font-bold mb-4" id="spell-modal-title">Incantesimo</h3><form id="spell-form" class="space-y-3"><input type="hidden" id="spell-id"><input type="hidden" id="spell-level"><div><label class="block text-sm font-bold mb-1">Nome Incantesimo</label><input type="text" id="spell-name" class="cs-input" required></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">Tempo di Lancio</label><input type="text" id="spell-casting-time" class="cs-input text-sm"></div><div><label class="block text-sm font-bold mb-1">Gittata</label><input type="text" id="spell-range" class="cs-input text-sm"></div></div><div class="grid grid-cols-2 gap-4"><div><label class="block text-sm font-bold mb-1">Durata</label><input type="text" id="spell-duration" class="cs-input text-sm"></div><div class="flex items-center gap-2 pt-6"><input type="checkbox" id="spell-concentration" class="w-4 h-4"><label for="spell-concentration" class="text-sm font-bold">Concentrazione?</label></div></div><div><label class="block text-sm font-bold mb-1">Componenti</label><div class="flex items-center gap-4" id="spell-components"><label><input type="checkbox" id="spell-comp-v" class="w-4 h-4"> V</label><label><input type="checkbox" id="spell-comp-s" class="w-4 h-4"> S</label><label><input type="checkbox" id="spell-comp-m" class="w-4 h-4"> M</label></div></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="spell-description" class="cs-textarea h-24"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva Incantesimo</button><button type="button" id="spell-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="feature-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="feature-modal-title">Privilegio / Tratto</h3><form id="feature-form" class="space-y-3"><input type="hidden" id="feature-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="feature-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="feature-type" class="cs-select"><option value="Razziale">Razziale</option><option value="Classe">Classe</option><option value="Background">Background</option><option value="Privilegio">Privilegio</option><option value="Altro">Altro</option></select></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="feature-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="feature-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="treasure-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="treasure-modal-title">Tesoro</h3><form id="treasure-form" class="space-y-3"><input type="hidden" id="treasure-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="treasure-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Valore (es. 100 MO)</label><input type="text" id="treasure-value" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="treasure-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="treasure-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
-    <div id="companion-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] flex flex-col"><h3 class="text-xl font-bold mb-4 flex-shrink-0" id="companion-modal-title">Compagno / Gregario</h3><form id="companion-form" class="space-y-3 overflow-y-auto pr-2 flex-grow"><input type="hidden" id="companion-id"><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><div class="md:col-span-2"><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="companion-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="companion-type" class="cs-select"><option value="Famiglio">Famiglio</option><option value="Compagno Animale">Compagno Animale</option><option value="Costrutto">Costrutto</option><option value="Gregario">Gregario</option><option value="Altro">Altro</option></select></div></div><div><label class="block text-sm font-bold mb-1">Tipo di Creatura / Razza</label><input type="text" id="companion-creature-type" class="cs-input" placeholder="Es. Bestia, Costrutto, Mastino Infernale..."></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2"><div><label class="block text-sm font-bold mb-1">CA</label><input type="number" id="companion-ac" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">PF Massimi</label><input type="number" id="companion-hp-max" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">PF Attuali</label><input type="number" id="companion-hp-current" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Velocità</label><input type="text" id="companion-speed" class="cs-input" placeholder="9m, 12m volo"></div></div><div class="grid grid-cols-3 md:grid-cols-6 gap-2"><div class="text-center"><label class="block text-sm font-bold mb-1">FOR</label><input type="number" id="companion-stat-str" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">DES</label><input type="number" id="companion-stat-dex" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">COS</label><input type="number" id="companion-stat-con" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">INT</label><input type="number" id="companion-stat-int" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">SAG</label><input type="number" id="companion-stat-wis" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">CAR</label><input type="number" id="companion-stat-cha" class="cs-input text-center"></div></div><div><label class="block text-sm font-bold mb-1">Abilità e Tiri Salvezza</label><textarea id="companion-skills" class="cs-textarea h-20" placeholder="Es. Furtività +4, Percezione +3, TS DES +4..."></textarea></div><div><label class="block text-sm font-bold mb-1">Sensi</label><textarea id="companion-senses" class="cs-textarea h-16" placeholder="Es. Percezione Passiva 13, Scurovisione 18m..."></textarea></div><div><label class="block text-sm font-bold mb-1">Azioni</label><textarea id="companion-actions" class="cs-textarea h-24" placeholder="Es. Morso. Attacco con arma da mischia: +4 per colpire, portata 1,5m, un bersaglio. Colpito: 5 (1d6 + 2) danni perforanti."></textarea></div><div><label class="block text-sm font-bold mb-1">Privilegi, Tratti e Infusioni</label><textarea id="companion-features" class="cs-textarea h-24" placeholder="Es. Tattiche del Branco. Il compagno ha vantaggio al tiro per colpire contro una creatura se almeno uno degli alleati del compagno si trova entro 1,5m dalla creatura e non è incapacitato."></textarea></div><div><label class="block text-sm font-bold mb-1">Note</label><textarea id="companion-notes" class="cs-textarea h-20"></textarea></div></form><div class="flex gap-2 mt-4 flex-shrink-0"><button type="submit" form="companion-form" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="companion-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></div></div>
 
+    <div id="spell-selector-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[90]">
+        <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl border border-red-500 max-h-[90vh] flex flex-col">
+            <div class="flex justify-between items-center mb-4 flex-shrink-0">
+                <h2 id="spell-selector-title" class="text-3xl font-bold text-red-400">Aggiungi Incantesimo</h2>
+                <button id="spell-selector-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+            </div>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4 flex-shrink-0">
+                <input type="search" id="selector-search-input" placeholder="Cerca..." class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans">
+                <select id="selector-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
+                <select id="selector-level-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-2 font-sans"></select>
+            </div>
+            <div id="spell-selector-content" class="overflow-y-auto font-sans text-gray-300 flex-grow"></div>
+        </div>
+    </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-        import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+    <div id="node-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"></div>
+    <div id="share-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-50"></div>
+    <div id="character-sheet-modal" class="hidden fixed inset-0 bg-black bg-opacity-80 flex items-center justify-center p-2 sm:p-4 z-50"></div>
+    <div id="weapon-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
+    <div id="equipment-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
+    <div id="spell-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
+    <div id="feature-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
+    <div id="treasure-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
+    <div id="companion-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"></div>
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
-            authDomain: "avventure-dnd.firebaseapp.com",
-            projectId: "avventure-dnd",
-            storageBucket: "avventure-dnd.appspot.com",
-            messagingSenderId: "943269894603",
-            appId: "1:943269894603:web:b8851c9862d76486603e4e"
-        };
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+    import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+    import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        const auth = getAuth(app);
+    // --- CONFIGURAZIONE FIREBASE ---
+    const firebaseConfig = {
+        apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
+        authDomain: "avventure-dnd.firebaseapp.com",
+        projectId: "avventure-dnd",
+        storageBucket: "avventure-dnd.appspot.com",
+        messagingSenderId: "943269894603",
+        appId: "1:943269894603:web:b8851c9862d76486603e4e"
+    };
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    const auth = getAuth(app);
 
-        let currentUserId = null;
-        let currentAdventureId = null;
-        let currentAdventureData = {};
-        let currentAdventureUnsubscribe = null;
-        let characterSheetUpdateTimeout = null;
-        let combatTrackerUpdateTimeout = null;
+    // --- VARIABILI GLOBALI DI STATO ---
+    let currentUserId = null;
+    let currentAdventureId = null;
+    let currentAdventureData = {};
+    let currentAdventureUnsubscribe = null;
+    let characterSheetUpdateTimeout = null;
+    let combatTrackerUpdateTimeout = null;
+    let dmNotesUpdateTimeout = null;
+    let userCustomLists = {};
+    let grimoireTargetInput = null;
+    let allSpells = [];
 
-        let dmNotesUpdateTimeout = null;
-let userCustomLists = {};
-let grimoireTargetInput = null;
+    // --- GESTIONE URL E VISTA GIOCATORE ---
+    const urlParams = new URLSearchParams(window.location.search);
+    const playerViewId = urlParams.get('player_view');
+    const playerToken = urlParams.get('token');
+    let playerViewInitialized = false;
 
-        let allSpells = []; // Conterrà tutti gli incantesimi dal DB
+    // --- COSTANTI DI GIOCO ---
+    const DND_CLASSES = ["Artefice", "Barbaro", "Bardo", "Chierico", "Druido", "Guerriero", "Ladro", "Mago", "Monaco", "Paladino", "Ranger", "Stregone", "Warlock"];
+    const DND_RACES = ["Aasimar (Protettore)", "Aasimar (Flagello)", "Aasimar (Caduto)", "Bugbear", "Cangiante", "Centauro", "Dragonide", "Nano (Delle Colline)", "Nano (Delle Montagne)", "Nano (Duergar)", "Elfo (Alto)", "Elfo (Dei Boschi)", "Elfo (Drow)", "Elfo (Shadar-kai)", "Firbolg", "Genasi (Acqua)", "Genasi (Aria)", "Genasi (Fuoco)", "Genasi (Terra)", "Gith (Githyanki)", "Gith (Githzerai)", "Gnomo (Delle Foreste)", "Gnomo (Delle Rocce)", "Goblin", "Goliath", "Halfling (Piedelesto)", "Halfling (Tozzo)", "Hobgoblin", "Kalashtar", "Kenku", "Koboldo", "Leonin", "Lizardfolk", "Loxodon", "Mezzelfo", "Mezzorco", "Minotauro", "Orco", "Satiro", "Shifter", "Simic Hybrid", "Tabaxi", "Tiefling", "Tritone", "Tortle", "Umano", "Umano (Variant)", "Vedalken", "Warforged", "Yuan-ti"];
+    const DND_SKILLS = { "Acrobazia": "dexterity", "Addestrare Animali": "wisdom", "Arcano": "intelligence", "Atletica": "strength", "Furtività": "dexterity", "Indagare": "intelligence", "Inganno": "charisma", "Intimidire": "charisma", "Intrattenere": "charisma", "Intuizione": "wisdom", "Medicina": "wisdom", "Natura": "intelligence", "Percezione": "wisdom", "Persuasione": "charisma", "Rapidità di Mano": "dexterity", "Religione": "intelligence", "Sopravvivenza": "wisdom", "Storia": "intelligence" };
+    const DND_SAVES = { "Forza": "strength", "Destrezza": "dexterity", "Costituzione": "constitution", "Intelligenza": "intelligence", "Saggezza": "wisdom", "Carisma": "charisma" };
 
-        const urlParams = new URLSearchParams(window.location.search);
-        const playerViewId = urlParams.get('player_view');
-        const playerToken = urlParams.get('token');
-        let playerViewInitialized = false;
-
-        onAuthStateChanged(auth, user => {
-    document.getElementById('initial-loader').style.display = 'none';
-
-    if (playerViewId && playerToken) {
-        if (playerViewInitialized) return;
-        playerViewInitialized = true;
-        (async () => {
-            try {
-                if (!auth.currentUser) {
-                    await signInAnonymously(auth);
+    // --- INIZIALIZZAZIONE E AUTENTICAZIONE ---
+    onAuthStateChanged(auth, user => {
+        document.getElementById('initial-loader').style.display = 'none';
+        if (playerViewId && playerToken) {
+            if (playerViewInitialized) return;
+            playerViewInitialized = true;
+            (async () => {
+                try {
+                    if (!auth.currentUser) { await signInAnonymously(auth); }
+                    document.getElementById('auth-container').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'none';
+                    document.getElementById('player-view-container').classList.add('active');
+                    loadPlayerView(playerViewId, playerToken);
+                } catch (error) {
+                    console.error("Anonymous sign-in failed:", error);
+                    const container = document.getElementById('player-view-container');
+                    container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p></div>`;
+                    container.classList.add('active');
+                    document.getElementById('auth-container').style.display = 'none';
+                    document.getElementById('app-container').style.display = 'none';
                 }
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('app-container').style.display = 'none';
-                document.getElementById('player-view-container').classList.add('active');
-                loadPlayerView(playerViewId, playerToken);
-            } catch (error) {
-                console.error("Anonymous sign-in failed:", error);
-                const container = document.getElementById('player-view-container');
-                container.innerHTML = `<div class="text-center p-8"><p class="text-red-500 text-2xl">Impossibile connettersi.</p><p class="text-gray-400 mt-4 font-sans">Controlla la tua connessione a internet. Se il problema persiste, il DM deve assicurarsi che l'autenticazione anonima sia abilitata nelle impostazioni del progetto Firebase.</p></div>`;
-                container.classList.add('active');
-                document.getElementById('auth-container').style.display = 'none';
-                document.getElementById('app-container').style.display = 'none';
-            }
-        })();
-    } else if (user) {
-        document.getElementById('auth-container').classList.remove('active');
-        document.getElementById('app-container').classList.add('active');
-        document.getElementById('player-view-container').style.display = 'none';
-        document.getElementById('user-email').textContent = user.email;
-        currentUserId = user.uid;
-        loadAdventures(user.uid);
-        loadUserLists();
-        loadAllSpells();
-    } else {
-        document.getElementById('app-container').classList.remove('active');
-        document.getElementById('player-view-container').style.display = 'none';
-        document.getElementById('auth-container').classList.add('active');
-        currentUserId = null;
-    }
-});
+            })();
+        } else if (user) {
+            document.getElementById('auth-container').classList.remove('active');
+            document.getElementById('app-container').classList.add('active');
+            document.getElementById('player-view-container').style.display = 'none';
+            document.getElementById('user-email').textContent = user.email;
+            currentUserId = user.uid;
+            loadAdventures(user.uid);
+            loadUserLists();
+            loadAllSpells();
+        } else {
+            document.getElementById('app-container').classList.remove('active');
+            document.getElementById('player-view-container').style.display = 'none';
+            document.getElementById('auth-container').classList.add('active');
+            currentUserId = null;
+        }
+    });
 
         function renderDiceLog(containerEl, rolls = []) {
             if (!containerEl) return;
