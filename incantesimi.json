@@ -8,7 +8,8 @@
     "concentration": false,
     "components": { "v": true, "s": true, "m": true },
     "description": "Un raggio di luce gialla sfreccia... 8d6 danni da fuoco...",
-    "school": "Invocazione"
+    "school": "Invocazione",
+    "classi": ["Mago", "Stregone"]
   },
   {
     "name": "Dardo Incantato",
@@ -19,6 +20,19 @@
     "concentration": false,
     "components": { "v": true, "s": true, "m": false },
     "description": "Crei tre dardi luminosi... 1d4+1 danni da forza...",
-    "school": "Invocazione"
+    "school": "Invocazione",
+    "classi": ["Mago"]
+  },
+  {
+    "name": "Parola Guaritrice",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "18 metri",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Una creatura a tua scelta che puoi vedere entro gittata recupera un numero di punti ferita pari a 1d4 + il tuo modificatore di caratteristica da incantatore.",
+    "school": "Invocazione",
+    "classi": ["Bardo", "Chierico", "Druido"]
   }
 ]
