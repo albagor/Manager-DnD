@@ -1,7 +1,7 @@
 [
   {
     "name": "Palla di Fuoco",
-    "level": "3 evocazione"
+    "level": 3,
     "castingTime": "1 azione",
     "range": "45 metri",
     "duration": "Istantanea",
