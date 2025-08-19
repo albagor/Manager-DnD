@@ -1,0 +1,24 @@
+[
+  {
+    "name": "Palla di Fuoco",
+    "level": 3,
+    "castingTime": "1 azione",
+    "range": "45 metri",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Un raggio di luce gialla sfreccia... 8d6 danni da fuoco...",
+    "school": "Invocazione"
+  },
+  {
+    "name": "Dardo Incantato",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "36 metri",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Crei tre dardi luminosi... 1d4+1 danni da forza...",
+    "school": "Invocazione"
+  }
+]
