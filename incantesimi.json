@@ -300,6 +300,18 @@
     "classi": ["Artefice", "Druido", "Ranger", "Mago"]
   },
   {
+    "name": "Benedizione",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "9 metri",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Benedici fino a tre creature a tua scelta entro gittata. Ogni volta che un bersaglio effettua un tiro per colpire o un tiro salvezza prima della fine dell'incantesimo, può tirare un d4 e aggiungere il risultato al tiro.",
+    "school": "Incantamento",
+    "classi": ["Chierico", "Paladino"]
+  },
+  {
     "name": "Caduta Morbida",
     "level": 1,
     "castingTime": "1 reazione",
@@ -336,6 +348,18 @@
     "classi": ["Artefice", "Mago", "Stregone"]
   },
   {
+    "name": "Comando",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "18 metri",
+    "duration": "1 round",
+    "concentration": false,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Pronunci un comando di una parola a una creatura che puoi vedere entro gittata. Il bersaglio deve superare un tiro salvezza su Saggezza o seguire il comando nel suo prossimo turno. L'incantesimo non ha effetto se il bersaglio è un non morto, se non capisce la tua lingua, or se il tuo comando è direttamente dannoso per lui.",
+    "school": "Incantamento",
+    "classi": ["Chierico", "Paladino"]
+  },
+  {
     "name": "Cura Ferite",
     "level": 1,
     "castingTime": "1 azione",
@@ -348,6 +372,42 @@
     "classi": ["Artefice", "Bardo", "Chierico", "Druido", "Paladino", "Ranger"]
   },
   {
+    "name": "Duello Obbligato",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "9 metri",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Scegli una creatura che puoi vedere entro gittata per sfidarla in duello. Il bersaglio deve effettuare un tiro salvezza su Saggezza. Se fallisce, ha svantaggio ai tiri per colpire contro creature diverse da te. Inoltre, deve effettuare un altro TS su Saggezza ogni volta che tenta di muoversi in uno spazio che si trova a più di 9 metri da te.",
+    "school": "Incantamento",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Eroismo",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "Tocco",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Una creatura consenziente che tocchi viene infusa di coraggio. Fino alla fine dell'incantesimo, la creatura è immune alla condizione spaventato e ottiene punti ferita temporanei pari al tuo modificatore di caratteristica da incantatore all'inizio di ogni suo turno.",
+    "school": "Incantamento",
+    "classi": ["Bardo", "Paladino"]
+  },
+  {
+    "name": "Favore Divino",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "La tua preghiera ti potenzia con potere divino. Fino alla fine dell'incantesimo, i tuoi attacchi con arma infliggono 1d4 danni radianti extra quando colpiscono.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
     "name": "Identificare",
     "level": 1,
     "castingTime": "1 minuto (rituale)",
@@ -355,9 +415,21 @@
     "duration": "Istantanea",
     "concentration": false,
     "components": { "v": true, "s": true, "m": true },
-    "description": "Scegli un oggetto che devi toccare durante l'intero lancio. Se si tratta di un oggetto magico o di un altro oggetto intriso di magia, impari le sue proprietà e come usarle, se richiede sintonia per essere usato, e quante cariche ha. Impari se qualche incantesimo sta attualmente influenzando l'oggetto. Se l'oggetto è stato creato da un incantesimo, impari quale incantesimo lo ha creato.",
+    "description": "Scegli un oggetto che devi toccare durante l'intero lancio. Se si tratta di un oggetto magico, impari le sue proprietà e come usarle, se richiede sintonia, e quante cariche ha. Impari se qualche incantesimo sta attualmente influenzando l'oggetto.",
     "school": "Divinazione",
     "classi": ["Artefice", "Bardo", "Mago"]
+  },
+  {
+    "name": "Individuazione del Bene e del Male",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Per la durata, conosci la posizione di qualsiasi celestiale, immondo o non morto entro 9 metri da te che non si trovi dietro copertura totale.",
+    "school": "Divinazione",
+    "classi": ["Chierico", "Paladino"]
   },
   {
     "name": "Individuazione del Magico",
@@ -367,9 +439,21 @@
     "duration": "Concentrazione, fino a 10 minuti",
     "concentration": true,
     "components": { "v": true, "s": true, "m": false },
-    "description": "Per la durata, percepisci la presenza di magia entro 9 metri da te. Se percepisci la magia in questo modo, puoi usare la tua azione per vedere una debole aura intorno a qualsiasi creatura o oggetto visibile nell'area che porta magia, e impari la sua scuola di magia, se presente.",
+    "description": "Per la durata, percepisci la presenza di magia entro 9 metri da te. Se percepisci la magia, puoi usare la tua azione per vedere una debole aura intorno a qualsiasi creatura o oggetto visibile nell'area che porta magia, e impari la sua scuola di magia.",
     "school": "Divinazione",
     "classi": ["Artefice", "Bardo", "Chierico", "Druido", "Paladino", "Ranger", "Mago", "Stregone"]
+  },
+  {
+    "name": "Individuazione delle Malattie e dei Veleni",
+    "level": 1,
+    "castingTime": "1 azione (rituale)",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Per la durata, percepisci la presenza e la posizione di veleni, creature velenose e malattie entro 9 metri da te.",
+    "school": "Divinazione",
+    "classi": ["Chierico", "Druido", "Paladino", "Ranger"]
   },
   {
     "name": "Luminescenza",
@@ -379,7 +463,7 @@
     "duration": "Concentrazione, fino a 1 minuto",
     "concentration": true,
     "components": { "v": true, "s": true, "m": true },
-    "description": "Ogni oggetto in un cubo di 6 metri entro gittata viene delineato da una luce blu, verde o viola. Qualsiasi creatura nell'area quando l'incantesimo viene lanciato viene anch'essa delineata se fallisce un tiro salvezza su Destrezza. Per la durata, gli oggetti e le creature affette emettono luce fioca in un raggio di 3 metri. Qualsiasi tiro per colpire contro una creatura o un oggetto affetto ha vantaggio se l'attaccante può vederlo, e la creatura o l'oggetto affetto non può beneficiare dell'essere invisibile.",
+    "description": "Ogni oggetto in un cubo di 6 metri entro gittata viene delineato da una luce. Qualsiasi creatura nell'area deve superare un tiro salvezza su Destrezza o essere anch'essa delineata. Qualsiasi tiro per colpire contro una creatura o un oggetto affetto ha vantaggio se l'attaccante può vederlo, e non può beneficiare dell'essere invisibile.",
     "school": "Invocazione",
     "classi": ["Artefice", "Bardo", "Druido"]
   },
@@ -406,6 +490,54 @@
     "description": "Tocchi una creatura. La velocità del bersaglio aumenta di 3 metri fino alla fine dell'incantesimo.\nA livelli superiori: quando lanci questo incantesimo usando uno slot di 2° livello o superiore, puoi bersagliare una creatura aggiuntiva per ogni livello dello slot sopra il 1°.",
     "school": "Trasmutazione",
     "classi": ["Artefice", "Ranger", "Mago"]
+  },
+  {
+    "name": "Protezione dal Bene e dal Male",
+    "level": 1,
+    "castingTime": "1 azione",
+    "range": "Tocco",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Fino alla fine dell'incantesimo, una creatura consenziente che tocchi è protetta contro aberrazioni, celestiali, elementali, fatati, immondi e non morti. Le creature di quei tipi hanno svantaggio ai tiri per colpire contro il bersaglio. Il bersaglio non può essere affascinato, spaventato o posseduto da loro.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino", "Warlock"]
+  },
+  {
+    "name": "Punizione Collerica",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci con un attacco con arma in mischia, il tuo attacco infligge 1d6 danni psichici extra. Inoltre, il bersaglio deve effettuare un tiro salvezza su Saggezza o diventare spaventato da te fino alla fine dell'incantesimo.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Punizione Incandescente",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci con un attacco con arma in mischia, l'attacco infligge 2d6 danni radianti extra. Il bersaglio emette luce fioca in un raggio di 1,5 metri e ha svantaggio ai tiri per colpire contro creature diverse da te.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Punizione Tonante",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci con un attacco con arma in mischia, l'attacco infligge 2d6 danni da tuono extra. Inoltre, il bersaglio deve superare un tiro salvezza su Forza o essere spinto di 3 metri lontano da te e cadere prono.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
   },
   {
     "name": "Purificare Cibo e Bevande",
@@ -454,6 +586,18 @@
     "description": "Proteggi una creatura entro gittata da attacchi. Fino alla fine dell'incantesimo, qualsiasi creatura che bersaglia la creatura protetta con un attacco o un incantesimo dannoso deve prima effettuare un tiro salvezza su Saggezza. Se fallisce, la creatura deve scegliere un nuovo bersaglio o perdere l'attacco o l'incantesimo. Se la creatura protetta effettua un attacco o lancia un incantesimo che affligge una creatura nemica, questo incantesimo finisce.",
     "school": "Abiurazione",
     "classi": ["Artefice", "Chierico"]
+  },
+  {
+    "name": "Scudo della Fede",
+    "level": 1,
+    "castingTime": "1 azione bonus",
+    "range": "18 metri",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Uno scudo scintillante appare e circonda una creatura a tua scelta entro gittata, conferendole un bonus di +2 alla CA per la durata.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino"]
   },
   {
     "name": "Trabocchetto",
@@ -600,6 +744,18 @@
     "classi": ["Artefice", "Mago", "Stregone"]
   },
   {
+    "name": "Localizza Oggetto",
+    "level": 2,
+    "castingTime": "1 azione",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Descrivi o nomina un oggetto che ti è familiare. Percepisci la direzione della posizione dell'oggetto, finché quell'oggetto si trova entro 300 metri da te. Se l'oggetto è in movimento, conosci la direzione del suo movimento. L'incantesimo può localizzare un oggetto specifico che conosci, purché tu lo abbia visto da vicino, entro 9 metri, almeno una volta. In alternativa, l'incantesimo può localizzare il tipo più vicino di un oggetto, come una certa specie di sedia, un gioiello, ecc.",
+    "school": "Divinazione",
+    "classi": ["Bardo", "Chierico", "Druido", "Paladino", "Ranger", "Mago"]
+  },
+  {
     "name": "Movimenti del Ragno",
     "level": 2,
     "castingTime": "1 azione",
@@ -634,6 +790,18 @@
     "description": "Tocchi una creatura. Se è avvelenata, neutralizzi il veleno. Se più di un veleno affligge il bersaglio, neutralizzi un veleno a tua scelta. Per la durata, il bersaglio ha vantaggio ai tiri salvezza contro l'essere avvelenato e ha resistenza ai danni da veleno.",
     "school": "Abiurazione",
     "classi": ["Artefice", "Chierico", "Druido", "Paladino", "Ranger"]
+  },
+  {
+    "name": "Punizione Marchiante",
+    "level": 2,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci una creatura con un attacco con arma, l'attacco infligge 2d6 danni radianti extra, il bersaglio emette luce fioca in un raggio di 1,5 metri, e qualsiasi tiro per colpire contro il bersaglio ha vantaggio se l'attaccante può vederlo. Il bersaglio non può diventare invisibile.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
   },
   {
     "name": "Ragnatela",
@@ -720,6 +888,18 @@
     "classi": ["Artefice", "Mago", "Stregone"]
   },
   {
+    "name": "Trova Cavalcatura",
+    "level": 2,
+    "castingTime": "10 minuti",
+    "range": "9 metri",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Evochi uno spirito che assume la forma di una cavalcatura intelligente e leale. Appare in uno spazio non occupato entro gittata, e puoi scegliere la forma tra un cavallo da guerra, un pony, un cammello, un alce o un mastino. La cavalcatura ha le statistiche della forma scelta, anche se è un celestiale, un fatato o un immondo (a tua scelta) invece del suo normale tipo di creatura.",
+    "school": "Evocazione",
+    "classi": ["Paladino"]
+  },
+  {
     "name": "Trucco della Corda",
     "level": 2,
     "castingTime": "1 azione",
@@ -744,6 +924,18 @@
     "classi": ["Artefice", "Bardo", "Mago", "Stregone"]
   },
   {
+    "name": "Zona di Verità",
+    "level": 2,
+    "castingTime": "1 azione",
+    "range": "18 metri",
+    "duration": "10 minuti",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Crei una zona magica che protegge dalle menzogne in una sfera di 4,5 metri di raggio. Fino alla fine dell'incantesimo, una creatura che entra nell'area per la prima volta in un turno o vi inizia il suo turno deve effettuare un tiro salvezza su Carisma. Se fallisce, non può dire deliberatamente una menzogna mentre si trova nel raggio. Sai se ogni creatura supera o fallisce il suo tiro salvezza.",
+    "school": "Incantamento",
+    "classi": ["Bardo", "Chierico", "Paladino"]
+  },
+  {
     "name": "Arma Elementale",
     "level": 3,
     "castingTime": "1 azione",
@@ -756,6 +948,18 @@
     "classi": ["Artefice", "Paladino"]
   },
   {
+    "name": "Aura di Vitalità",
+    "level": 3,
+    "castingTime": "1 azione",
+    "range": "Personale (raggio di 9 metri)",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Un'energia curativa si irradia da te in un'aura con un raggio di 9 metri. Fino alla fine dell'incantesimo, l'aura si muove con te. Puoi usare un'azione bonus nel tuo turno per far sì che una creatura nell'aura (incluso te) recuperi 2d6 punti ferita.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
     "name": "Camminare sull'Acqua",
     "level": 3,
     "castingTime": "1 azione (rituale)",
@@ -766,6 +970,18 @@
     "description": "Questo incantesimo concede la capacità di muoversi su qualsiasi superficie liquida come se fosse terreno solido. Puoi bersagliare fino a dieci creature consenzienti entro gittata.",
     "school": "Trasmutazione",
     "classi": ["Artefice", "Chierico", "Druido", "Ranger"]
+  },
+  {
+    "name": "Cerchio Magico",
+    "level": 3,
+    "castingTime": "1 minuto",
+    "range": "3 metri",
+    "duration": "1 ora",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Crei un cilindro di 3 metri di raggio e 6 metri di altezza di energia magica. Puoi scegliere di rendere il cerchio una barriera contro celestiali, elementali, fatati, immondi o non morti. Queste creature non possono entrare volontariamente nel cilindro e hanno svantaggio ai tiri per colpire contro i bersagli all'interno.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino", "Mago", "Warlock"]
   },
   {
     "name": "Creare Cibo e Acqua",
@@ -840,6 +1056,30 @@
     "classi": ["Artefice", "Mago", "Stregone"]
   },
   {
+    "name": "Luce Diurna",
+    "level": 3,
+    "castingTime": "1 azione",
+    "range": "18 metri",
+    "duration": "1 ora",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Una sfera di luce di 18 metri di raggio si espande da un punto a tua scelta. La sfera è luce intensa e proietta luce fioca per altri 18 metri. Se il punto scelto si trova su un oggetto che tieni in mano o che non è indossato o trasportato, la luce emana dall'oggetto e si muove con esso. L'oscurità magica creata da un incantesimo di 3° livello o inferiore viene dissolta.",
+    "school": "Invocazione",
+    "classi": ["Chierico", "Druido", "Paladino", "Ranger", "Stregone"]
+  },
+  {
+    "name": "Manto del Crociato",
+    "level": 3,
+    "castingTime": "1 azione",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Un'energia sacra si irradia da te in un'aura di 9 metri di raggio. Fino alla fine dell'incantesimo, ogni creatura amichevole nell'aura (incluso te) infligge 1d4 danni radianti extra quando colpisce con un attacco con arma.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
     "name": "Protezione dall'Energia",
     "level": 3,
     "castingTime": "1 azione",
@@ -852,16 +1092,28 @@
     "classi": ["Artefice", "Chierico", "Ranger", "Mago", "Stregone"]
   },
   {
-    "name": "Respirare sott'Acqua",
+    "name": "Punizione Accecante",
     "level": 3,
-    "castingTime": "1 azione (rituale)",
-    "range": "9 metri",
-    "duration": "24 ore",
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci con un attacco con arma in mischia, l'attacco infligge 3d8 danni radianti extra. Il bersaglio deve superare un tiro salvezza su Costituzione o diventare accecato fino alla fine dell'incantesimo.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Rimuovi Maledizione",
+    "level": 3,
+    "castingTime": "1 azione",
+    "range": "Tocco",
+    "duration": "Istantanea",
     "concentration": false,
-    "components": { "v": true, "s": true, "m": true },
-    "description": "Questo incantesimo concede a un massimo di dieci creature consenzienti che puoi vedere entro gittata la capacità di respirare sott'acqua per la durata.",
-    "school": "Trasmutazione",
-    "classi": ["Artefice", "Druido", "Ranger", "Mago", "Stregone"]
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Al tuo tocco, tutte le maledizioni che affliggono una creatura o un oggetto terminano. Se l'oggetto è un oggetto magico maledetto, la sua maledizione rimane, ma l'incantesimo rompe la sintonia del portatore con l'oggetto in modo che possa rimuoverlo o scartarlo.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino", "Mago", "Warlock"]
   },
   {
     "name": "Rinascita",
@@ -936,6 +1188,42 @@
     "classi": ["Artefice", "Druido", "Warlock"]
   },
   {
+    "name": "Aura di Purezza",
+    "level": 4,
+    "castingTime": "1 azione",
+    "range": "Personale (raggio di 9 metri)",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Un'energia purificatrice si irradia da te. Fino alla fine dell'incantesimo, le creature amichevoli nell'aura (incluso te) non possono ammalarsi, hanno resistenza ai danni da veleno e hanno vantaggio ai tiri salvezza contro effetti che le renderebbero accecate, affascinate, assordate, spaventate, paralizzate, avvelenate o stordite.",
+    "school": "Abiurazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Aura di Vita",
+    "level": 4,
+    "castingTime": "1 azione",
+    "range": "Personale (raggio di 9 metri)",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Un'energia vitale si irradia da te. Fino alla fine dell'incantesimo, le creature viventi nell'aura (incluso te) recuperano 1 punto ferita all'inizio di ogni loro turno e hanno resistenza ai danni necrotici.",
+    "school": "Abiurazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Esilio",
+    "level": 4,
+    "castingTime": "1 azione",
+    "range": "18 metri",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Tenti di mandare una creatura che puoi vedere entro gittata in un altro piano di esistenza. Il bersaglio deve superare un tiro salvezza su Carisma o essere bandito. Se il bersaglio è originario di un piano diverso, viene bandito permanentemente. Altrimenti, è incapacitato e ritorna quando l'incantesimo finisce.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino", "Mago", "Stregone", "Warlock"]
+  },
+  {
     "name": "Evoca Costrutto",
     "level": 4,
     "castingTime": "1 azione",
@@ -960,6 +1248,18 @@
     "classi": ["Artefice", "Mago"]
   },
   {
+    "name": "Interdizione alla Morte",
+    "level": 4,
+    "castingTime": "1 azione",
+    "range": "Tocco",
+    "duration": "8 ore",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": false },
+    "description": "Tocchi una creatura e le conferisci una limitata protezione dalla morte. La prima volta che il bersaglio scenderebbe a 0 punti ferita a causa di un danno, scende invece a 1 punto ferita, e l'incantesimo finisce. Se un effetto ucciderebbe istantaneamente il bersaglio senza infliggere danni, quell'effetto viene invece negato, e l'incantesimo finisce.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino"]
+  },
+  {
     "name": "Libertà di Movimento",
     "level": 4,
     "castingTime": "1 azione",
@@ -970,6 +1270,18 @@
     "description": "Tocchi una creatura consenziente. Per la durata, i movimenti del bersaglio non sono influenzati da terreno difficile, e incantesimi e altri effetti magici non possono né ridurre la velocità del bersaglio né causare che il bersaglio sia paralizzato o trattenuto.",
     "school": "Abiurazione",
     "classi": ["Artefice", "Bardo", "Chierico", "Druido", "Ranger"]
+  },
+  {
+    "name": "Localizza Creatura",
+    "level": 4,
+    "castingTime": "1 azione",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 ora",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Descrivi o nomina una creatura che ti è familiare. Percepisci la direzione della posizione della creatura, finché quella creatura si trova entro 300 metri da te. In alternativa, puoi anche localizzare la creatura più vicina di una specifica specie.",
+    "school": "Divinazione",
+    "classi": ["Bardo", "Chierico", "Druido", "Paladino", "Ranger", "Mago"]
   },
   {
     "name": "Occhio Arcano",
@@ -994,6 +1306,18 @@
     "description": "Questo incantesimo rende la carne di una creatura consenziente che tocchi dura come la pietra. Fino alla fine dell'incantesimo, il bersaglio ha resistenza ai danni contundenti, perforanti e taglienti non magici.",
     "school": "Abiurazione",
     "classi": ["Artefice", "Druido", "Ranger", "Mago", "Stregone"]
+  },
+  {
+    "name": "Punizione Demoralizzante",
+    "level": 4,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci una creatura con un attacco con arma, l'attacco infligge 4d6 danni psichici extra. Il bersaglio deve superare un tiro salvezza su Saggezza o diventare spaventato da te e avere la sua velocità ridotta a 0 per la durata.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
   },
   {
     "name": "Santuario Privato di Mordenkainen",
@@ -1080,6 +1404,30 @@
     "classi": ["Artefice", "Bardo", "Mago", "Stregone"]
   },
   {
+    "name": "Cerchio di Potere",
+    "level": 5,
+    "castingTime": "1 azione",
+    "range": "Personale (raggio di 9 metri)",
+    "duration": "Concentrazione, fino a 10 minuti",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Un'aura di potere magico si irradia da te. Scegli un numero di creature entro gittata. Per la durata, ogni creatura protetta ha vantaggio ai tiri salvezza contro incantesimi e altri effetti magici. Inoltre, quando una creatura protetta supererebbe un tiro salvezza che normalmente le infliggerebbe metà danno da un incantesimo, non subisce invece alcun danno.",
+    "school": "Abiurazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Costrizione",
+    "level": 5,
+    "castingTime": "1 minuto",
+    "range": "9 metri",
+    "duration": "Fino a dissoluzione",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Emetti un comando magico a una creatura che puoi vedere, influenzandola come per l'incantesimo Suggestione, ma l'effetto può durare per un anno e un giorno. Non puoi ordinare alla creatura di farsi del male direttamente.",
+    "school": "Incantamento",
+    "classi": ["Chierico", "Paladino", "Mago"]
+  },
+  {
     "name": "Creazione",
     "level": 5,
     "castingTime": "1 minuto",
@@ -1090,6 +1438,18 @@
     "description": "Estrai fili d'ombra dal Piano delle Ombre per creare un oggetto non vivente di materia vegetale entro gittata: tessuto, corda, legno, ecc. L'oggetto non può essere più grande di un cubo di 1,5 metri.",
     "school": "Illusione",
     "classi": ["Artefice", "Mago", "Stregone"]
+  },
+  {
+    "name": "Dissolvi il Bene e il Male",
+    "level": 5,
+    "castingTime": "1 azione",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Un'energia sacra ti avvolge. Per la durata, i tuoi attacchi in mischia infliggono 2d6 danni extra a celestiali, immondi e non morti. Puoi anche tentare di bandire una di queste creature con un tocco.",
+    "school": "Abiurazione",
+    "classi": ["Chierico", "Paladino"]
   },
   {
     "name": "Mano di Bigby",
@@ -1114,6 +1474,42 @@
     "description": "Un muro di pietra solida non magica sorge da una superficie che puoi vedere entro gittata. Il muro può avere qualsiasi forma tu desideri, anche se non può occupare lo stesso spazio di una creatura o di un altro oggetto. Il muro è spesso 15 cm e può essere composto da un massimo di dieci pannelli da 3 metri per 3 metri.",
     "school": "Invocazione",
     "classi": ["Artefice", "Druido", "Mago", "Stregone"]
+  },
+  {
+    "name": "Onda Distruttiva",
+    "level": 5,
+    "castingTime": "1 azione",
+    "range": "Personale (raggio di 9 metri)",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "Emetti un'esplosione di energia divina. Ogni creatura a tua scelta in un raggio di 9 metri da te deve effettuare un tiro salvezza su Costituzione. Se fallisce, una creatura subisce 5d6 danni da tuono più 5d6 danni radianti o necrotici (a tua scelta) e cade prona. Se supera il tiro salvezza, subisce la metà dei danni e non cade prona.",
+    "school": "Invocazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Punizione Esiliante",
+    "level": 5,
+    "castingTime": "1 azione bonus",
+    "range": "Personale",
+    "duration": "Concentrazione, fino a 1 minuto",
+    "concentration": true,
+    "components": { "v": true, "s": false, "m": false },
+    "description": "La prossima volta che colpisci una creatura con un attacco con arma, l'attacco infligge 5d10 danni da forza extra. Se questo danno riduce il bersaglio a 50 punti ferita o meno, lo bandisci in un innocuo semipiano. Se il bersaglio è originario del piano in cui ti trovi, ritorna quando l'incantesimo finisce.",
+    "school": "Abiurazione",
+    "classi": ["Paladino"]
+  },
+  {
+    "name": "Rianimare Morti",
+    "level": 5,
+    "castingTime": "1 minuto",
+    "range": "Tocco",
+    "duration": "Istantanea",
+    "concentration": false,
+    "components": { "v": true, "s": true, "m": true },
+    "description": "Tocchi una creatura morta che non sia stata non morta per più di 10 giorni. Se la sua anima è libera e disposta, la creatura ritorna in vita con 1 punto ferita. Questo incantesimo neutralizza qualsiasi veleno e cura le malattie non magiche che affliggevano la creatura al momento della morte. Non ripristina parti del corpo mancanti.",
+    "school": "Necromanzia",
+    "classi": ["Chierico", "Paladino"]
   },
   {
     "name": "Ristorare Superiore",
