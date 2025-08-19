@@ -1186,19 +1186,57 @@ document.addEventListener('click', function(e) {
     });
 
     function renderChaptersUI(chapters = []) {
-        const container = document.getElementById('chapters-container');
-        container.innerHTML = '';
-        if (chapters.length === 0) { container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno!</p>'; return; }
-        chapters.forEach(chapter => {
-            const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === chapter.id)?.sharedWith || [];
-            const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
-            const chapterEl = document.createElement('div');
-            chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
-            chapterEl.dataset.chapterId = chapter.id;
-            chapterEl.innerHTML = `<div class="chapter-view-mode p-4"><div class="flex justify-between items-center mb-2"><h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4><div class="flex items-center gap-2"><button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button><button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button><button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button></div></div><div class="font-sans text-gray-300 border-t border-gray-600 pt-2">${renderTextWithLinks(chapter.publicContent)}</div><div class="mt-2 pt-2 border-t border-dashed border-yellow-500"><h4 class="text-yellow-400 font-bold text-sm">Note Master</h4><div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div></div></div><div class="chapter-edit-mode hidden p-4 space-y-2"><label class="font-bold text-sm text-gray-400">Titolo Capitolo</label><input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}"><label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label><textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea><label class="font-bold text-sm text-yellow-400">Note Master (private)</label><textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea><div class="flex gap-2 mt-2"><button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button><button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button></div></div>`;
-            container.appendChild(chapterEl);
-        });
+    const container = document.getElementById('chapters-container');
+    container.innerHTML = '';
+    if (chapters.length === 0) { 
+        container.innerHTML = '<p class="text-gray-500 text-center font-sans p-4">Nessun capitolo. Aggiungine uno!</p>'; 
+        return; 
     }
+    chapters.forEach(chapter => {
+        const sharedWith = currentAdventureData.sharedItems?.find(item => item.id === chapter.id)?.sharedWith || [];
+        const shareStatus = sharedWith.length === 0 ? 'Condividi' : (sharedWith.includes('all') ? 'Condiviso con tutti' : `Condiviso con ${sharedWith.length}`);
+        
+        // Creiamo l'elemento <details> invece di un <div>
+        const chapterEl = document.createElement('details');
+        chapterEl.className = 'chapter-container bg-gray-700 rounded-lg';
+        chapterEl.dataset.chapterId = chapter.id;
+
+        // L'HTML ora è diviso tra <summary> (il titolo visibile) e il resto del contenuto (nascosto di default)
+        chapterEl.innerHTML = `
+            <summary class="p-4 cursor-pointer flex justify-between items-center">
+                <h4 class="text-2xl font-bold text-red-400">${chapter.title}</h4>
+                <div class="flex items-center gap-2">
+                    <button class="open-share-modal-btn text-sm font-bold py-1 px-3 rounded-lg bg-blue-600 hover:bg-blue-700">${shareStatus}</button>
+                    <button class="edit-chapter-btn text-gray-400 hover:text-green-500 font-bold p-1 text-lg">✎</button>
+                    <button class="delete-chapter-btn text-gray-400 hover:text-red-500 font-bold p-1 text-xl">&times;</button>
+                </div>
+            </summary>
+
+            <div class="chapter-content-wrapper p-4 border-t border-gray-600">
+                <div class="chapter-view-mode">
+                    <div class="font-sans text-gray-300">${renderTextWithLinks(chapter.publicContent)}</div>
+                    <div class="mt-4 pt-4 border-t border-dashed border-yellow-500">
+                        <h4 class="text-yellow-400 font-bold text-sm">Note Master</h4>
+                        <div class="text-gray-400 font-sans text-sm">${renderTextWithLinks(chapter.masterContent)}</div>
+                    </div>
+                </div>
+                <div class="chapter-edit-mode hidden p-4 space-y-2">
+                    <label class="font-bold text-sm text-gray-400">Titolo Capitolo</label>
+                    <input type="text" class="chapter-title-edit w-full bg-gray-600 rounded-lg p-2 font-sans" value="${chapter.title}">
+                    <label class="font-bold text-sm text-gray-400">Contenuto Pubblico (per i giocatori)</label>
+                    <textarea class="chapter-public-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.publicContent || ''}</textarea>
+                    <label class="font-bold text-sm text-yellow-400">Note Master (private)</label>
+                    <textarea class="chapter-master-content-edit w-full h-32 bg-gray-600 rounded-lg p-2 font-sans">${chapter.masterContent || ''}</textarea>
+                    <div class="flex gap-2 mt-2">
+                        <button class="save-chapter-btn flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base">Salva</button>
+                        <button class="cancel-edit-chapter-btn flex-grow bg-gray-600 hover:bg-gray-500 rounded-lg p-2 text-base">Annulla</button>
+                    </div>
+                </div>
+            </div>
+        `;
+        container.appendChild(chapterEl);
+    });
+}
 
     document.getElementById('add-chapter-btn').addEventListener('click', async () => { if (!currentAdventureId) return; const title = prompt("Titolo del nuovo capitolo:", "Nuovo Capitolo"); if (!title) return; const newChapter = { id: crypto.randomUUID(), title, publicContent: "", masterContent: "", order: (currentAdventureData.background?.length || 0) }; await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { background: arrayUnion(newChapter) }); });
 
