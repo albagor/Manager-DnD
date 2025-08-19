@@ -274,7 +274,7 @@
     "description": "Estendi la mano e tracci un cerchio con un'arma. Ogni creatura entro un raggio di 1,5 metri da te, diversa da te, deve superare un tiro salvezza su Destrezza o subire 1d6 danni da forza.\nIl danno dell'incantesimo aumenta di 1d6 quando raggiungi il 5° livello (2d6), l'11° livello (3d6) e il 17° livello (4d6).",
     "school": "Evocazione",
     "classi": ["Artefice", "Bardo", "Mago", "Stregone", "Warlock"]
-  }
+  },
   {
     "name": "Palla di Fuoco",
     "level": 3,
