@@ -1558,53 +1558,53 @@
         if (e.target.id === 'cs-race-select') { const customInput = document.getElementById('cs-race-custom'); if (e.target.value === 'Altro...') { customInput.classList.remove('hidden'); } else { customInput.classList.add('hidden'); } }
     });
 
-    csModalContent.addEventListener('click', e => {
-        const token = csModal.dataset.currentToken; if (!token) return;
-        if (e.target.id === 'cs-add-defense-btn') { const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false }; const sheetData = window.currentSheetData; sheetData.defenses.push(newDefense); renderDefenses(sheetData.defenses); saveCharacterSheet(token, sheetData); }
-        if (e.target.classList.contains('cs-delete-defense-btn')) { const itemEl = e.target.closest('.defense-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId); renderDefenses(sheetData.defenses); updateAC(sheetData); saveCharacterSheet(token, sheetData); }
-        if (e.target.id === 'cs-add-class-btn') { const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 }; const sheetData = window.currentSheetData; sheetData.classes.push(newClass); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); }
-        if (e.target.classList.contains('cs-delete-class-btn')) { const itemEl = e.target.closest('.class-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; if (sheetData.classes.length > 1) { sheetData.classes = sheetData.classes.filter(c => c.id !== itemId); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); } }
-        const rollAttackBtn = e.target.closest('.roll-attack-btn'); if (rollAttackBtn) { handleWeaponRoll('attack', rollAttackBtn.dataset.idx); }
-        const rollDamageBtn = e.target.closest('.roll-damage-btn'); if (rollDamageBtn) { const isVersatile = rollDamageBtn.dataset.versatile === 'true'; handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile); }
-        if (e.target.id === 'cs-add-companion-btn') { openCompanionModal(); }
-        const editCompBtn = e.target.closest('.edit-companion-btn'); if (editCompBtn) { const idx = editCompBtn.dataset.idx; const companion = window.currentSheetData.companions[idx]; if (companion) openCompanionModal(companion, idx); }
-        const deleteCompBtn = e.target.closest('.delete-companion-btn'); if (deleteCompBtn) { const idx = deleteCompBtn.dataset.idx; if (!confirm('Sei sicuro di voler eliminare questo compagno?')) return; let sheetData = window.currentSheetData; sheetData.companions.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
+csModalContent.addEventListener('click', e => {
+    const token = csModal.dataset.currentToken; if (!token) return;
+    if (e.target.id === 'cs-add-defense-btn') { const newDefense = { id: crypto.randomUUID(), name: '', value: 0, type: 'other', worn: false }; const sheetData = window.currentSheetData; sheetData.defenses.push(newDefense); renderDefenses(sheetData.defenses); saveCharacterSheet(token, sheetData); }
+    if (e.target.classList.contains('cs-delete-defense-btn')) { const itemEl = e.target.closest('.defense-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; sheetData.defenses = sheetData.defenses.filter(d => d.id !== itemId); renderDefenses(sheetData.defenses); updateAC(sheetData); saveCharacterSheet(token, sheetData); }
+    if (e.target.id === 'cs-add-class-btn') { const newClass = { id: crypto.randomUUID(), name: 'Guerriero', level: 1 }; const sheetData = window.currentSheetData; sheetData.classes.push(newClass); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); }
+    if (e.target.classList.contains('cs-delete-class-btn')) { const itemEl = e.target.closest('.class-item'); const itemId = itemEl.dataset.id; let sheetData = window.currentSheetData; if (sheetData.classes.length > 1) { sheetData.classes = sheetData.classes.filter(c => c.id !== itemId); renderClasses(sheetData.classes); updateTotalLevel(sheetData); saveCharacterSheet(token, sheetData); } }
+    const rollAttackBtn = e.target.closest('.roll-attack-btn'); if (rollAttackBtn) { handleWeaponRoll('attack', rollAttackBtn.dataset.idx); }
+    const rollDamageBtn = e.target.closest('.roll-damage-btn'); if (rollDamageBtn) { const isVersatile = rollDamageBtn.dataset.versatile === 'true'; handleWeaponRoll('damage', rollDamageBtn.dataset.idx, isVersatile); }
+    if (e.target.id === 'cs-add-companion-btn') { openCompanionModal(); }
+    const editCompBtn = e.target.closest('.edit-companion-btn'); if (editCompBtn) { const idx = editCompBtn.dataset.idx; const companion = window.currentSheetData.companions[idx]; if (companion) openCompanionModal(companion, idx); }
+    const deleteCompBtn = e.target.closest('.delete-companion-btn'); if (deleteCompBtn) { const idx = deleteCompBtn.dataset.idx; if (!confirm('Sei sicuro di voler eliminare questo compagno?')) return; let sheetData = window.currentSheetData; sheetData.companions.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
 
-        // === INIZIO LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
-        if (e.target.id === 'cs-open-grimoire-btn') {
-            (async () => {
-                grimoireModal.classList.remove('hidden');
-                if (!allSpellsCache) {
-                    try {
-                        document.getElementById('grimoire-content').innerHTML = '<div class="loader mx-auto"></div>';
-                        const response = await fetch('incantesimi.json');
-                        if (!response.ok) throw new Error('File non trovato o errore di rete');
-                        allSpellsCache = await response.json();
-                    } catch (error) {
-                        console.error("Errore nel caricare incantesimi.json:", error);
-                        document.getElementById('grimoire-content').innerHTML = '<p class="text-red-500">Impossibile caricare il grimorio. Controlla che il file incantesimi.json sia presente e senza errori.</p>';
-                        return;
-                    }
+    // === INIZIO LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
+    if (e.target.id === 'cs-open-grimoire-btn') {
+        (async () => {
+            grimoireModal.classList.remove('hidden');
+            if (!allSpellsCache) {
+                try {
+                    document.getElementById('grimoire-content').innerHTML = '<div class="loader mx-auto"></div>';
+                    const response = await fetch('incantesimi.json');
+                    if (!response.ok) throw new Error('File non trovato o errore di rete');
+                    allSpellsCache = await response.json();
+                } catch (error) {
+                    console.error("Errore nel caricare incantesimi.json:", error);
+                    document.getElementById('grimoire-content').innerHTML = '<p class="text-red-500">Impossibile caricare il grimorio. Controlla che il file incantesimi.json sia presente e senza errori.</p>';
+                    return;
                 }
-                // Applica subito i filtri correnti quando apri
-                filterAndRenderGrimoire();
-            })();
-        }
-
-        // Listener per i dettagli dell'incantesimo sulla scheda
-        const spellNameEl = e.target.closest('.spell-item-in-sheet .spell-name');
-        if (spellNameEl) {
-            const spellName = spellNameEl.dataset.spellName;
-            const spellLevel = spellNameEl.dataset.spellLevel;
-            const spellData = window.currentSheetData.spellcasting.spells[spellLevel].find(s => s.name === spellName);
-            if (spellData) {
-                // Aggiungiamo i dati mancanti per la visualizzazione
-                const fullSpellData = { ...spellData, level: spellLevel, classi: [], school: 'N/D' };
-                showSpellDetailModal(fullSpellData);
             }
+            // Applica subito i filtri correnti quando apri
+            filterAndRenderGrimoire();
+        })();
+    }
+
+    // Listener per i dettagli dell'incantesimo sulla scheda
+    const spellNameEl = e.target.closest('.spell-item-in-sheet .spell-name');
+    if (spellNameEl) {
+        const spellName = spellNameEl.dataset.spellName;
+        const spellLevel = spellNameEl.dataset.spellLevel;
+        const spellData = window.currentSheetData.spellcasting.spells[spellLevel].find(s => s.name === spellName);
+        if (spellData) {
+            // Aggiungiamo i dati mancanti per la visualizzazione
+            const fullSpellData = { ...spellData, level: spellLevel, classi: [], school: 'N/D' };
+            showSpellDetailModal(fullSpellData);
         }
-        // === FINE LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
-    });
+    }
+    // === FINE LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
+});
 
     const equipmentModal = document.getElementById('equipment-modal');
     function renderEquipment(equipment = []) {
