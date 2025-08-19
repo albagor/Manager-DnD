@@ -1077,13 +1077,27 @@ document.addEventListener('click', function(e) {
     nodeModal.addEventListener('click', (e) => { if (e.target === nodeModal) nodeModal.classList.add('hidden'); });
 
     backToListBtn.addEventListener('click', () => {
-        adventureDetailView.style.display = 'none';
-        adventureListView.style.display = 'block';
-        currentAdventureId = null;
-        if (currentAdventureUnsubscribe) { currentAdventureUnsubscribe(); currentAdventureUnsubscribe = null; }
-        document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';
-        document.getElementById('master-dice-log-container').style.display = 'none';
-    });
+    adventureDetailView.style.display = 'none';
+    adventureListView.style.display = 'block';
+    
+    // Annulla l'ascolto dell'avventura precedente
+    if (currentAdventureUnsubscribe) { 
+        currentAdventureUnsubscribe(); 
+        currentAdventureUnsubscribe = null; 
+    }
+
+    // --- LA CORREZIONE CHIAVE È QUI ---
+    // Resetta completamente i dati in memoria ("butta il foglietto")
+    currentAdventureId = null;
+    currentAdventureData = {}; 
+    // ------------------------------------
+
+    // Pulisce l'interfaccia
+    document.getElementById('player-share-content').innerHTML = '<p class="text-gray-400 font-sans mb-4">Apri un\'avventura per gestire i giocatori.</p>';
+    document.getElementById('master-dice-log-container').style.display = 'none';
+    document.getElementById('adventure-detail-title').textContent = '';
+    document.getElementById('chapters-container').innerHTML = '';
+});
 
     document.getElementById('adventure-detail-view').addEventListener('click', (e) => {
         if (e.target.classList.contains('node-add-btn')) {
