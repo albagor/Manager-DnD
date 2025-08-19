@@ -572,28 +572,56 @@
     <div id="treasure-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-md w-full"><h3 class="text-xl font-bold mb-4" id="treasure-modal-title">Tesoro</h3><form id="treasure-form" class="space-y-3"><input type="hidden" id="treasure-id"><div><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="treasure-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Valore (es. 100 MO)</label><input type="text" id="treasure-value" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Descrizione</label><textarea id="treasure-description" class="cs-textarea h-32"></textarea></div><div class="flex gap-2 mt-4"><button type="submit" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="treasure-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></form></div></div>
     <div id="companion-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[60]"><div class="bg-gray-200 text-black rounded-lg shadow-xl p-6 max-w-2xl w-full max-h-[90vh] flex flex-col"><h3 class="text-xl font-bold mb-4 flex-shrink-0" id="companion-modal-title">Compagno / Gregario</h3><form id="companion-form" class="space-y-3 overflow-y-auto pr-2 flex-grow"><input type="hidden" id="companion-id"><div class="grid grid-cols-1 md:grid-cols-3 gap-2"><div class="md:col-span-2"><label class="block text-sm font-bold mb-1">Nome</label><input type="text" id="companion-name" class="cs-input" required></div><div><label class="block text-sm font-bold mb-1">Tipo</label><select id="companion-type" class="cs-select"><option value="Famiglio">Famiglio</option><option value="Compagno Animale">Compagno Animale</option><option value="Costrutto">Costrutto</option><option value="Gregario">Gregario</option><option value="Altro">Altro</option></select></div></div><div><label class="block text-sm font-bold mb-1">Tipo di Creatura / Razza</label><input type="text" id="companion-creature-type" class="cs-input" placeholder="Es. Bestia, Costrutto, Mastino Infernale..."></div><div class="grid grid-cols-2 md:grid-cols-4 gap-2"><div><label class="block text-sm font-bold mb-1">CA</label><input type="number" id="companion-ac" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">PF Massimi</label><input type="number" id="companion-hp-max" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">PF Attuali</label><input type="number" id="companion-hp-current" class="cs-input"></div><div><label class="block text-sm font-bold mb-1">Velocità</label><input type="text" id="companion-speed" class="cs-input" placeholder="9m, 12m volo"></div></div><div class="grid grid-cols-3 md:grid-cols-6 gap-2"><div class="text-center"><label class="block text-sm font-bold mb-1">FOR</label><input type="number" id="companion-stat-str" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">DES</label><input type="number" id="companion-stat-dex" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">COS</label><input type="number" id="companion-stat-con" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">INT</label><input type="number" id="companion-stat-int" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">SAG</label><input type="number" id="companion-stat-wis" class="cs-input text-center"></div><div class="text-center"><label class="block text-sm font-bold mb-1">CAR</label><input type="number" id="companion-stat-cha" class="cs-input text-center"></div></div><div><label class="block text-sm font-bold mb-1">Abilità e Tiri Salvezza</label><textarea id="companion-skills" class="cs-textarea h-20" placeholder="Es. Furtività +4, Percezione +3, TS DES +4..."></textarea></div><div><label class="block text-sm font-bold mb-1">Sensi</label><textarea id="companion-senses" class="cs-textarea h-16" placeholder="Es. Percezione Passiva 13, Scurovisione 18m..."></textarea></div><div><label class="block text-sm font-bold mb-1">Azioni</label><textarea id="companion-actions" class="cs-textarea h-24" placeholder="Es. Morso. Attacco con arma da mischia: +4 per colpire, portata 1,5m, un bersaglio. Colpito: 5 (1d6 + 2) danni perforanti."></textarea></div><div><label class="block text-sm font-bold mb-1">Privilegi, Tratti e Infusioni</label><textarea id="companion-features" class="cs-textarea h-24" placeholder="Es. Tattiche del Branco. Il compagno ha vantaggio al tiro per colpire contro una creatura se almeno uno degli alleati del compagno si trova entro 1,5m dalla creatura e non è incapacitato."></textarea></div><div><label class="block text-sm font-bold mb-1">Note</label><textarea id="companion-notes" class="cs-textarea h-20"></textarea></div></form><div class="flex gap-2 mt-4 flex-shrink-0"><button type="submit" form="companion-form" class="flex-grow bg-blue-600 hover:bg-blue-700 rounded-lg p-2 text-base text-white">Salva</button><button type="button" id="companion-cancel-btn" class="flex-grow bg-gray-500 hover:bg-gray-700 rounded-lg p-2 text-base text-white">Annulla</button></div></div></div>
 <!-- Grimorio -->
-    <div id="grimoire-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[70]">
+<div id="grimoire-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[70]">
     <div class="bg-gray-800 rounded-lg shadow-xl p-6 w-full max-w-4xl border border-red-500 h-[90vh] flex flex-col">
         <div class="flex justify-between items-center mb-4 flex-shrink-0">
-            <h2 class="text-3xl font-bold text-red-400">Grimorio degli Incantesimi</h2>
+            <h2 class="text-3xl font-bold text-red-400">Grimorio</h2>
             <button id="grimoire-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
         </div>
-        <div class="mb-4 flex-shrink-0">
-            <input type="search" id="grimoire-search" placeholder="Cerca incantesimo per nome, livello, scuola..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
+        <div class="mb-4 flex-shrink-0 flex gap-4">
+            <input type="search" id="grimoire-search" placeholder="Cerca incantesimo..." class="w-full bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
+            <select id="grimoire-class-filter" class="bg-gray-700 border border-gray-600 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-red-500 font-sans text-lg">
+                <option value="all">Tutte le Classi</option>
+                <option value="Mago">Mago</option>
+                <option value="Stregone">Stregone</option>
+                <option value="Warlock">Warlock</option>
+                <option value="Chierico">Chierico</option>
+                <option value="Druido">Druido</option>
+                <option value="Bardo">Bardo</option>
+                <option value="Paladino">Paladino</option>
+                <option value="Ranger">Ranger</option>
+                <option value="Artefice">Artefice</option>
+            </select>
         </div>
         <div id="grimoire-content" class="font-sans text-gray-300 flex-grow overflow-y-auto">
             </div>
     </div>
 </div>
+
+    <div id="spell-detail-modal" class="hidden fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center p-4 z-[80]">
+    <div class="bg-gray-800 rounded-lg shadow-xl w-full max-w-2xl border border-red-500 flex flex-col max-h-[80vh]">
+        <div class="flex justify-between items-center p-4 border-b border-gray-600">
+            <h2 id="spell-detail-title" class="text-3xl font-bold text-red-400"></h2>
+            <button id="spell-detail-close-btn" class="text-3xl text-gray-400 hover:text-white">&times;</button>
+        </div>
+        <div id="spell-detail-content" class="p-6 overflow-y-auto font-sans">
+            </div>
+        <div class="p-4 border-t border-gray-600 mt-auto">
+             <button id="spell-detail-add-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded-lg text-lg" data-spell-name="">Aggiungi alla Scheda</button>
+        </div>
+    </div>
+</div>
+
+    
     <!-- Fine Grimorio -->
 
 
    <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
     import { getFirestore, collection, addDoc, onSnapshot, query, doc, deleteDoc, serverTimestamp, getDoc, updateDoc, arrayUnion, arrayRemove, setDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
     import { getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword, signOut, onAuthStateChanged, signInAnonymously } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
 
-    const firebaseConfig = {
+      const firebaseConfig = {
         apiKey: "AIzaSyABn9aXZ5jOj2mVftCqiKL2TDZe9cY50dY",
         authDomain: "avventure-dnd.firebaseapp.com",
         projectId: "avventure-dnd",
@@ -612,7 +640,6 @@
     let currentAdventureUnsubscribe = null;
     let characterSheetUpdateTimeout = null;
     let combatTrackerUpdateTimeout = null;
-
     let dmAnnotationsUpdateTimeout = null;
 
     const urlParams = new URLSearchParams(window.location.search);
@@ -620,10 +647,106 @@
     const playerToken = urlParams.get('token');
     let playerViewInitialized = false;
 
-    // === INIZIO LOGICA GRIMORIO (VARIABILI) ===
     const grimoireModal = document.getElementById('grimoire-modal');
-    let allSpellsCache = null; // Usiamo una cache per non ricaricare il JSON ogni volta
-    // === FINE LOGICA GRIMORIO (VARIABILI) ===
+    let allSpellsCache = null;
+
+    // === INIZIO MODIFICA GRIMORIO: Funzioni migliorate ===
+
+    // Funzione renderGrimoire AGGIORNATA per raggruppare per livello
+    function renderGrimoire(spells, spellDetailsContainerId = 'grimoire-content') {
+        const container = document.getElementById(spellDetailsContainerId);
+        container.innerHTML = '';
+
+        if (!spells || spells.length === 0) {
+            container.innerHTML = `<p class="text-center text-gray-400 p-4">Nessun incantesimo trovato.</p>`;
+            return;
+        }
+
+        // Raggruppa gli incantesimi per livello
+        const spellsByLevel = spells.reduce((acc, spell) => {
+            const level = spell.level;
+            if (!acc[level]) {
+                acc[level] = [];
+            }
+            acc[level].push(spell);
+            return acc;
+        }, {});
+
+        // Ordina i livelli (0, 1, 2...) e crea le sezioni
+        Object.keys(spellsByLevel).sort((a, b) => a - b).forEach(level => {
+            const sectionWrapper = document.createElement('div');
+            sectionWrapper.className = 'mb-4';
+
+            const levelTitle = level === "0" ? 'Trucchetti' : `Livello ${level}`;
+            let sectionHtml = `<h3 class="text-2xl font-bold text-red-500 border-b border-gray-600 pb-2 mb-2 sticky top-0 bg-gray-800">${levelTitle}</h3>`;
+            
+            sectionHtml += spellsByLevel[level].map(spell => {
+                const isAlreadyAdded = isSpellAlreadyInSheet(spell.name, parseInt(level));
+                const addButtonHtml = isAlreadyAdded 
+                    ? `<button class="bg-gray-500 text-white font-bold py-1 px-3 rounded-lg text-sm" disabled>Già Aggiunto</button>`
+                    : `<button class="add-spell-from-grimoire-btn bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-lg text-sm" data-spell-name="${spell.name}">Aggiungi</button>`;
+
+                return `
+                    <div class="p-3 border-b border-gray-700 flex justify-between items-center spell-item-grimoire" data-spell-name="${spell.name}">
+                        <div>
+                            <h4 class="text-xl text-red-400 cursor-pointer hover:text-white">${spell.name}</h4>
+                            <p class="text-sm text-gray-500">${spell.school || ''} - <span class="italic">${(spell.classi || []).join(', ')}</span></p>
+                        </div>
+                        ${addButtonHtml}
+                    </div>`;
+            }).join('');
+            
+            sectionWrapper.innerHTML = sectionHtml;
+            container.appendChild(sectionWrapper);
+        });
+    }
+
+    // NUOVA funzione per controllare se un incantesimo è già nella scheda
+    function isSpellAlreadyInSheet(spellName, spellLevel) {
+        if (!window.currentSheetData || !window.currentSheetData.spellcasting || !window.currentSheetData.spellcasting.spells) {
+            return false;
+        }
+        const spellsOfLevel = window.currentSheetData.spellcasting.spells[spellLevel];
+        if (!spellsOfLevel) {
+            return false;
+        }
+        return spellsOfLevel.some(s => s.name.toLowerCase() === spellName.toLowerCase());
+    }
+
+    // NUOVA modale per i dettagli dell'incantesimo
+    function showSpellDetailModal(spell) {
+        const modal = document.getElementById('spell-detail-modal');
+        if (!modal) return;
+        document.getElementById('spell-detail-title').textContent = `${spell.name} (Liv. ${spell.level})`;
+        
+        const components = [];
+        if (spell.components?.v) components.push('V');
+        if (spell.components?.s) components.push('S');
+        if (spell.components?.m) components.push('M');
+        const concentration = spell.concentration ? '<span class="text-yellow-400 font-bold">(Concentrazione)</span>' : '';
+
+        document.getElementById('spell-detail-content').innerHTML = `
+            <p class="text-gray-400 mb-2"><em>${spell.school} ${concentration}</em></p>
+            <div class="grid grid-cols-2 gap-2 text-sm mb-4">
+                <p><strong>Tempo di Lancio:</strong> ${spell.castingTime || 'N/D'}</p>
+                <p><strong>Gittata:</strong> ${spell.range || 'N/D'}</p>
+                <p><strong>Componenti:</strong> ${components.join(', ') || 'Nessuna'}</p>
+                <p><strong>Durata:</strong> ${spell.duration || 'N/D'}</p>
+            </div>
+            <div class="text-gray-300 leading-relaxed border-t border-gray-600 pt-3">${spell.description.replace(/\n/g, '<br>')}</div>
+            <p class="text-sm text-gray-500 mt-4 pt-2 border-t border-gray-700"><strong>Classi:</strong> ${(spell.classi || []).join(', ')}</p>
+        `;
+        
+        const isAdded = isSpellAlreadyInSheet(spell.name, spell.level);
+        const footerBtn = document.getElementById('spell-detail-add-btn');
+        footerBtn.textContent = isAdded ? "Già Aggiunto" : "Aggiungi alla Scheda";
+        footerBtn.disabled = isAdded;
+        footerBtn.dataset.spellName = spell.name; // Passa il nome per l'aggiunta
+
+        modal.classList.remove('hidden');
+    }
+
+    // === FINE MODIFICA GRIMORIO ===
 
     onAuthStateChanged(auth, user => {
         document.getElementById('initial-loader').style.display = 'none';
@@ -1446,16 +1569,15 @@
         if (e.target.id === 'cs-add-companion-btn') { openCompanionModal(); }
         const editCompBtn = e.target.closest('.edit-companion-btn'); if (editCompBtn) { const idx = editCompBtn.dataset.idx; const companion = window.currentSheetData.companions[idx]; if (companion) openCompanionModal(companion, idx); }
         const deleteCompBtn = e.target.closest('.delete-companion-btn'); if (deleteCompBtn) { const idx = deleteCompBtn.dataset.idx; if (!confirm('Sei sicuro di voler eliminare questo compagno?')) return; let sheetData = window.currentSheetData; sheetData.companions.splice(idx, 1); saveCharacterSheet(token, sheetData); populateCharacterSheet(sheetData); }
-        
-        // === INIZIO LOGICA GRIMORIO (LISTENER) ===
-        // Aggiunto il listener per il pulsante del grimorio
+
+        // === INIZIO LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
         if (e.target.id === 'cs-open-grimoire-btn') {
             (async () => {
                 grimoireModal.classList.remove('hidden');
                 if (!allSpellsCache) {
                     try {
                         document.getElementById('grimoire-content').innerHTML = '<div class="loader mx-auto"></div>';
-                        const response = await fetch('incantesimi.json'); // Assicurati che il file sia nella stessa cartella
+                        const response = await fetch('incantesimi.json');
                         if (!response.ok) throw new Error('File non trovato o errore di rete');
                         allSpellsCache = await response.json();
                     } catch (error) {
@@ -1464,10 +1586,24 @@
                         return;
                     }
                 }
-                renderGrimoire(allSpellsCache);
+                // Applica subito i filtri correnti quando apri
+                filterAndRenderGrimoire();
             })();
         }
-        // === FINE LOGICA GRIMORIO (LISTENER) ===
+
+        // Listener per i dettagli dell'incantesimo sulla scheda
+        const spellNameEl = e.target.closest('.spell-item-in-sheet .spell-name');
+        if (spellNameEl) {
+            const spellName = spellNameEl.dataset.spellName;
+            const spellLevel = spellNameEl.dataset.spellLevel;
+            const spellData = window.currentSheetData.spellcasting.spells[spellLevel].find(s => s.name === spellName);
+            if (spellData) {
+                // Aggiungiamo i dati mancanti per la visualizzazione
+                const fullSpellData = { ...spellData, level: spellLevel, classi: [], school: 'N/D' };
+                showSpellDetailModal(fullSpellData);
+            }
+        }
+        // === FINE LOGICA GRIMORIO (LISTENER AGGIORNATO) ===
     });
 
     const equipmentModal = document.getElementById('equipment-modal');
@@ -1514,31 +1650,38 @@
     });
 
     const spellModal = document.getElementById('spell-modal');
-    function renderSpells(spellcasting) {
-        const container = document.getElementById('cs-spell-levels-container');
-        container.innerHTML = '';
-        for (let level = 0; level <= 9; level++) {
-            const levelData = spellcasting.spells[level] || [];
-            const slotsData = spellcasting.slots ? (spellcasting.slots[level] || { total: 0, used: 0 }) : { total: 0, used: 0 };
-            const levelEl = document.createElement('div');
-            levelEl.className = 'cs-box spell-level-container';
-            levelEl.dataset.level = level;
-            let slotsHtml = '';
-            if (level > 0) {
-                slotsHtml = `<div class="flex items-center gap-2 mb-2"><label class="text-xs">Slot Totali</label><input type="number" class="cs-input text-sm w-16 spell-slot-total" value="${slotsData.total}"><label class="text-xs">Usati</label><input type="number" class="cs-input text-sm w-16 spell-slot-used" value="${slotsData.used}"></div>`;
-            }
-            const spellListHtml = levelData.map(spell => {
-                const components = [];
-                if (spell.components?.v) components.push('V');
-                if (spell.components?.s) components.push('S');
-                if (spell.components?.m) components.push('M');
-                const concentration = spell.concentration ? '<span class="text-xs font-bold text-red-700">(C)</span>' : '';
-                return `<div class="p-1 border-b border-gray-300"><details><summary class="flex justify-between items-center cursor-pointer"><div class="flex items-center gap-2"><input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''} data-id="${spell.id}" data-level="${level}"><span>${spell.name} ${concentration}</span></div><div class="flex-shrink-0"><button class="edit-spell-btn text-blue-600 p-1" data-id="${spell.id}" data-level="${level}">✎</button><button class="delete-spell-btn text-red-600 p-1" data-id="${spell.id}" data-level="${level}">&times;</button></div></summary><div class="text-xs p-2 mt-1 border-t border-gray-200 bg-white/50 rounded"><p><strong>Tempo Lancio:</strong> ${spell.castingTime || 'N/A'} | <strong>Gittata:</strong> ${spell.range || 'N/A'}</p><p><strong>Componenti:</strong> ${components.join(', ') || 'Nessuna'} | <strong>Durata:</strong> ${spell.duration || 'N/A'}</p><p class="mt-2">${(spell.description || 'Nessuna descrizione.').replace(/\n/g, '<br>')}</p></div></details></div>`
-            }).join('');
-            levelEl.innerHTML = `<h4 class="text-lg font-bold text-red-800">${level === 0 ? 'Trucchetti' : `Livello ${level}`}</h4>${slotsHtml}<div class="spell-list space-y-1">${spellListHtml}</div><button class="add-spell-btn mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Incantesimo</button>`;
-            container.appendChild(levelEl);
+function renderSpells(spellcasting) {
+    const container = document.getElementById('cs-spell-levels-container');
+    container.innerHTML = '';
+    for (let level = 0; level <= 9; level++) {
+        const levelData = spellcasting.spells[level] || [];
+        const slotsData = spellcasting.slots ? (spellcasting.slots[level] || {total: 0, used: 0}) : {total: 0, used: 0};
+        const levelEl = document.createElement('div');
+        levelEl.className = 'cs-box spell-level-container';
+        levelEl.dataset.level = level;
+        let slotsHtml = '';
+        if (level > 0) {
+            slotsHtml = `<div class="flex items-center gap-2 mb-2"><label class="text-xs">Slot Totali</label><input type="number" class="cs-input text-sm w-16 spell-slot-total" value="${slotsData.total}"><label class="text-xs">Usati</label><input type="number" class="cs-input text-sm w-16 spell-slot-used" value="${slotsData.used}"></div>`;
         }
+        const spellListHtml = levelData.map(spell => {
+            const concentration = spell.concentration ? '<span class="text-xs font-bold text-red-700">(C)</span>' : '';
+            return `<div class="p-1 border-b border-gray-300 spell-item-in-sheet">
+                        <div class="flex justify-between items-center">
+                            <div class="flex items-center gap-2">
+                                <input type="checkbox" class="spell-prepared-checkbox w-4 h-4" ${spell.prepared ? 'checked' : ''} data-id="${spell.id}" data-level="${level}">
+                                <span class="spell-name cursor-pointer hover:text-red-700" data-spell-name="${spell.name}" data-spell-level="${level}">${spell.name} ${concentration}</span>
+                            </div>
+                            <div class="flex-shrink-0">
+                                <button class="edit-spell-btn text-blue-600 p-1" data-id="${spell.id}" data-level="${level}">✎</button>
+                                <button class="delete-spell-btn text-red-600 p-1" data-id="${spell.id}" data-level="${level}">&times;</button>
+                            </div>
+                        </div>
+                    </div>`;
+        }).join('');
+        levelEl.innerHTML = `<h4 class="text-lg font-bold text-red-800">${level === 0 ? 'Trucchetti' : `Livello ${level}`}</h4>${slotsHtml}<div class="spell-list space-y-1">${spellListHtml}</div><button class="add-spell-btn mt-2 w-full text-sm bg-green-700 hover:bg-green-800 rounded p-1 text-white">Aggiungi Incantesimo</button>`;
+        container.appendChild(levelEl);
     }
+}
     function openSpellModal(level, spell = null) {
         spellModal.classList.remove('hidden');
         document.getElementById('spell-form').reset();
@@ -1609,59 +1752,75 @@
         csModalContent.querySelector('[data-field="spellcasting.attackBonus"]').value = formatModifier(attackBonus);
     }
 
-    // === INIZIO LOGICA GRIMORIO (FUNZIONI E LISTENERS) ===
-    function renderGrimoire(spells) {
-        const container = document.getElementById('grimoire-content');
-        container.innerHTML = '';
-        if (spells.length === 0) {
-            container.innerHTML = `<p class="text-center text-gray-400">Nessun incantesimo trovato.</p>`;
-            return;
-        }
-        spells.forEach(spell => {
-            const spellEl = document.createElement('div');
-            spellEl.className = 'p-3 border-b border-gray-700 flex justify-between items-center';
-            spellEl.innerHTML = `
-                <div>
-                    <h4 class="text-xl text-red-400">${spell.name} <span class="text-base text-gray-400">(Liv. ${spell.level})</span></h4>
-                    <p class="text-sm text-gray-500">${spell.school || ''}</p>
-                </div>
-                <button class="add-spell-from-grimoire-btn bg-green-600 hover:bg-green-700 text-white font-bold py-1 px-3 rounded-lg" data-spell-name="${spell.name}">Aggiungi</button>
-            `;
-            container.appendChild(spellEl);
-        });
-    }
+    // === INIZIO LOGICA GRIMORIO (GESTIONE FILTRI E AGGIUNTA) ===
 
-    document.getElementById('grimoire-search').addEventListener('input', (e) => {
+    // Funzione principale per filtrare e renderizzare
+    function filterAndRenderGrimoire() {
         if (!allSpellsCache) return;
-        const searchTerm = e.target.value.toLowerCase().trim();
-        const filteredSpells = allSpellsCache.filter(spell =>
-            spell.name.toLowerCase().includes(searchTerm) ||
-            `livello ${spell.level}`.includes(searchTerm) ||
-            (spell.school && spell.school.toLowerCase().includes(searchTerm))
-        );
+
+        const searchTerm = document.getElementById('grimoire-search').value.toLowerCase().trim();
+        const selectedClass = document.getElementById('grimoire-class-filter').value;
+        
+        let filteredSpells = allSpellsCache;
+
+        // Filtro per classe
+        if (selectedClass !== 'all') {
+            filteredSpells = filteredSpells.filter(spell => spell.classi && spell.classi.includes(selectedClass));
+        }
+        
+        // Filtro per testo
+        if (searchTerm) {
+            filteredSpells = filteredSpells.filter(spell => 
+                spell.name.toLowerCase().includes(searchTerm) ||
+                `livello ${spell.level}`.includes(searchTerm) ||
+                (spell.school && spell.school.toLowerCase().includes(searchTerm))
+            );
+        }
+        
         renderGrimoire(filteredSpells);
+    }
+    
+    // Listeners per i filtri
+    document.getElementById('grimoire-search').addEventListener('input', filterAndRenderGrimoire);
+    document.getElementById('grimoire-class-filter').addEventListener('change', filterAndRenderGrimoire);
+
+    // Listener per la modale del grimorio
+    grimoireModal.addEventListener('click', e => {
+        // Aggiunta dell'incantesimo
+        if (e.target.classList.contains('add-spell-from-grimoire-btn')) {
+            const spellName = e.target.dataset.spellName;
+            addSpellToSheetByName(spellName);
+            // Aggiorna il pulsante per mostrare "Già Aggiunto"
+            e.target.textContent = "Già Aggiunto";
+            e.target.disabled = true;
+            e.target.classList.remove('bg-green-600', 'hover:bg-green-700');
+            e.target.classList.add('bg-gray-500');
+        }
+
+        // Apertura dettagli incantesimo
+        const spellItem = e.target.closest('.spell-item-grimoire');
+        if (spellItem && !e.target.matches('button')) {
+            const spellName = spellItem.dataset.spellName;
+            const spell = allSpellsCache.find(s => s.name === spellName);
+            if (spell) {
+                showSpellDetailModal(spell);
+            }
+        }
     });
 
-    document.getElementById('grimoire-close-btn').addEventListener('click', () => {
-        grimoireModal.classList.add('hidden');
-    });
-
-    document.getElementById('grimoire-modal').addEventListener('click', e => {
-        if (!e.target.classList.contains('add-spell-from-grimoire-btn')) return;
-
-        const spellName = e.target.dataset.spellName;
+    // Funzione centralizzata per aggiungere un incantesimo
+    function addSpellToSheetByName(spellName) {
         const spellToAdd = allSpellsCache.find(s => s.name === spellName);
         if (!spellToAdd) return;
-
+        
         const token = csModal.dataset.currentToken;
         if (!token) return;
 
         let sheetData = window.currentSheetData;
         const spellLevel = spellToAdd.level;
 
-        // Controlla se l'incantesimo è già presente
-        if (sheetData.spellcasting.spells[spellLevel] && sheetData.spellcasting.spells[spellLevel].some(s => s.name === spellName)) {
-            alert(`"${spellName}" è già presente nella lista.`);
+        if (isSpellAlreadyInSheet(spellName, spellLevel)) {
+            // alert(`"${spellName}" è già presente nella lista.`); // Opzionale
             return;
         }
 
@@ -1676,19 +1835,32 @@
             components: spellToAdd.components || { v: false, s: false, m: false },
             description: spellToAdd.description || ''
         };
-
+        
         if (!sheetData.spellcasting.spells[spellLevel]) {
             sheetData.spellcasting.spells[spellLevel] = [];
         }
         sheetData.spellcasting.spells[spellLevel].push(newSpellObject);
 
-        grimoireModal.classList.add('hidden');
         populateCharacterSheet(sheetData);
         saveCharacterSheet(token, sheetData);
+    }
 
-        alert(`"${spellName}" aggiunto alla scheda!`);
+    // Listener per la modale dei dettagli incantesimo
+    document.getElementById('spell-detail-close-btn').addEventListener('click', () => {
+        document.getElementById('spell-detail-modal').classList.add('hidden');
     });
-    // === FINE LOGICA GRIMORIO (FUNZIONI E LISTENERS) ===
+
+    document.getElementById('spell-detail-add-btn').addEventListener('click', (e) => {
+        const spellName = e.target.dataset.spellName;
+        if(spellName) {
+            addSpellToSheetByName(spellName);
+            document.getElementById('spell-detail-modal').classList.add('hidden');
+            // Aggiorna la vista del grimorio per mostrare che l'incantesimo è stato aggiunto
+            filterAndRenderGrimoire();
+        }
+    });
+
+    // === FINE LOGICA GRIMORIO ===
 
 
     const featureModal = document.getElementById('feature-modal');
