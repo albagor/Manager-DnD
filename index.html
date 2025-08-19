@@ -1114,13 +1114,38 @@ document.addEventListener('click', function(e) {
             formContainer.innerHTML = formHtml;
             listEl.prepend(formContainer);
             formContainer.querySelector('.cancel-new-node-btn').addEventListener('click', () => formContainer.remove());
-            formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
-                const title = formContainer.querySelector('.new-node-title').value.trim();
-                if (!title) { alert('Il titolo è obbligatorio.'); return; }
-                let newNode = { title, group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo", publicContent: "", masterContent: "", imageUrl: "" };
-                if (type === 'maps' || type === 'images') { newNode.imageUrl = formContainer.querySelector('.new-node-image-url')?.value.trim() || ""; newNode.publicContent = formContainer.querySelector('.new-node-public-content')?.value.trim() || ""; newNode.masterContent = formContainer.querySelector('.new-node-master-content')?.value.trim() || ""; }
-                try { await updateDoc(doc(db, `users/${currentUserId}/adventures`, currentAdventureId), { [type]: arrayUnion(newNode) }); formContainer.remove(); } catch (error) { console.error(`Errore aggiunta ${typeName}:`, error); }
-            });
+            // IL NUOVO CODICE DA INSERIRE
+formContainer.querySelector('.save-new-node-btn').addEventListener('click', async () => {
+    const title = formContainer.querySelector('.new-node-title').value.trim();
+    if (!title) {
+        alert('Il titolo è obbligatorio.');
+        return;
+    }
+    let newNode = {
+        title,
+        group: formContainer.querySelector('.new-node-group').value.trim() || "Senza Gruppo",
+        publicContent: "",
+        masterContent: "",
+        imageUrl: ""
+    };
+    if (type === 'maps' || type === 'images') {
+        newNode.imageUrl = formContainer.querySelector('.new-node-image-url')?.value.trim() || "";
+        newNode.publicContent = formContainer.querySelector('.new-node-public-content')?.value.trim() || "";
+        newNode.masterContent = formContainer.querySelector('.new-node-master-content')?.value.trim() || "";
+    }
+    
+    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+    try {
+        // Questa chiamata a updateDoc attiverà onSnapshot, che aggiornerà l'interfaccia.
+        await updateDoc(adventureRef, {
+            [type]: arrayUnion(newNode)
+        });
+        // Rimuoviamo solo il modulo di inserimento, senza toccare l'interfaccia manualmente.
+        formContainer.remove();
+    } catch (error) {
+        console.error(`Errore aggiunta ${typeName}:`, error);
+    }
+});
         }
     });
 
@@ -1165,37 +1190,52 @@ document.addEventListener('click', function(e) {
             } else if (target.classList.contains('cancel-edit-btn')) {
                 container.querySelector('.node-view-mode').classList.remove('hidden');
                 container.querySelector('.node-edit-mode').classList.add('hidden');
-            } else if (target.classList.contains('save-node-btn')) {
-                const adventureSnap = await getDoc(adventureRef);
-                if (adventureSnap.exists()) {
-                    const nodes = adventureSnap.data()[type] || [];
-                    const nodeIndex = nodes.findIndex(n => n.title === nodeId);
-                    if (nodeIndex !== -1) {
-                        const updatedNodes = [...nodes];
-                        const newNodeData = { ...updatedNodes[nodeIndex], publicContent: container.querySelector('.node-public-content-edit').value, masterContent: container.querySelector('.node-master-content-edit').value, imageUrl: container.querySelector('.node-image-url-edit').value };
-                        updatedNodes[nodeIndex] = newNodeData;
+          // IL NUOVO CODICE DA INSERIRE
+} else if (target.classList.contains('save-node-btn')) {
+    const adventureRef = doc(db, `users/${currentUserId}/adventures`, currentAdventureId);
+    const adventureSnap = await getDoc(adventureRef);
 
-                        const sharedItems = adventureSnap.data().sharedItems || [];
-                        const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
-                        const updatePayload = { [type]: updatedNodes };
-                        let updatedSharedItemsCache = null;
+    if (adventureSnap.exists()) {
+        const adventureData = adventureSnap.data();
+        const nodes = adventureData[type] || [];
+        const nodeIndex = nodes.findIndex(n => n.title === nodeId);
 
-                        if (sharedItemIndex > -1) {
-                            const updatedSharedItems = [...sharedItems];
-                            updatedSharedItems[sharedItemIndex] = { ...updatedSharedItems[sharedItemIndex], ...newNodeData };
-                            updatePayload.sharedItems = updatedSharedItems;
-                            updatedSharedItemsCache = updatedSharedItems;
-                        }
-
-                        await updateDoc(adventureRef, updatePayload);
-                        currentAdventureData[type] = updatedNodes;
-                        if (updatedSharedItemsCache) {
-                            currentAdventureData.sharedItems = updatedSharedItemsCache;
-                        }
-                        renderGroupedNodes(type, updatedNodes);
-                    }
+        if (nodeIndex !== -1) {
+            // Creiamo un nuovo array con l'oggetto modificato
+            const updatedNodes = nodes.map((node, index) => {
+                if (index === nodeIndex) {
+                    return {
+                        ...node,
+                        publicContent: container.querySelector('.node-public-content-edit').value,
+                        masterContent: container.querySelector('.node-master-content-edit').value,
+                        imageUrl: container.querySelector('.node-image-url-edit').value
+                    };
                 }
+                return node;
+            });
+            
+            const updatePayload = { [type]: updatedNodes };
+
+            // Aggiorna anche gli sharedItems se esistono
+            const sharedItems = adventureData.sharedItems || [];
+            const sharedItemIndex = sharedItems.findIndex(item => item.id === nodeId);
+            if (sharedItemIndex > -1) {
+                const updatedSharedItems = [...sharedItems];
+                const newNodeData = updatedNodes[nodeIndex];
+                updatedSharedItems[sharedItemIndex] = { 
+                    ...updatedSharedItems[sharedItemIndex], 
+                    publicContent: newNodeData.publicContent,
+                    masterContent: newNodeData.masterContent,
+                    imageUrl: newNodeData.imageUrl
+                };
+                updatePayload.sharedItems = updatedSharedItems;
             }
+            
+            // Questo updateDoc attiverà onSnapshot e aggiornerà l'interfaccia
+            await updateDoc(adventureRef, updatePayload);
+        }
+    }
+}
         }
     });
 
