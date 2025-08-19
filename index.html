@@ -650,6 +650,20 @@
     const grimoireModal = document.getElementById('grimoire-modal');
     let allSpellsCache = null;
 
+       // === BLOCCO DI LISTENER DELEGATI (MANAGER) ===
+document.addEventListener('click', function(e) {
+    // Listener per chiudere la modale del Grimorio
+    if (e.target.id === 'grimoire-close-btn') {
+        grimoireModal.classList.add('hidden');
+    }
+
+    // Listener per chiudere la modale dei dettagli incantesimo
+    if (e.target.id === 'spell-detail-close-btn') {
+        document.getElementById('spell-detail-modal').classList.add('hidden');
+    }
+});
+// ===============================================
+       
     // === INIZIO MODIFICA GRIMORIO: Funzioni migliorate ===
 
     // Funzione renderGrimoire AGGIORNATA per raggruppare per livello
@@ -1845,11 +1859,7 @@ function renderSpells(spellcasting) {
         saveCharacterSheet(token, sheetData);
     }
 
-    // Listener per la modale dei dettagli incantesimo
-    document.getElementById('spell-detail-close-btn').addEventListener('click', () => {
-        document.getElementById('spell-detail-modal').classList.add('hidden');
-    });
-
+ 
     document.getElementById('spell-detail-add-btn').addEventListener('click', (e) => {
         const spellName = e.target.dataset.spellName;
         if(spellName) {
